@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Sidebar from '../components/layout/Sidebar'
 import TopBar from '../components/layout/TopBar'
 import StatsGrid from '../components/dashboard/StatsGrid'
@@ -7,10 +8,21 @@ import TodayFocus from '../components/dashboard/TodayFocus'
 import QuickActions from '../components/dashboard/QuickActions'
 import Investments from '../components/dashboard/Investments'
 import { useDashboard } from '../hooks/useDashboard'
+import { useAuth } from '../hooks/useAuth'
 
 export default function DashboardPage() {
   const { activeSection } = useDashboard()
-  
+  const { user, updateProfile } = useAuth()
+  const [name, setName] = useState(user?.name || '')
+  const [saving, setSaving] = useState(false)
+
+  const handleSave = async () => {
+    if (!name.trim()) return
+    setSaving(true)
+    try { await updateProfile({ name: name.trim() }) }
+    finally { setSaving(false) }
+  }
+
   return (
     <div className="min-h-screen bg-bg">
       <Sidebar />
@@ -88,28 +100,18 @@ export default function DashboardPage() {
             <div className="animate-fade-in">
               <div className="bg-surface border border-border rounded-lg p-6 max-w-2xl">
                 <h3 className="text-sm font-medium mb-6">Paramètres</h3>
-                
                 <div className="space-y-6">
                   <div>
                     <label className="block text-xs text-muted mb-1.5">Nom</label>
-                    <input
-                      type="text"
-                      defaultValue="Mouhamadou Touré"
-                      className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm text-text focus:outline-none focus:border-accent transition-colors"
-                    />
+                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm text-text focus:outline-none focus:border-accent transition-colors" />
                   </div>
-                  
                   <div>
                     <label className="block text-xs text-muted mb-1.5">Email</label>
-                    <input
-                      type="email"
-                      defaultValue="mouhamadou@example.com"
-                      className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm text-text focus:outline-none focus:border-accent transition-colors"
-                    />
+                    <input type="email" value={user?.email || ''} disabled className="w-full px-3 py-2 bg-bg/50 border border-border rounded-lg text-sm text-muted cursor-not-allowed" />
+                    <p className="text-[10px] text-muted mt-1">L'email ne peut pas être modifié</p>
                   </div>
-                  
-                  <button className="px-4 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors">
-                    Sauvegarder
+                  <button onClick={handleSave} disabled={saving || !name.trim()} className="px-4 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors disabled:opacity-50">
+                    {saving ? 'Enregistrement...' : 'Sauvegarder'}
                   </button>
                 </div>
               </div>
