@@ -4,13 +4,17 @@ import { useAuth } from '../hooks/useAuth'
 
 export default function AuthPage() {
   const navigate = useNavigate()
-  const { login, signup, renderGoogleButton } = useAuth()
+  const { login, signup, renderGoogleButton, isAuthenticated } = useAuth()
   const [activeTab, setActiveTab] = useState('login')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
   const [signupForm, setSignupForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
   const googleBtnRef = useRef(null)
+
+  useEffect(() => {
+    if (isAuthenticated) navigate('/dashboard')
+  }, [isAuthenticated, navigate])
 
   useEffect(() => {
     const timer = setTimeout(() => {

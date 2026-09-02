@@ -29,14 +29,17 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false))
   }, [])
 
-  const handleGoogleCredential = useCallback(async (credential) => {
-    const { token, user } = await apiFetch('/api/auth/google', {
-      method: 'POST',
-      body: JSON.stringify({ credential }),
-    })
-    localStorage.setItem('command_center_token', token)
-    setUser(user)
-    return user
+  const handleGoogleCredential = useCallback(async (credentialResponse) => {
+    try {
+      const { token, user } = await apiFetch('/api/auth/google', {
+        method: 'POST',
+        body: JSON.stringify({ credential: credentialResponse.credential }),
+      })
+      localStorage.setItem('command_center_token', token)
+      setUser(user)
+    } catch (err) {
+      console.error('Google auth error:', err)
+    }
   }, [])
 
   useEffect(() => {
