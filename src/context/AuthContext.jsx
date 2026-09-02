@@ -43,15 +43,30 @@ export function AuthProvider({ children }) {
   }, [])
 
   useEffect(() => {
-    if (!GOOGLE_CLIENT_ID || !window.google) return
+    if (!GOOGLE_CLIENT_ID) return
 
-    window.google.accounts.id.initialize({
-      client_id: GOOGLE_CLIENT_ID,
-      callback: handleGoogleCredential,
-      auto_select: false,
-      cancel_on_tap_outside: true,
-    })
-  }, [handleGoogleCredential])
+    function initGoogle() {
+      if (!window.google) return
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleCredential,
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      })
+    }
+
+    if (window.google) {
+      initGoogle()
+    } else {
+      const checkInterval = setInterval(() => {
+        if (window.google) {
+          clearInterval(checkInterval)
+          initGoogle()
+        }
+      }, 100)
+      return () => clearInterval(checkInterval)
+    }
+  }, [handleGoogleCredential, GOOGLE_CLIENT_ID])
 
   const renderGoogleButton = useCallback((containerId) => {
     if (!window.google || !GOOGLE_CLIENT_ID) return
