@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 
 export default function AuthPage() {
   const navigate = useNavigate()
-  const { login, signup, isAuthenticated, googleReady, triggerGoogleLogin, GOOGLE_CLIENT_ID } = useAuth()
+  const { login, signup, isAuthenticated, googleReady, googleError, triggerGoogleLogin, GOOGLE_CLIENT_ID } = useAuth()
   const [activeTab, setActiveTab] = useState('login')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -90,6 +90,7 @@ export default function AuthPage() {
             <button onClick={() => { setActiveTab('signup'); setError('') }} className={`flex-1 py-2.5 rounded-md text-sm font-medium transition-all ${activeTab === 'signup' ? 'bg-bg text-text border border-border' : 'text-muted hover:text-text'}`}>Inscription</button>
           </div>
           {error && <div className="mb-6 p-3 bg-accentSec/10 border border-accentSec/30 rounded-lg text-accentSec text-sm">{error}</div>}
+          {googleError && <div className="mb-6 p-3 bg-accentSec/10 border border-accentSec/30 rounded-lg text-accentSec text-sm">{googleError}</div>}
 
           {GOOGLE_CLIENT_ID && (
             <button onClick={handleGoogle} className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-surface border border-border rounded-lg text-text text-sm font-medium hover:border-accent/50 transition-colors mb-4">

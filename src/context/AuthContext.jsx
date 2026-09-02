@@ -20,6 +20,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [googleReady, setGoogleReady] = useState(false)
+  const [googleError, setGoogleError] = useState(null)
   const callbackRef = useRef(null)
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export function AuthProvider({ children }) {
 
   callbackRef.current = async (response) => {
     try {
+      setGoogleError(null)
       const { token, user } = await apiFetch('/api/auth/google', {
         method: 'POST',
         body: JSON.stringify({ credential: response.credential }),
@@ -41,6 +43,7 @@ export function AuthProvider({ children }) {
       setUser(user)
     } catch (err) {
       console.error('Google auth error:', err)
+      setGoogleError(err.message || 'Erreur de connexion Google')
     }
   }
 
@@ -124,6 +127,7 @@ export function AuthProvider({ children }) {
     logout,
     updateProfile,
     googleReady,
+    googleError,
     triggerGoogleLogin,
     GOOGLE_CLIENT_ID,
   }
