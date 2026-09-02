@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
+import { createContext, useContext, useState, useEffect, useRef } from 'react'
 
 const AuthContext = createContext(null)
 
@@ -19,6 +19,7 @@ function apiFetch(path, options = {}) {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [googleReady, setGoogleReady] = useState(false)
   const callbackRef = useRef(null)
 
   useEffect(() => {
@@ -46,40 +47,37 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (!GOOGLE_CLIENT_ID) return
 
-    function initGoogle() {
-      if (!window.google?.accounts?.id) return
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: (response) => callbackRef.current(response),
-        auto_select: false,
-        cancel_on_tap_outside: true,
-      })
-      window.google.accounts.id.renderButton(
-        document.getElementById('google-signin-btn'),
-        {
-          type: 'standard',
-          theme: 'filled_black',
-          size: 'large',
-          text: 'continue_with',
-          shape: 'rectangular',
-          width: document.getElementById('google-signin-btn')?.offsetWidth || 400,
-        }
-      )
+    function tryInit() {
+      if (!window.google?.accounts?.id) return false
+      try {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: (response) => callbackRef.current(response),
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        })
+        setGoogleReady(true)
+        return true
+      } catch (e) {
+        console.error('Google init error:', e)
+        return false
+      }
     }
 
-    if (window.google?.accounts?.id) {
-      initGoogle()
-    } else {
-      const checkInterval = setInterval(() => {
-        if (window.google?.accounts?.id) {
-          clearInterval(checkInterval)
-          initGoogle()
-        }
-      }, 100)
-      const timeout = setTimeout(() => clearInterval(checkInterval), 10000)
-      return () => { clearInterval(checkInterval); clearTimeout(timeout) }
-    }
+    if (tryInit()) return
+
+    const checkInterval = setInterval(() => {
+      if (tryInit()) clearInterval(checkInterval)
+    }, 200)
+    const timeout = setTimeout(() => clearInterval(checkInterval), 15000)
+    return () => { clearInterval(checkInterval); clearTimeout(timeout) }
   }, [GOOGLE_CLIENT_ID])
+
+  const triggerGoogleLogin = () => {
+    if (window.google?.accounts?.id) {
+      window.google.accounts.id.prompt()
+    }
+  }
 
   const login = async (email, password) => {
     const { token, user } = await apiFetch('/api/auth/login', {
@@ -125,6 +123,8 @@ export function AuthProvider({ children }) {
     signup,
     logout,
     updateProfile,
+    googleReady,
+    triggerGoogleLogin,
     GOOGLE_CLIENT_ID,
   }
 
