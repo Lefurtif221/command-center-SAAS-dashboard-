@@ -1,10 +1,71 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
+import { useAuth } from '../../hooks/useAuth'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 export default function ConnectedServices() {
-  const { services, connectService, disconnectService, syncService } = useDashboard()
-  const [connecting, setConnecting] = useState(null)
-  const handleConnect = async (s) => { setConnecting(s); await connectService(s); setConnecting(null) }
+  const { services, disconnectService } = useDashboard()
+  const { user } = useAuth()
+  const [connectedList, setConnectedList] = useState([])
+  const [loading, setLoading] = useState(null)
+
+  useEffect(() => {
+    fetchServices()
+  }, [])
+
+  const fetchServices = async () => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      const res = await fetch(`${API_URL}/api/services`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      setConnectedList(data.services || [])
+    } catch (err) {
+      console.error('Failed to fetch services:', err)
+    }
+  }
+
+  const handleConnect = async (serviceName) => {
+    setLoading(serviceName)
+    try {
+      const token = localStorage.getItem('command_center_token')
+      const res = await fetch(`${API_URL}/api/services/${serviceName}/authorize`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      }
+    } catch (err) {
+      console.error('OAuth error:', err)
+      setLoading(null)
+    }
+  }
+
+  const handleDisconnect = async (serviceName) => {
+    if (!window.confirm(`Déconnecter ${serviceName} ?`)) return
+    try {
+      const token = localStorage.getItem('command_center_token')
+      await fetch(`${API_URL}/api/services/${serviceName}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setConnectedList(prev => prev.filter(s => s !== serviceName))
+      disconnectService(serviceName)
+    } catch (err) {
+      console.error('Disconnect error:', err)
+    }
+  }
+
+  const allServices = [
+    { id: 'gmail', name: 'Gmail', icon: '📧' },
+    { id: 'notion', name: 'Notion', icon: '📝' },
+    { id: 'slack', name: 'Slack', icon: '💼' },
+    { id: 'trello', name: 'Trello', icon: '📋' },
+    { id: 'outlook', name: 'Outlook', icon: '📬' },
+  ]
 
   return (
     <div className="bg-surface border border-border rounded-lg">
@@ -12,33 +73,31 @@ export default function ConnectedServices() {
         <h3 className="text-sm font-medium">Services connectés</h3>
       </div>
       <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {Object.entries(services).map(([key, service]) => (
-          <div key={key} className={`p-3 rounded-lg border transition-all ${service.connected ? 'bg-bg border-success/20' : 'bg-bg border-border hover:border-muted'}`}>
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-xl">{service.icon}</span>
-              <div className="flex-1">
-                <p className="text-sm font-medium">{service.name}</p>
-                <p className={`text-[10px] ${service.connected ? 'text-success' : 'text-muted'}`}>{service.connected ? 'Connecté' : 'Non connecté'}</p>
+        {allServices.map((service) => {
+          const isConnected = connectedList.includes(service.id)
+          return (
+            <div key={service.id} className={`p-3 rounded-lg border transition-all ${isConnected ? 'bg-bg border-success/20' : 'bg-bg border-border hover:border-muted'}`}>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-xl">{service.icon}</span>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{service.name}</p>
+                  <p className={`text-[10px] ${isConnected ? 'text-success' : 'text-muted'}`}>{isConnected ? 'Connecté' : 'Non connecté'}</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {isConnected ? (
+                  <button onClick={() => handleDisconnect(service.id)} className="flex-1 px-2 py-1.5 bg-bg border border-border rounded text-xs text-accentSec hover:bg-accentSec/5 transition-colors">
+                    Déconnecter
+                  </button>
+                ) : (
+                  <button onClick={() => handleConnect(service.id)} disabled={loading === service.id} className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 bg-accent/10 border border-accent/30 rounded text-xs text-accent hover:bg-accent/20 transition-colors disabled:opacity-50">
+                    {loading === service.id ? '...' : 'Connecter'}
+                  </button>
+                )}
               </div>
             </div>
-            <div className="flex gap-2">
-              {service.connected ? (
-                <>
-                  <button onClick={() => syncService(key)} className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 bg-bg border border-border rounded text-xs text-muted hover:text-text hover:border-accent/30 transition-colors">
-                    <span className="iconify" data-icon="lucide:refresh-cw" data-width="12"></span>Sync
-                  </button>
-                  <button onClick={() => { if (window.confirm(`Déconnecter ${service.name} ?`)) disconnectService(key) }} className="px-2 py-1.5 bg-bg border border-border rounded text-xs text-accentSec hover:bg-accentSec/5 transition-colors">
-                    <span className="iconify" data-icon="lucide:unplug" data-width="12"></span>
-                  </button>
-                </>
-              ) : (
-                <button onClick={() => handleConnect(key)} disabled={connecting === key} className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 bg-accent/10 border border-accent/30 rounded text-xs text-accent hover:bg-accent/20 transition-colors disabled:opacity-50">
-                  <span className="iconify" data-icon="lucide:plug" data-width="12"></span>{connecting === key ? '...' : 'Connecter'}
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

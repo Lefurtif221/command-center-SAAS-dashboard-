@@ -4,6 +4,7 @@ import { DashboardProvider } from './context/DashboardContext'
 import LandingPage from './pages/LandingPage'
 import AuthPage from './pages/AuthPage'
 import DashboardPage from './pages/DashboardPage'
+import OAuthCallback from './pages/OAuthCallback'
 import { useAuth } from './hooks/useAuth'
 
 function ProtectedRoute({ children }) {
@@ -23,6 +24,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
+      <Route path="/auth/callback/:service" element={<ProtectedRoute><OAuthCallback /></ProtectedRoute>} />
       <Route path="/dashboard/*" element={<ProtectedRoute><DashboardProvider><DashboardPage /></DashboardProvider></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
