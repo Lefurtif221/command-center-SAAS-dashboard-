@@ -1,29 +1,19 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
 export default function AuthPage() {
   const navigate = useNavigate()
-  const { login, signup, renderGoogleButton, isAuthenticated } = useAuth()
+  const { login, signup, isAuthenticated } = useAuth()
   const [activeTab, setActiveTab] = useState('login')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
   const [signupForm, setSignupForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
-  const googleBtnRef = useRef(null)
 
   useEffect(() => {
     if (isAuthenticated) navigate('/dashboard')
   }, [isAuthenticated, navigate])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (googleBtnRef.current) {
-        renderGoogleButton('google-signin-btn')
-      }
-    }, 500)
-    return () => clearTimeout(timer)
-  }, [renderGoogleButton])
 
   const handleLogin = async (e) => {
     e.preventDefault(); setError(''); setLoading(true)
@@ -95,7 +85,7 @@ export default function AuthPage() {
 
           {/* Google Identity Services Button */}
           <div className="mb-4">
-            <div id="google-signin-btn" ref={googleBtnRef} className="w-full"></div>
+            <div id="google-signin-btn" className="w-full"></div>
           </div>
 
           <div className="flex items-center gap-4 mb-6">
