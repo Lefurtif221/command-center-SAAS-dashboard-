@@ -52,7 +52,7 @@ export default function AuthPage() {
           </button>
           <div className="flex items-center gap-2 mb-12">
             <span className="iconify text-accent" data-icon="lucide:zap" data-width="24"></span>
-            <span className="font-medium tracking-tight text-lg">Command Center</span>
+            <span className="font-medium tracking-tight text-lg">Personal Place</span>
           </div>
           <h1 className="text-4xl font-semibold tracking-tighter-custom mb-6 leading-tight">
             Bienvenue sur votre<br />espace productif
@@ -83,7 +83,7 @@ export default function AuthPage() {
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-2 mb-8">
             <span className="iconify text-accent" data-icon="lucide:zap" data-width="20"></span>
-            <span className="font-medium tracking-tight text-sm">Command Center</span>
+            <span className="font-medium tracking-tight text-sm">Personal Place</span>
           </div>
           <div className="flex gap-1 p-1 bg-surface border border-border rounded-lg mb-8">
             <button onClick={() => { setActiveTab('login'); setError('') }} className={`flex-1 py-2.5 rounded-md text-sm font-medium transition-all ${activeTab === 'login' ? 'bg-bg text-text border border-border' : 'text-muted hover:text-text'}`}>Connexion</button>

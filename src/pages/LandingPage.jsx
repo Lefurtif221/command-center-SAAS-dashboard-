@@ -28,7 +28,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="iconify text-accent" data-icon="lucide:zap" data-width="20" data-stroke-width="1.5"></span>
-            <span className="font-medium tracking-tight text-sm">Command Center</span>
+            <span className="font-medium tracking-tight text-sm">Personal Place</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted">
             <a href="#features" className="hover:text-text transition-colors">Fonctionnalités</a>
@@ -283,14 +283,14 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
             <span className="iconify text-muted" data-icon="lucide:zap" data-width="18"></span>
-            <span className="text-sm font-medium text-muted">Command Center</span>
+            <span className="text-sm font-medium text-muted">Personal Place</span>
           </div>
           <div className="flex gap-6 text-xs text-muted">
             <a href="#" className="hover:text-text transition-colors">Confidentialité</a>
             <a href="#" className="hover:text-text transition-colors">Conditions</a>
             <a href="#" className="hover:text-text transition-colors">Contact</a>
           </div>
-          <div className="text-xs text-muted/50">© 2024 Command Center. Tous droits réservés.</div>
+          <div className="text-xs text-muted/50">© 2024 Personal Place. Tous droits réservés.</div>
         </div>
       </footer>
     </div>
