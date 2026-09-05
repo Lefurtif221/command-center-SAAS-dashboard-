@@ -1,9 +1,8 @@
-import { createContext, useContext, useState, useEffect, useRef } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 
 const AuthContext = createContext(null)
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 
 function apiFetch(path, options = {}) {
   const token = localStorage.getItem('command_center_token')
@@ -19,68 +18,29 @@ function apiFetch(path, options = {}) {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [googleReady, setGoogleReady] = useState(false)
-  const [googleError, setGoogleError] = useState(null)
-  const callbackRef = useRef(null)
 
   useEffect(() => {
-    const token = localStorage.getItem('command_center_token')
-    if (!token) { setLoading(false); return }
-    apiFetch('/api/auth/me')
-      .then(({ user }) => setUser(user))
-      .catch(() => localStorage.removeItem('command_center_token'))
-      .finally(() => setLoading(false))
+    const params = new URLSearchParams(window.location.search)
+    const tokenFromUrl = params.get('token')
+    const userFromUrl = params.get('user')
+    const errorFromUrl = params.get('error')
+
+    if (tokenFromUrl && userFromUrl) {
+      localStorage.setItem('command_center_token', tokenFromUrl)
+      setUser(JSON.parse(userFromUrl))
+      window.history.replaceState({}, '', window.location.pathname)
+    } else if (errorFromUrl) {
+      console.error('Google OAuth error:', errorFromUrl)
+      window.history.replaceState({}, '', window.location.pathname)
+    } else {
+      const token = localStorage.getItem('command_center_token')
+      if (!token) { setLoading(false); return }
+      apiFetch('/api/auth/me')
+        .then(({ user }) => setUser(user))
+        .catch(() => localStorage.removeItem('command_center_token'))
+        .finally(() => setLoading(false))
+    }
   }, [])
-
-  callbackRef.current = async (response) => {
-    try {
-      setGoogleError(null)
-      const { token, user } = await apiFetch('/api/auth/google', {
-        method: 'POST',
-        body: JSON.stringify({ credential: response.credential }),
-      })
-      localStorage.setItem('command_center_token', token)
-      setUser(user)
-    } catch (err) {
-      console.error('Google auth error:', err)
-      setGoogleError(err.message || 'Erreur de connexion Google')
-    }
-  }
-
-  useEffect(() => {
-    if (!GOOGLE_CLIENT_ID) return
-
-    function tryInit() {
-      if (!window.google?.accounts?.id) return false
-      try {
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: (response) => callbackRef.current(response),
-          auto_select: false,
-          cancel_on_tap_outside: true,
-        })
-        setGoogleReady(true)
-        return true
-      } catch (e) {
-        console.error('Google init error:', e)
-        return false
-      }
-    }
-
-    if (tryInit()) return
-
-    const checkInterval = setInterval(() => {
-      if (tryInit()) clearInterval(checkInterval)
-    }, 200)
-    const timeout = setTimeout(() => clearInterval(checkInterval), 15000)
-    return () => { clearInterval(checkInterval); clearTimeout(timeout) }
-  }, [GOOGLE_CLIENT_ID])
-
-  const triggerGoogleLogin = () => {
-    if (window.google?.accounts?.id) {
-      window.google.accounts.id.prompt()
-    }
-  }
 
   const login = async (email, password) => {
     const { token, user } = await apiFetch('/api/auth/login', {
@@ -102,12 +62,20 @@ export function AuthProvider({ children }) {
     return user
   }
 
+  const googleLogin = useCallback(() => {
+    const width = 500, height = 600
+    const left = (window.innerWidth - width) / 2
+    const top = (window.innerHeight - height) / 2
+    window.open(
+      `${API_URL}/api/auth/google`,
+      'google-oauth',
+      `width=${width},height=${height},left=${left},top=${top}`
+    )
+  }, [])
+
   const logout = () => {
     setUser(null)
     localStorage.removeItem('command_center_token')
-    if (window.google) {
-      window.google.accounts.id.disableAutoSelect()
-    }
   }
 
   const updateProfile = async (updates) => {
@@ -124,12 +92,9 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!user,
     login,
     signup,
+    googleLogin,
     logout,
     updateProfile,
-    googleReady,
-    googleError,
-    triggerGoogleLogin,
-    GOOGLE_CLIENT_ID,
   }
 
   return (
