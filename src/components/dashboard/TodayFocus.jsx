@@ -6,7 +6,7 @@ const pCfg = { high: { label: 'Urgent', border: 'border-accentSec', dot: 'bg-acc
 
 export default function TodayFocus() {
   const [tasks, setTasks] = useState([])
-  const today = new Date().toISOString().split('T')[0]
+  const today = new Date().toLocaleDateString('sv-SE')
   const todayLabel = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
 
   useEffect(() => { fetchTasks() }, [])
