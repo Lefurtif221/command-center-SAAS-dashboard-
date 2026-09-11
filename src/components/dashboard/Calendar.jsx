@@ -1,4 +1,6 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 const DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
@@ -40,9 +42,23 @@ function isSameDay(a, b) {
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [events, setEvents] = useState(getEvents)
+  const [tasks, setTasks] = useState([])
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [newEvent, setNewEvent] = useState({ title: '', color: 'accent' })
+
+  useEffect(() => { fetchTasks() }, [])
+
+  const fetchTasks = async () => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      const res = await fetch(`${API_URL}/api/tasks`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      setTasks(data.tasks || [])
+    } catch (err) { console.error(err) }
+  }
 
   const weekDates = useMemo(() => getWeekDates(currentDate), [currentDate])
   const today = new Date()
@@ -79,7 +95,19 @@ export default function Calendar() {
     saveEvents(updated)
   }
 
-  const getEventAt = (dateStr, hour) => events.find(e => e.date === dateStr && e.hour === hour)
+  const getEventAt = (dateStr, hour) => {
+    const event = events.find(e => e.date === dateStr && e.hour === hour)
+    if (event) return { type: 'event', ...event }
+
+    // Show tasks due this day at hour 8
+    if (hour === 8) {
+      const dayTasks = tasks.filter(t => t.due_date === dateStr && !t.completed)
+      if (dayTasks.length > 0) {
+        return { type: 'task', id: 'tasks-' + dateStr, title: `${dayTasks.length} tâche${dayTasks.length > 1 ? 's' : ''}`, color: 'warning', date: dateStr, hour: 8 }
+      }
+    }
+    return null
+  }
 
   const navigateWeek = (dir) => {
     const d = new Date(currentDate)
@@ -144,12 +172,14 @@ export default function Calendar() {
                   const event = getEventAt(dateStr, hour)
                   const isToday = isSameDay(d, today)
                   return (
-                    <td key={di} onClick={() => handleSlotClick(dateStr, hour)}
+                    <td key={di} onClick={() => !event && handleSlotClick(dateStr, hour)}
                       className={`border-b border-r border-border h-10 relative ${isToday ? 'bg-accent/5' : 'hover:bg-bg/50'} ${event ? '' : 'cursor-pointer'}`}>
                       {event && (
                         <div className={`absolute inset-0.5 rounded flex items-center justify-between px-1.5 ${colors[event.color]}`}>
                           <span className="text-[10px] font-medium truncate">{event.title}</span>
-                          <button onClick={(e) => { e.stopPropagation(); removeEvent(event.id) }} className="text-[10px] opacity-70 hover:opacity-100 ml-1 flex-shrink-0">✕</button>
+                          {event.type === 'event' && (
+                            <button onClick={(e) => { e.stopPropagation(); removeEvent(event.id) }} className="text-[10px] opacity-70 hover:opacity-100 ml-1 flex-shrink-0">✕</button>
+                          )}
                         </div>
                       )}
                     </td>
