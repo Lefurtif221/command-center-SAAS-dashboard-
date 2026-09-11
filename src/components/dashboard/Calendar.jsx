@@ -7,17 +7,6 @@ const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet'
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i)
 
-const EVENTS_KEY = 'personalplace_calendar_events'
-
-function getEvents() {
-  try { return JSON.parse(localStorage.getItem(EVENTS_KEY)) || [] }
-  catch { return [] }
-}
-
-function saveEvents(events) {
-  localStorage.setItem(EVENTS_KEY, JSON.stringify(events))
-}
-
 function getWeekDates(date) {
   const d = new Date(date)
   const day = d.getDay()
@@ -41,13 +30,24 @@ function isSameDay(a, b) {
 
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date())
-  const [events, setEvents] = useState(getEvents)
+  const [events, setEvents] = useState([])
   const [tasks, setTasks] = useState([])
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [newEvent, setNewEvent] = useState({ title: '', color: 'accent' })
 
-  useEffect(() => { fetchTasks() }, [])
+  useEffect(() => { fetchEvents(); fetchTasks() }, [])
+
+  const fetchEvents = async () => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      const res = await fetch(`${API_URL}/api/calendar`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      setEvents(data.events || [])
+    } catch (err) { console.error(err) }
+  }
 
   const fetchTasks = async () => {
     try {
@@ -72,34 +72,38 @@ export default function Calendar() {
   }
   const colorLabels = { accent: 'Bleu', success: 'Vert', warning: 'Orange', accentSec: 'Rouge', purple: 'Violet' }
 
-  const addEvent = () => {
+  const addEvent = async () => {
     if (!selectedSlot || !newEvent.title.trim()) return
-    const event = {
-      id: Date.now(),
-      date: selectedSlot.date,
-      hour: selectedSlot.hour,
-      title: newEvent.title.trim(),
-      color: newEvent.color,
-    }
-    const updated = [...events, event]
-    setEvents(updated)
-    saveEvents(updated)
-    setNewEvent({ title: '', color: 'accent' })
-    setModalOpen(false)
-    setSelectedSlot(null)
+    try {
+      const token = localStorage.getItem('command_center_token')
+      const res = await fetch(`${API_URL}/api/calendar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ title: newEvent.title.trim(), date: selectedSlot.date, hour: selectedSlot.hour, color: newEvent.color }),
+      })
+      const data = await res.json()
+      if (data.event) setEvents(prev => [...prev, data.event])
+      setNewEvent({ title: '', color: 'accent' })
+      setModalOpen(false)
+      setSelectedSlot(null)
+    } catch (err) { console.error(err) }
   }
 
-  const removeEvent = (id) => {
-    const updated = events.filter(e => e.id !== id)
-    setEvents(updated)
-    saveEvents(updated)
+  const removeEvent = async (id) => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      await fetch(`${API_URL}/api/calendar/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setEvents(prev => prev.filter(e => e.id !== id))
+    } catch (err) { console.error(err) }
   }
 
   const getEventAt = (dateStr, hour) => {
     const event = events.find(e => e.date === dateStr && e.hour === hour)
     if (event) return { type: 'event', ...event }
 
-    // Show tasks due this day at hour 8
     if (hour === 8) {
       const dayTasks = tasks.filter(t => t.due_date === dateStr && !t.completed)
       if (dayTasks.length > 0) {
@@ -133,9 +137,9 @@ export default function Calendar() {
           <span className="iconify text-accent" data-icon="lucide:calendar" data-width="16"></span>
           <h3 className="text-sm font-medium">Calendrier</h3>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-text mr-2">{weekLabel}</span>
-          <button onClick={goToToday} className="px-2 py-1 text-xs text-accent border border-accent/30 rounded hover:bg-accent/10 transition-colors">Aujourd'hui</button>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <span className="text-xs sm:text-sm font-medium text-text mr-1 sm:mr-2">{weekLabel}</span>
+          <button onClick={goToToday} className="px-1.5 sm:px-2 py-1 text-[10px] sm:text-xs text-accent border border-accent/30 rounded hover:bg-accent/10 transition-colors">Aujourd'hui</button>
           <button onClick={() => navigateWeek(-1)} className="p-1 rounded text-muted hover:text-text hover:bg-bg/50 transition-colors">
             <span className="iconify" data-icon="lucide:chevron-left" data-width="16"></span>
           </button>
