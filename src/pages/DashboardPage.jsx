@@ -6,7 +6,6 @@ import ConnectedServices from '../components/dashboard/ConnectedServices'
 import EmailFilter from '../components/dashboard/EmailFilter'
 import TodayFocus from '../components/dashboard/TodayFocus'
 import QuickActions from '../components/dashboard/QuickActions'
-import Investments from '../components/dashboard/Investments'
 import Calendar from '../components/dashboard/Calendar'
 import Tasks from '../components/dashboard/Tasks'
 import { useDashboard } from '../hooks/useDashboard'
@@ -77,12 +76,6 @@ export default function DashboardPage() {
           {activeSection === 'tasks' && (
             <div className="animate-fade-in">
               <Tasks />
-            </div>
-          )}
-          
-          {activeSection === 'investments' && (
-            <div className="animate-fade-in">
-              <Investments />
             </div>
           )}
           

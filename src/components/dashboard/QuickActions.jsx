@@ -7,7 +7,7 @@ export default function QuickActions() {
     { id: 'emails', label: 'Voir les emails', icon: 'lucide:mail', section: 'emails' },
     { id: 'tasks', label: 'Nouvelle tâche', icon: 'lucide:check-square', section: 'tasks' },
     { id: 'calendar', label: 'Calendrier', icon: 'lucide:calendar', section: 'calendar' },
-    { id: 'investments', label: 'Investissements', icon: 'lucide:trending-up', section: 'investments' },
+    { id: 'messages', label: 'Messages', icon: 'lucide:message-square', section: 'messages' },
   ]
 
   return (

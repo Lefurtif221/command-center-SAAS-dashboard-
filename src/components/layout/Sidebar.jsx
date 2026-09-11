@@ -5,10 +5,9 @@ import { useDashboard } from '../../hooks/useDashboard'
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: 'lucide:layout-grid' },
   { id: 'emails', label: 'Emails', icon: 'lucide:mail', badge: 'emails' },
-  { id: 'messages', label: 'Messages', icon: 'lucide:message-square', badge: 'messages' },
+  { id: 'messages', label: 'Messages', icon: 'lucide:message-square' },
   { id: 'calendar', label: 'Calendrier', icon: 'lucide:calendar' },
   { id: 'tasks', label: 'Tâches', icon: 'lucide:check-square' },
-  { id: 'investments', label: 'Investissements', icon: 'lucide:trending-up' },
 ]
 
 export default function Sidebar() {
