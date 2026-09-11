@@ -21,6 +21,11 @@ export function DashboardProvider({ children }) {
 
   useEffect(() => {
     fetchConnectedServices()
+    const interval = setInterval(() => {
+      const token = localStorage.getItem('command_center_token')
+      if (token) fetchGmailEmails()
+    }, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   const fetchConnectedServices = async () => {
@@ -61,22 +66,30 @@ export function DashboardProvider({ children }) {
     }
   }
 
-  const filteredEmails = emails.filter(email => {
-    if (filterPriority !== 'all' && email.priority !== filterPriority) return false
-    if (filterTime === 'today') {
-      const today = new Date().toDateString()
-      return today === new Date(email.date).toDateString()
-    }
-    if (filterTime === 'week') {
-      const weekAgo = new Date()
-      weekAgo.setDate(weekAgo.getDate() - 7)
-      return new Date(email.date) >= weekAgo
-    }
-    return true
-  })
+  const filteredEmails = emails
+    .filter(email => {
+      if (filterPriority !== 'all' && email.priority !== filterPriority) return false
+      if (filterTime === 'today') {
+        const today = new Date().toDateString()
+        return today === new Date(email.date).toDateString()
+      }
+      if (filterTime === 'week') {
+        const weekAgo = new Date()
+        weekAgo.setDate(weekAgo.getDate() - 7)
+        return new Date(email.date) >= weekAgo
+      }
+      return true
+    })
+    .sort((a, b) => {
+      if (a.priority === 'high' && b.priority !== 'high') return -1
+      if (a.priority !== 'high' && b.priority === 'high') return 1
+      if (a.unread && !b.unread) return -1
+      if (!a.unread && b.unread) return 1
+      return 0
+    })
 
   const stats = {
-    unreadEmails: emails.filter(e => e.unread).length,
+    unreadEmails: emails.filter(e => e.priority === 'high').length,
     pendingTasks: tasks.filter(t => !t.completed).length,
     todayEvents: events.filter(e => e.date === new Date().toISOString().split('T')[0]).length,
     unreadMessages: messages.filter(m => m.unread).length

@@ -15,8 +15,8 @@ export default function TopBar() {
         </button>
         <button className="relative p-2 rounded-lg text-muted hover:text-text hover:bg-surface transition-colors">
           <span className="iconify" data-icon="lucide:bell" data-width="16"></span>
-          {(stats.unreadEmails + stats.unreadMessages) > 0 && (
-            <span className="absolute top-1 right-1 w-3.5 h-3.5 text-[8px] font-bold bg-accentSec text-bg rounded-full flex items-center justify-center">{stats.unreadEmails + stats.unreadMessages}</span>
+          {(stats.unreadEmails + stats.pendingTasks) > 0 && (
+            <span className="absolute top-1 right-1 w-3.5 h-3.5 text-[8px] font-bold bg-accentSec text-bg rounded-full flex items-center justify-center">{stats.unreadEmails + stats.pendingTasks}</span>
           )}
         </button>
       </div>
