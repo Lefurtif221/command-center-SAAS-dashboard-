@@ -42,7 +42,6 @@ export default function EmailFilter() {
         body: JSON.stringify({ sender: senderEmail, priority: 'high' }),
       })
       await fetchRules()
-      refreshEmails()
     } catch (err) { console.error(err) }
     finally { setRuleLoading(null) }
   }
@@ -58,7 +57,6 @@ export default function EmailFilter() {
         body: JSON.stringify({ sender: senderEmail, priority: 'low' }),
       })
       await fetchRules()
-      refreshEmails()
     } catch (err) { console.error(err) }
     finally { setRuleLoading(null) }
   }
@@ -74,7 +72,6 @@ export default function EmailFilter() {
       })
       setKeywordInput('')
       await fetchRules()
-      refreshEmails()
     } catch (err) { console.error(err) }
   }
 
@@ -86,7 +83,6 @@ export default function EmailFilter() {
         headers: { Authorization: `Bearer ${token}` },
       })
       setRules(prev => prev.filter(r => r.id !== id))
-      refreshEmails()
     } catch (err) { console.error(err) }
   }
 
