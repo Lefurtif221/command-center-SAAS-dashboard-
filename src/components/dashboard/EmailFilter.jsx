@@ -4,7 +4,7 @@ import { useDashboard } from '../../hooks/useDashboard'
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 export default function EmailFilter() {
-  const { filteredEmails, filterPriority, filterTime, setFilterPriority, setFilterTime, markEmailRead, emailError, refreshEmails } = useDashboard()
+  const { filteredEmails, filterPriority, filterTime, setFilterPriority, setFilterTime, markEmailRead, emailError, refreshEmails, updateEmailPriority } = useDashboard()
   const [expanded, setExpanded] = useState(null)
   const [ruleLoading, setRuleLoading] = useState(null)
   const [keywordInput, setKeywordInput] = useState('')
@@ -42,6 +42,7 @@ export default function EmailFilter() {
         body: JSON.stringify({ sender: senderEmail, priority: 'high' }),
       })
       await fetchRules()
+      updateEmailPriority(senderEmail, 'high')
     } catch (err) { console.error(err) }
     finally { setRuleLoading(null) }
   }
@@ -57,6 +58,7 @@ export default function EmailFilter() {
         body: JSON.stringify({ sender: senderEmail, priority: 'low' }),
       })
       await fetchRules()
+      updateEmailPriority(senderEmail, 'low')
     } catch (err) { console.error(err) }
     finally { setRuleLoading(null) }
   }

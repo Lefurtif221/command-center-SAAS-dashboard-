@@ -104,7 +104,7 @@ export function DashboardProvider({ children }) {
       return 0
     })
 
-  const todayStr = new Date().toISOString().split('T')[0]
+  const todayStr = new Date().toLocaleDateString('sv-SE')
 
   const calendarActivity = (() => {
     try {
@@ -154,11 +154,17 @@ export function DashboardProvider({ children }) {
     fetchGmailEmails()
   }
 
+  const updateEmailPriority = (senderEmail, priority) => {
+    setEmails(prev => prev.map(email =>
+      email.from === senderEmail ? { ...email, priority } : email
+    ))
+  }
+
   const value = {
     services, emails, filteredEmails, tasks, events, messages, stats, emailError,
     filterPriority, filterTime, activeSection,
     setFilterPriority, setFilterTime, setActiveSection,
-    connectService, disconnectService, syncService, markEmailRead, fetchConnectedServices, refreshEmails
+    connectService, disconnectService, syncService, markEmailRead, fetchConnectedServices, refreshEmails, updateEmailPriority
   }
 
   return (
