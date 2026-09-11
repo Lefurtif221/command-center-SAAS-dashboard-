@@ -21,12 +21,28 @@ export function DashboardProvider({ children }) {
 
   useEffect(() => {
     fetchConnectedServices()
+    fetchTasks()
     const interval = setInterval(() => {
       const token = localStorage.getItem('command_center_token')
-      if (token) fetchGmailEmails()
+      if (token) {
+        fetchGmailEmails()
+        fetchTasks()
+      }
     }, 30000)
     return () => clearInterval(interval)
   }, [])
+
+  const fetchTasks = async () => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      if (!token) return
+      const res = await fetch(`${API_URL}/api/tasks`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      if (data.tasks) setTasks(data.tasks)
+    } catch (err) { console.error(err) }
+  }
 
   const fetchConnectedServices = async () => {
     try {
@@ -88,11 +104,20 @@ export function DashboardProvider({ children }) {
       return 0
     })
 
+  const todayStr = new Date().toISOString().split('T')[0]
+
+  const calendarActivity = (() => {
+    try {
+      const events = JSON.parse(localStorage.getItem('personalplace_calendar_events')) || []
+      return events.filter(e => e.date === todayStr).length
+    } catch { return 0 }
+  })()
+
   const stats = {
     unreadEmails: emails.filter(e => e.priority === 'high').length,
     pendingTasks: tasks.filter(t => !t.completed).length,
-    todayEvents: events.filter(e => e.date === new Date().toISOString().split('T')[0]).length,
-    unreadMessages: messages.filter(m => m.unread).length
+    activity: calendarActivity,
+    totalTasks: tasks.length,
   }
 
   const connectService = async (serviceName) => {

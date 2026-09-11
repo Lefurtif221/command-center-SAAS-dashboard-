@@ -3,8 +3,8 @@ import { useDashboard } from '../../hooks/useDashboard'
 const statCards = [
   { id: 'emails', label: 'Emails importants', icon: 'lucide:mail', key: 'unreadEmails' },
   { id: 'tasks', label: 'Tâches à faire', icon: 'lucide:check-square', key: 'pendingTasks' },
-  { id: 'events', label: "Aujourd'hui", icon: 'lucide:calendar', key: 'todayEvents' },
-  { id: 'messages', label: 'Messages', icon: 'lucide:message-square', key: 'unreadMessages' },
+  { id: 'activity', label: "Activité aujourd'hui", icon: 'lucide:calendar', key: 'activity' },
+  { id: 'totalTasks', label: 'Total tâches', icon: 'lucide:list', key: 'totalTasks' },
 ]
 
 export default function StatsGrid() {
