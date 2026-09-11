@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
 
 export default function EmailFilter() {
-  const { filteredEmails, filterPriority, filterTime, setFilterPriority, setFilterTime, markEmailRead } = useDashboard()
+  const { filteredEmails, filterPriority, filterTime, setFilterPriority, setFilterTime, markEmailRead, emailError } = useDashboard()
   const [expanded, setExpanded] = useState(null)
   const pColors = { high: 'bg-accentSec', medium: 'bg-warning', low: 'bg-success' }
   const pLabels = { high: 'Urgent', medium: 'Moyen', low: 'Faible' }
@@ -28,6 +28,7 @@ export default function EmailFilter() {
           </select>
         </div>
       </div>
+      {emailError && <div className="px-4 py-2 bg-accentSec/10 border-b border-accentSec/30 text-accentSec text-xs">{emailError}</div>}
       <div className="divide-y divide-border">
         {filteredEmails.length === 0 ? (
           <div className="p-8 text-center">

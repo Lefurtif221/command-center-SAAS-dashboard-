@@ -15,6 +15,7 @@ export function DashboardProvider({ children }) {
   })
 
   const [emails, setEmails] = useState([])
+  const [emailError, setEmailError] = useState(null)
   const [tasks, setTasks] = useState([])
   const [events, setEvents] = useState([])
   const [messages, setMessages] = useState([])
@@ -50,14 +51,17 @@ export function DashboardProvider({ children }) {
 
   const fetchGmailEmails = async () => {
     try {
+      setEmailError(null)
       const token = localStorage.getItem('command_center_token')
       const res = await fetch(`${API_URL}/api/services/gmail/emails`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await res.json()
       if (data.emails) setEmails(data.emails)
+      else if (data.error) setEmailError(data.error)
     } catch (err) {
       console.error('Failed to fetch Gmail emails:', err)
+      setEmailError(err.message)
     }
   }
 
@@ -113,7 +117,7 @@ export function DashboardProvider({ children }) {
   }
 
   const value = {
-    services, emails, filteredEmails, tasks, events, messages, stats,
+    services, emails, filteredEmails, tasks, events, messages, stats, emailError,
     filterPriority, filterTime, activeSection,
     setFilterPriority, setFilterTime, setActiveSection,
     connectService, disconnectService, syncService, markEmailRead, fetchConnectedServices
