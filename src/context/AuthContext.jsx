@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 
 const AuthContext = createContext(null)
 
@@ -62,17 +62,6 @@ export function AuthProvider({ children }) {
     return user
   }
 
-  const googleLogin = useCallback(() => {
-    const width = 500, height = 600
-    const left = (window.innerWidth - width) / 2
-    const top = (window.innerHeight - height) / 2
-    window.open(
-      `${API_URL}/api/auth/google`,
-      'google-oauth',
-      `width=${width},height=${height},left=${left},top=${top}`
-    )
-  }, [])
-
   const logout = () => {
     setUser(null)
     localStorage.removeItem('command_center_token')
@@ -92,7 +81,6 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!user,
     login,
     signup,
-    googleLogin,
     logout,
     updateProfile,
   }

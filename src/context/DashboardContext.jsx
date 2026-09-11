@@ -1,4 +1,6 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 const DashboardContext = createContext(null)
 
@@ -19,6 +21,45 @@ export function DashboardProvider({ children }) {
   const [filterPriority, setFilterPriority] = useState('all')
   const [filterTime, setFilterTime] = useState('today')
   const [activeSection, setActiveSection] = useState('dashboard')
+
+  useEffect(() => {
+    fetchConnectedServices()
+  }, [])
+
+  const fetchConnectedServices = async () => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      if (!token) return
+      const res = await fetch(`${API_URL}/api/services`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      const connected = data.services || []
+      setServices(prev => {
+        const updated = { ...prev }
+        for (const key of Object.keys(updated)) {
+          updated[key] = { ...updated[key], connected: connected.includes(key) }
+        }
+        return updated
+      })
+      if (connected.includes('gmail')) fetchGmailEmails()
+    } catch (err) {
+      console.error('Failed to fetch services:', err)
+    }
+  }
+
+  const fetchGmailEmails = async () => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      const res = await fetch(`${API_URL}/api/services/gmail/emails`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      if (data.emails) setEmails(data.emails)
+    } catch (err) {
+      console.error('Failed to fetch Gmail emails:', err)
+    }
+  }
 
   const filteredEmails = emails.filter(email => {
     if (filterPriority !== 'all' && email.priority !== filterPriority) return false
@@ -47,6 +88,7 @@ export function DashboardProvider({ children }) {
       ...prev,
       [serviceName]: { ...prev[serviceName], connected: true, lastSync: new Date().toISOString() }
     }))
+    if (serviceName === 'gmail') fetchGmailEmails()
   }
 
   const disconnectService = (serviceName) => {
@@ -54,6 +96,7 @@ export function DashboardProvider({ children }) {
       ...prev,
       [serviceName]: { ...prev[serviceName], connected: false, lastSync: undefined }
     }))
+    if (serviceName === 'gmail') setEmails([])
   }
 
   const syncService = async (serviceName) => {
@@ -62,6 +105,7 @@ export function DashboardProvider({ children }) {
       ...prev,
       [serviceName]: { ...prev[serviceName], lastSync: new Date().toISOString() }
     }))
+    if (serviceName === 'gmail') fetchGmailEmails()
   }
 
   const markEmailRead = (emailId) => {
@@ -72,7 +116,7 @@ export function DashboardProvider({ children }) {
     services, emails, filteredEmails, tasks, events, messages, stats,
     filterPriority, filterTime, activeSection,
     setFilterPriority, setFilterTime, setActiveSection,
-    connectService, disconnectService, syncService, markEmailRead
+    connectService, disconnectService, syncService, markEmailRead, fetchConnectedServices
   }
 
   return (

@@ -20,7 +20,7 @@ export default function Sidebar() {
   return (
     <aside className={`fixed left-0 top-0 bottom-0 z-50 flex flex-col bg-surface border-r border-border transition-all duration-300 ${collapsed ? 'w-16' : 'w-56'}`}>
       <div className="h-14 flex items-center justify-between px-4 border-b border-border">
-        {!collapsed && <div className="flex items-center gap-2"><span className="iconify text-accent" data-icon="lucide:zap" data-width="18"></span><span className="font-medium tracking-tight text-sm">Command</span></div>}
+        {!collapsed && <div className="flex items-center gap-2"><span className="iconify text-accent" data-icon="lucide:zap" data-width="18"></span><span className="font-medium tracking-tight text-sm">Personal Place</span></div>}
         <button onClick={() => setCollapsed(!collapsed)} className="p-1.5 rounded-md text-muted hover:text-text hover:bg-bg/50 transition-colors">
           <span className="iconify" data-icon={collapsed ? "lucide:chevron-right" : "lucide:chevron-left"} data-width="16"></span>
         </button>

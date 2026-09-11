@@ -7,6 +7,7 @@ import EmailFilter from '../components/dashboard/EmailFilter'
 import TodayFocus from '../components/dashboard/TodayFocus'
 import QuickActions from '../components/dashboard/QuickActions'
 import Investments from '../components/dashboard/Investments'
+import Calendar from '../components/dashboard/Calendar'
 import { useDashboard } from '../hooks/useDashboard'
 import { useAuth } from '../hooks/useAuth'
 
@@ -66,14 +67,7 @@ export default function DashboardPage() {
           
           {activeSection === 'calendar' && (
             <div className="animate-fade-in">
-              <div className="bg-surface border border-border rounded-lg p-8 text-center">
-                <span className="iconify text-muted mx-auto mb-3" data-icon="lucide:calendar" data-width="48"></span>
-                <h3 className="text-lg font-medium mb-2">Calendrier</h3>
-                <p className="text-sm text-muted">Google Calendar, Outlook - vue unifiée de vos événements.</p>
-                <button className="mt-4 px-4 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors">
-                  Connecter un service
-                </button>
-              </div>
+              <Calendar />
             </div>
           )}
           
