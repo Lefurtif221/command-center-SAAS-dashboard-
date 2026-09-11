@@ -11,6 +11,10 @@ export default function EmailFilter() {
   const [keywordPriority, setKeywordPriority] = useState('high')
   const [showKeywordForm, setShowKeywordForm] = useState(false)
   const [rules, setRules] = useState([])
+  const [replyModal, setReplyModal] = useState(null)
+  const [replyBody, setReplyBody] = useState('')
+  const [sending, setSending] = useState(false)
+  const [sendResult, setSendResult] = useState(null)
   const pColors = { high: 'bg-accentSec', low: 'bg-success' }
   const pLabels = { high: 'Important', low: 'Non important' }
 
@@ -166,8 +170,7 @@ export default function EmailFilter() {
                   <div className="mt-3 pt-3 border-t border-border">
                     <p className="text-xs text-muted mb-3">{email.preview}</p>
                     <div className="flex gap-2 flex-wrap">
-                      <button className="px-3 py-1.5 bg-accent text-bg text-xs font-medium rounded hover:bg-[#33c2ff] transition-colors">Répondre</button>
-                      <button className="px-3 py-1.5 bg-bg border border-border text-xs text-muted rounded hover:text-text transition-colors">Transférer</button>
+                      <button onClick={(e) => { e.stopPropagation(); setReplyModal(email); setReplyBody('') }} className="px-3 py-1.5 bg-accent text-bg text-xs font-medium rounded hover:bg-[#33c2ff] transition-colors">Répondre</button>
                       <button onClick={(e) => markImportant(email.senderEmail, e)} disabled={ruleLoading === email.senderEmail}
                         className="px-3 py-1.5 bg-accentSec/10 border border-accentSec/30 text-xs text-accentSec rounded hover:bg-accentSec/20 transition-colors disabled:opacity-50">
                         {ruleLoading === email.senderEmail ? '...' : 'Important'}
@@ -188,6 +191,59 @@ export default function EmailFilter() {
           </div>
         ))}
       </div>
+
+      {replyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => { setReplyModal(null); setSendResult(null) }}>
+          <div className="bg-surface border border-border rounded-lg p-5 w-full max-w-lg mx-4" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-sm font-medium">Répondre</h4>
+              <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="text-muted hover:text-text"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
+            </div>
+            <div className="space-y-3">
+              <div className="text-xs">
+                <span className="text-muted">À : </span><span className="text-text">{replyModal.senderEmail}</span>
+              </div>
+              <div className="text-xs">
+                <span className="text-muted">Sujet : </span><span className="text-text">Re: {replyModal.subject.replace(/^Re:\s*/i, '')}</span>
+              </div>
+              {sendResult ? (
+                <div className={`p-3 rounded-lg text-sm ${sendResult.success ? 'bg-success/10 text-success' : 'bg-accentSec/10 text-accentSec'}`}>
+                  {sendResult.success ? 'Email envoyé avec succès !' : sendResult.error}
+                </div>
+              ) : (
+                <textarea placeholder="Votre réponse..." value={replyBody} onChange={(e) => setReplyBody(e.target.value)}
+                  className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors h-32 resize-none" autoFocus />
+              )}
+              <div className="flex gap-2 justify-end">
+                {sendResult ? (
+                  <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors">Fermer</button>
+                ) : (
+                  <>
+                    <button onClick={() => setReplyModal(null)} className="px-3 py-2 bg-bg border border-border text-sm text-muted rounded-lg hover:text-text transition-colors">Annuler</button>
+                    <button onClick={async () => {
+                      if (!replyBody.trim()) return
+                      setSending(true)
+                      try {
+                        const token = localStorage.getItem('command_center_token')
+                        const res = await fetch(`${API_URL}/api/services/gmail/reply`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                          body: JSON.stringify({ to: replyModal.senderEmail, subject: replyModal.subject, body: replyBody.trim() }),
+                        })
+                        const data = await res.json()
+                        setSendResult(data.success ? { success: true } : { success: false, error: data.error })
+                      } catch (err) { setSendResult({ success: false, error: err.message }) }
+                      finally { setSending(false) }
+                    }} disabled={sending || !replyBody.trim()} className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors disabled:opacity-50">
+                      {sending ? 'Envoi...' : 'Envoyer'}
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
