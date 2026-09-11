@@ -7,11 +7,7 @@ const DashboardContext = createContext(null)
 export function DashboardProvider({ children }) {
   const [services, setServices] = useState({
     gmail: { connected: false, name: 'Gmail', icon: '📧' },
-    notion: { connected: false, name: 'Notion', icon: '📝' },
     whatsapp: { connected: false, name: 'WhatsApp', icon: '💬' },
-    outlook: { connected: false, name: 'Outlook', icon: '📬' },
-    slack: { connected: false, name: 'Slack', icon: '💼' },
-    trello: { connected: false, name: 'Trello', icon: '📋' }
   })
 
   const [emails, setEmails] = useState([])

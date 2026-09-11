@@ -60,11 +60,8 @@ export default function ConnectedServices() {
   }
 
   const allServices = [
-    { id: 'gmail', name: 'Gmail', icon: '📧' },
-    { id: 'notion', name: 'Notion', icon: '📝' },
-    { id: 'slack', name: 'Slack', icon: '💼' },
-    { id: 'trello', name: 'Trello', icon: '📋' },
-    { id: 'outlook', name: 'Outlook', icon: '📬' },
+    { id: 'gmail', name: 'Gmail', icon: '📧', desc: 'Emails, calendrier, contacts' },
+    { id: 'whatsapp', name: 'WhatsApp', icon: '💬', desc: 'Messages WhatsApp Web', external: true, url: 'https://web.whatsapp.com' },
   ]
 
   return (
@@ -72,20 +69,24 @@ export default function ConnectedServices() {
       <div className="flex items-center justify-between p-4 border-b border-border">
         <h3 className="text-sm font-medium">Services connectés</h3>
       </div>
-      <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
         {allServices.map((service) => {
-          const isConnected = connectedList.includes(service.id)
+          const isConnected = connectedList.includes(service.id) || service.external
           return (
             <div key={service.id} className={`p-3 rounded-lg border transition-all ${isConnected ? 'bg-bg border-success/20' : 'bg-bg border-border hover:border-muted'}`}>
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-xl">{service.icon}</span>
                 <div className="flex-1">
                   <p className="text-sm font-medium">{service.name}</p>
-                  <p className={`text-[10px] ${isConnected ? 'text-success' : 'text-muted'}`}>{isConnected ? 'Connecté' : 'Non connecté'}</p>
+                  <p className="text-[10px] text-muted">{service.desc}</p>
                 </div>
               </div>
               <div className="flex gap-2">
-                {isConnected ? (
+                {service.external ? (
+                  <a href={service.url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 bg-accent/10 border border-accent/30 rounded text-xs text-accent hover:bg-accent/20 transition-colors text-center">
+                    Ouvrir
+                  </a>
+                ) : isConnected ? (
                   <button onClick={() => handleDisconnect(service.id)} className="flex-1 px-2 py-1.5 bg-bg border border-border rounded text-xs text-accentSec hover:bg-accentSec/5 transition-colors">
                     Déconnecter
                   </button>
