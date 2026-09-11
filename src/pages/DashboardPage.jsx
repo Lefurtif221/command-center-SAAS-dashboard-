@@ -27,15 +27,15 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-bg">
       <Sidebar />
-      
-      <div className="ml-56">
+
+      <div className="md:ml-56">
         <TopBar />
-        
-        <main className="p-6">
+
+        <main className="p-4 md:p-6">
           {activeSection === 'dashboard' && (
-            <div className="space-y-6 animate-fade-in">
+            <div className="space-y-4 md:space-y-6 animate-fade-in">
               <StatsGrid />
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
                 <div className="lg:col-span-2">
                   <ConnectedServices />
                 </div>
@@ -45,16 +45,16 @@ export default function DashboardPage() {
               <QuickActions />
             </div>
           )}
-          
+
           {activeSection === 'emails' && (
             <div className="animate-fade-in">
               <EmailFilter />
             </div>
           )}
-          
+
           {activeSection === 'messages' && (
             <div className="animate-fade-in">
-              <div className="bg-surface border border-border rounded-lg p-8 text-center">
+              <div className="bg-surface border border-border rounded-lg p-6 md:p-8 text-center">
                 <span className="iconify text-muted mx-auto mb-3" data-icon="lucide:message-square" data-width="48"></span>
                 <h3 className="text-lg font-medium mb-2">Messages</h3>
                 <p className="text-sm text-muted mb-4">WhatsApp et autres services de messagerie.</p>
@@ -66,24 +66,24 @@ export default function DashboardPage() {
               </div>
             </div>
           )}
-          
+
           {activeSection === 'calendar' && (
             <div className="animate-fade-in">
               <Calendar />
             </div>
           )}
-          
+
           {activeSection === 'tasks' && (
             <div className="animate-fade-in">
               <Tasks />
             </div>
           )}
-          
+
           {activeSection === 'settings' && (
             <div className="animate-fade-in">
-              <div className="bg-surface border border-border rounded-lg p-6 max-w-2xl">
+              <div className="bg-surface border border-border rounded-lg p-4 md:p-6 max-w-2xl">
                 <h3 className="text-sm font-medium mb-6">Paramètres</h3>
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
                   <div>
                     <label className="block text-xs text-muted mb-1.5">Nom</label>
                     <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm text-text focus:outline-none focus:border-accent transition-colors" />

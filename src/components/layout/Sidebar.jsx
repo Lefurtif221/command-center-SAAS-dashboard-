@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import { useDashboard } from '../../hooks/useDashboard'
 
@@ -10,36 +10,51 @@ const navItems = [
   { id: 'tasks', label: 'Tâches', icon: 'lucide:check-square' },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ onToggle }) {
   const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const { user, logout } = useAuth()
   const { activeSection, setActiveSection, stats } = useDashboard()
-  const getBadge = (t) => t === 'emails' ? stats.unreadEmails : t === 'messages' ? stats.unreadMessages : 0
+  const getBadge = (t) => t === 'emails' ? stats.unreadEmails : 0
 
-  return (
-    <aside className={`fixed left-0 top-0 bottom-0 z-50 flex flex-col bg-surface border-r border-border transition-all duration-300 ${collapsed ? 'w-16' : 'w-56'}`}>
+  const handleNav = (id) => {
+    setActiveSection(id)
+    setMobileOpen(false)
+  }
+
+  useEffect(() => {
+    const handleResize = () => { if (window.innerWidth >= 768) setMobileOpen(false) }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const sidebarContent = (
+    <>
       <div className="h-14 flex items-center justify-between px-4 border-b border-border">
         {!collapsed && <div className="flex items-center gap-2"><span className="iconify text-accent" data-icon="lucide:zap" data-width="18"></span><span className="font-medium tracking-tight text-sm">Personal Place</span></div>}
-        <button onClick={() => setCollapsed(!collapsed)} className="p-1.5 rounded-md text-muted hover:text-text hover:bg-bg/50 transition-colors">
+        <button onClick={() => { setCollapsed(!collapsed); onToggle && onToggle(!collapsed) }} className="p-1.5 rounded-md text-muted hover:text-text hover:bg-bg/50 transition-colors hidden md:block">
           <span className="iconify" data-icon={collapsed ? "lucide:chevron-right" : "lucide:chevron-left"} data-width="16"></span>
         </button>
+        <button onClick={() => setMobileOpen(false)} className="p-1.5 rounded-md text-muted hover:text-text hover:bg-bg/50 transition-colors md:hidden">
+          <span className="iconify" data-icon="lucide:x" data-width="16"></span>
+        </button>
       </div>
-      <nav className="flex-1 py-4 px-2">
+      <nav className="flex-1 py-4 px-2 overflow-y-auto">
         <div className="flex flex-col gap-1">
           {!collapsed && <div className="text-[10px] font-medium text-muted/50 px-2 mb-2 uppercase tracking-wider">Modules</div>}
           {navItems.map((item) => {
             const b = item.badge ? getBadge(item.badge) : 0
             return (
-              <button key={item.id} onClick={() => setActiveSection(item.id)} className={`flex items-center gap-3 px-2 py-2 rounded-md transition-colors ${activeSection === item.id ? 'bg-bg text-accent border border-border' : 'text-muted hover:text-text hover:bg-bg/50'}`}>
+              <button key={item.id} onClick={() => handleNav(item.id)} className={`flex items-center gap-3 px-2 py-2 rounded-md transition-colors ${activeSection === item.id ? 'bg-bg text-accent border border-border' : 'text-muted hover:text-text hover:bg-bg/50'}`}>
                 <span className="iconify" data-icon={item.icon} data-width="18"></span>
-                {!collapsed && <><span className="flex-1 text-left text-sm">{item.label}</span>{b > 0 && <span className="text-[10px] font-medium bg-accent/10 text-accent px-1.5 py-0.5 rounded-full">{b}</span>}</>}
+                {!collapsed && <><span className="flex-1 text-left text-sm">{item.label}</span>{b > 0 && <span className="text-[10px] font-medium bg-accentSec/10 text-accentSec px-1.5 py-0.5 rounded-full">{b}</span>}</>}
               </button>
             )
           })}
         </div>
       </nav>
       <div className="px-2 pb-4 space-y-1">
-        <button onClick={() => setActiveSection('settings')} className={`w-full flex items-center gap-3 px-2 py-2 rounded-md transition-colors ${activeSection === 'settings' ? 'bg-bg text-accent border border-border' : 'text-muted hover:text-text hover:bg-bg/50'}`}>
+        <button onClick={() => handleNav('settings')} className={`w-full flex items-center gap-3 px-2 py-2 rounded-md transition-colors ${activeSection === 'settings' ? 'bg-bg text-accent border border-border' : 'text-muted hover:text-text hover:bg-bg/50'}`}>
           <span className="iconify" data-icon="lucide:settings" data-width="18"></span>
           {!collapsed && <span className="text-sm">Settings</span>}
         </button>
@@ -59,6 +74,30 @@ export default function Sidebar() {
           </div>
         </div>
       )}
-    </aside>
+    </>
+  )
+
+  return (
+    <>
+      {/* Mobile hamburger button */}
+      <button onClick={() => setMobileOpen(true)} className="fixed top-3 left-3 z-50 p-2 rounded-lg bg-surface border border-border text-muted hover:text-text transition-colors md:hidden">
+        <span className="iconify" data-icon="lucide:menu" data-width="20"></span>
+      </button>
+
+      {/* Desktop sidebar */}
+      <aside className={`hidden md:flex fixed left-0 top-0 bottom-0 z-40 flex-col bg-surface border-r border-border transition-all duration-300 ${collapsed ? 'w-16' : 'w-56'}`}>
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile sidebar overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
+          <aside className="absolute left-0 top-0 bottom-0 w-64 flex flex-col bg-surface border-r border-border animate-slide-in">
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
   )
 }

@@ -105,22 +105,24 @@ export default function Tasks() {
       </div>
 
       <div className="p-4 border-b border-border">
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <input type="text" placeholder="Nouvelle tâche..." value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addTask()}
             className="flex-1 px-3 py-2 bg-bg border border-border rounded-lg text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" />
-          <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)}
-            className="px-2 py-2 bg-bg border border-border rounded-lg text-xs text-text focus:outline-none focus:border-accent transition-colors" />
-          <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)}
-            className="px-2 py-2 bg-bg border border-border rounded-lg text-xs text-text focus:outline-none focus:border-accent cursor-pointer">
-            <option value="high">Urgent</option>
-            <option value="medium">Moyen</option>
-            <option value="low">Faible</option>
-          </select>
-          <button onClick={addTask} disabled={adding || !newTitle.trim()}
-            className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors disabled:opacity-50">
-            {adding ? '...' : '+'}
-          </button>
+          <div className="flex gap-2">
+            <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)}
+              className="flex-1 sm:flex-none px-2 py-2 bg-bg border border-border rounded-lg text-xs text-text focus:outline-none focus:border-accent transition-colors" />
+            <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)}
+              className="px-2 py-2 bg-bg border border-border rounded-lg text-xs text-text focus:outline-none focus:border-accent cursor-pointer">
+              <option value="high">Urgent</option>
+              <option value="medium">Moyen</option>
+              <option value="low">Faible</option>
+            </select>
+            <button onClick={addTask} disabled={adding || !newTitle.trim()}
+              className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors disabled:opacity-50">
+              {adding ? '...' : '+'}
+            </button>
+          </div>
         </div>
       </div>
 
