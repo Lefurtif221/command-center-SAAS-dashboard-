@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
 export default function AuthPage() {
   const navigate = useNavigate()
   const { login, signup, isAuthenticated } = useAuth()
@@ -95,7 +97,7 @@ export default function AuthPage() {
               </div>
               <div className="flex items-center justify-between text-xs">
                 <label className="flex items-center gap-2 text-muted"><input type="checkbox" defaultChecked /> Se souvenir de moi</label>
-                <a href="#" className="text-accent hover:text-accent/80 transition-colors">Mot de passe oublié ?</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); navigate('/auth/forgot-password') }} className="text-accent hover:text-accent/80 transition-colors">Mot de passe oublié ?</a>
               </div>
               <button type="submit" disabled={loading} className="w-full bg-accent text-bg hover:bg-[#33c2ff] font-semibold text-sm py-2.5 rounded-lg transition-colors disabled:opacity-50">{loading ? 'Connexion...' : 'Se connecter'}</button>
             </form>

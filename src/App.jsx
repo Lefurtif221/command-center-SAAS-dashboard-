@@ -3,6 +3,8 @@ import { AuthProvider } from './context/AuthContext'
 import { DashboardProvider } from './context/DashboardContext'
 import LandingPage from './pages/LandingPage'
 import AuthPage from './pages/AuthPage'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import DashboardPage from './pages/DashboardPage'
 import OAuthCallback from './pages/OAuthCallback'
 import { useAuth } from './hooks/useAuth'
@@ -24,6 +26,8 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
+      <Route path="/auth/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+      <Route path="/auth/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
       <Route path="/auth/callback/:service" element={<ProtectedRoute><OAuthCallback /></ProtectedRoute>} />
       <Route path="/dashboard/*" element={<ProtectedRoute><DashboardProvider><DashboardPage /></DashboardProvider></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
