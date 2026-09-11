@@ -1,14 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 export default function EmailFilter() {
-  const { filteredEmails, filterPriority, filterTime, setFilterPriority, setFilterTime, markEmailRead, emailError } = useDashboard()
+  const { filteredEmails, filterPriority, filterTime, setFilterPriority, setFilterTime, markEmailRead, emailError, refreshEmails } = useDashboard()
   const [expanded, setExpanded] = useState(null)
   const [ruleLoading, setRuleLoading] = useState(null)
-  const pColors = { high: 'bg-accentSec', medium: 'bg-warning', low: 'bg-success' }
-  const pLabels = { high: 'Important', medium: 'Moyen', low: 'Non important' }
+  const [keywordInput, setKeywordInput] = useState('')
+  const [keywordPriority, setKeywordPriority] = useState('high')
+  const [showKeywordForm, setShowKeywordForm] = useState(false)
+  const [rules, setRules] = useState([])
+  const pColors = { high: 'bg-accentSec', low: 'bg-success' }
+  const pLabels = { high: 'Important', low: 'Non important' }
+
+  useEffect(() => { fetchRules() }, [])
+
+  const fetchRules = async () => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      const res = await fetch(`${API_URL}/api/services/email-rules`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      setRules(data.rules || [])
+    } catch (err) { console.error(err) }
+  }
 
   const markImportant = async (senderEmail, e) => {
     e.stopPropagation()
@@ -20,7 +37,8 @@ export default function EmailFilter() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ sender: senderEmail, priority: 'high' }),
       })
-      window.location.reload()
+      await fetchRules()
+      refreshEmails()
     } catch (err) { console.error(err) }
     finally { setRuleLoading(null) }
   }
@@ -35,9 +53,37 @@ export default function EmailFilter() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ sender: senderEmail, priority: 'low' }),
       })
-      window.location.reload()
+      await fetchRules()
+      refreshEmails()
     } catch (err) { console.error(err) }
     finally { setRuleLoading(null) }
+  }
+
+  const addKeywordRule = async () => {
+    if (!keywordInput.trim()) return
+    try {
+      const token = localStorage.getItem('command_center_token')
+      await fetch(`${API_URL}/api/services/email-rules`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ keyword: keywordInput.trim(), priority: keywordPriority }),
+      })
+      setKeywordInput('')
+      await fetchRules()
+      refreshEmails()
+    } catch (err) { console.error(err) }
+  }
+
+  const deleteRule = async (id) => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      await fetch(`${API_URL}/api/services/email-rules/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setRules(prev => prev.filter(r => r.id !== id))
+      refreshEmails()
+    } catch (err) { console.error(err) }
   }
 
   return (
@@ -58,8 +104,45 @@ export default function EmailFilter() {
             <option value="week">Cette semaine</option>
             <option value="all">Tout</option>
           </select>
+          <button onClick={() => setShowKeywordForm(!showKeywordForm)} className="px-2 py-1 bg-accent/10 border border-accent/30 text-accent rounded text-xs hover:bg-accent/20 transition-colors">
+            Règles
+          </button>
         </div>
       </div>
+
+      {showKeywordForm && (
+        <div className="p-4 border-b border-border bg-bg/50">
+          <p className="text-xs text-muted mb-2">Ajouter un mot-clé (ex: linkedin, promo, facture...)</p>
+          <div className="flex gap-2 mb-3">
+            <input type="text" placeholder="Mot-clé..." value={keywordInput} onChange={(e) => setKeywordInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && addKeywordRule()}
+              className="flex-1 px-3 py-1.5 bg-bg border border-border rounded text-xs text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" />
+            <select value={keywordPriority} onChange={(e) => setKeywordPriority(e.target.value)} className="px-2 py-1.5 bg-bg border border-border rounded text-xs text-text focus:outline-none focus:border-accent cursor-pointer">
+              <option value="high">Important</option>
+              <option value="low">Non important</option>
+            </select>
+            <button onClick={addKeywordRule} disabled={!keywordInput.trim()} className="px-3 py-1.5 bg-accent text-bg text-xs font-medium rounded hover:bg-[#33c2ff] transition-colors disabled:opacity-50">+</button>
+          </div>
+          {rules.length > 0 && (
+            <div className="space-y-1">
+              {rules.map((rule) => (
+                <div key={rule.id} className="flex items-center justify-between px-2 py-1.5 bg-bg rounded text-xs">
+                  <span className="text-text">
+                    {rule.keyword ? <><span className="text-accent">Mot-clé:</span> {rule.keyword}</> : <><span className="text-accent">Expéditeur:</span> {rule.sender}</>}
+                    <span className={`ml-2 px-1.5 py-0.5 rounded text-[10px] ${rule.priority === 'high' ? 'bg-accentSec/10 text-accentSec' : 'bg-success/10 text-success'}`}>
+                      {rule.priority === 'high' ? 'Important' : 'Non important'}
+                    </span>
+                  </span>
+                  <button onClick={() => deleteRule(rule.id)} className="text-muted hover:text-accentSec transition-colors">
+                    <span className="iconify" data-icon="lucide:x" data-width="12"></span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {emailError && <div className="px-4 py-2 bg-accentSec/10 border-b border-accentSec/30 text-accentSec text-xs">{emailError}</div>}
       <div className="divide-y divide-border">
         {filteredEmails.length === 0 ? (
@@ -71,11 +154,11 @@ export default function EmailFilter() {
           <div key={email.id} className={`p-4 transition-colors cursor-pointer ${email.unread ? 'bg-accent/5 hover:bg-accent/10' : 'hover:bg-bg/50'}`}
             onClick={() => { setExpanded(expanded === email.id ? null : email.id); if (email.unread) markEmailRead(email.id) }}>
             <div className="flex items-start gap-3">
-              <div className={`w-1.5 h-1.5 mt-2 rounded-full flex-shrink-0 ${pColors[email.priority]}`} />
+              <div className={`w-1.5 h-1.5 mt-2 rounded-full flex-shrink-0 ${pColors[email.priority] || 'bg-muted'}`} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   {email.unread && <span className="w-1.5 h-1.5 bg-accent rounded-full" />}
-                  <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${email.priority === 'high' ? 'bg-accentSec/10 text-accentSec' : 'bg-success/10 text-success'}`}>{pLabels[email.priority]}</span>
+                  <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${email.priority === 'high' ? 'bg-accentSec/10 text-accentSec' : 'bg-success/10 text-success'}`}>{pLabels[email.priority] || email.priority}</span>
                 </div>
                 <p className={`text-sm ${email.unread ? 'font-medium text-text' : 'text-muted'}`}>{email.subject}</p>
                 <p className="text-xs text-muted/70 truncate mt-0.5">{email.preview}</p>

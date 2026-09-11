@@ -116,11 +116,15 @@ export function DashboardProvider({ children }) {
     setEmails(prev => prev.map(email => email.id === emailId ? { ...email, unread: false } : email))
   }
 
+  const refreshEmails = () => {
+    fetchGmailEmails()
+  }
+
   const value = {
     services, emails, filteredEmails, tasks, events, messages, stats, emailError,
     filterPriority, filterTime, activeSection,
     setFilterPriority, setFilterTime, setActiveSection,
-    connectService, disconnectService, syncService, markEmailRead, fetchConnectedServices
+    connectService, disconnectService, syncService, markEmailRead, fetchConnectedServices, refreshEmails
   }
 
   return (
