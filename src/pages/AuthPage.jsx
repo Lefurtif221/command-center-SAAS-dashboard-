@@ -18,7 +18,7 @@ export default function AuthPage() {
   const handleLogin = async (e) => {
     e.preventDefault(); setError(''); setLoading(true)
     try { await login(loginForm.email, loginForm.password); navigate('/dashboard') }
-    catch { setError('Email ou mot de passe incorrect') }
+    catch (err) { setError(err.message || 'Email ou mot de passe incorrect') }
     finally { setLoading(false) }
   }
 
@@ -28,7 +28,7 @@ export default function AuthPage() {
     if (signupForm.password.length < 8) { setError('Le mot de passe doit contenir au moins 8 caractères'); return }
     setLoading(true)
     try { await signup(signupForm.name, signupForm.email, signupForm.password); navigate('/dashboard') }
-    catch { setError('Une erreur est survenue') }
+    catch (err) { setError(err.message || 'Une erreur est survenue') }
     finally { setLoading(false) }
   }
 
