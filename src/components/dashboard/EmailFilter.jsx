@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useDashboard } from '../../hooks/useDashboard'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
@@ -206,8 +207,8 @@ export default function EmailFilter() {
         ))}
       </div>
 
-      {emailModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setEmailModal(null)}>
+      {emailModal && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4" onClick={() => setEmailModal(null)}>
           <div className="bg-surface border border-border rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-border flex-shrink-0">
               <div className="flex-1 min-w-0">
@@ -234,7 +235,8 @@ export default function EmailFilter() {
                 className="px-3 py-1.5 bg-bg border border-border text-xs text-muted rounded hover:text-text transition-colors disabled:opacity-50">Non important</button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {replyModal && (
