@@ -48,7 +48,7 @@ export default function DashboardPage() {
           )}
 
           {activeSection === 'emails' && (
-            <div className="animate-fade-in">
+            <div>
               <EmailFilter />
             </div>
           )}
