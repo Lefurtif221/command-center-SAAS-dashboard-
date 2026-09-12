@@ -207,16 +207,16 @@ export default function EmailFilter() {
       </div>
 
       {emailModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setEmailModal(null)}>
-          <div className="bg-surface border border-border rounded-lg p-5 w-full max-w-2xl mx-4 max-h-[80vh] flex flex-col" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setEmailModal(null)}>
+          <div className="bg-surface border border-border rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-border flex-shrink-0">
               <div className="flex-1 min-w-0">
                 <h4 className="text-sm font-medium truncate">{emailModal.subject}</h4>
                 <p className="text-[10px] text-muted mt-0.5">De : {emailModal.sender} &lt;{emailModal.senderEmail}&gt;</p>
               </div>
-              <button onClick={() => setEmailModal(null)} className="text-muted hover:text-text ml-2"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
+              <button onClick={() => setEmailModal(null)} className="text-muted hover:text-text ml-2 flex-shrink-0"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
             </div>
-            <div className="flex-1 overflow-y-auto overflow-x-hidden bg-bg rounded-lg p-4 border border-border">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4">
               {emailBodyLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <span className="iconify text-accent animate-spin" data-icon="lucide:loader-2" data-width="24"></span>
@@ -225,7 +225,7 @@ export default function EmailFilter() {
                 <pre className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed break-all">{stripHtml(emailBody)}</pre>
               )}
             </div>
-            <div className="flex gap-2 mt-4">
+            <div className="flex gap-2 p-4 border-t border-border flex-shrink-0">
               <button onClick={() => { setEmailModal(null); setReplyModal(emailModal); setReplyBody('') }}
                 className="px-3 py-1.5 bg-accent text-bg text-xs font-medium rounded hover:bg-[#33c2ff] transition-colors">Répondre</button>
               <button onClick={() => markImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
