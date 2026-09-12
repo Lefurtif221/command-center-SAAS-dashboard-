@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
 import { useDashboard } from '../../hooks/useDashboard'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
@@ -207,9 +206,9 @@ export default function EmailFilter() {
         ))}
       </div>
 
-      {emailModal && createPortal(
+      {emailModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4" onClick={() => setEmailModal(null)}>
-          <div className="bg-surface border border-border rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+          <div className="bg-surface border border-border rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-border flex-shrink-0">
               <div className="flex-1 min-w-0">
                 <h4 className="text-sm font-medium truncate">{emailModal.subject}</h4>
@@ -217,13 +216,13 @@ export default function EmailFilter() {
               </div>
               <button onClick={() => setEmailModal(null)} className="text-muted hover:text-text ml-2 flex-shrink-0"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
             </div>
-            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4">
+            <div className="flex-1 overflow-y-auto p-4" style={{ wordBreak: 'break-all' }}>
               {emailBodyLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <span className="iconify text-accent animate-spin" data-icon="lucide:loader-2" data-width="24"></span>
                 </div>
               ) : (
-                <div className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed break-words overflow-hidden" style={{ wordBreak: 'break-all', maxWidth: '100%' }}>{stripHtml(emailBody)}</div>
+                <p className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed">{stripHtml(emailBody)}</p>
               )}
             </div>
             <div className="flex gap-2 p-4 border-t border-border flex-shrink-0">
@@ -235,8 +234,7 @@ export default function EmailFilter() {
                 className="px-3 py-1.5 bg-bg border border-border text-xs text-muted rounded hover:text-text transition-colors disabled:opacity-50">Non important</button>
             </div>
           </div>
-        </div>,
-        document.body
+        </div>
       )}
 
       {replyModal && (
