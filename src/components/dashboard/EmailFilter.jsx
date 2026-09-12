@@ -208,7 +208,11 @@ export default function EmailFilter() {
                   <span className="iconify text-accent animate-spin" data-icon="lucide:loader-2" data-width="24"></span>
                 </div>
               ) : (
-                <pre className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed">{emailBody}</pre>
+                <div className="prose prose-sm max-w-none text-text leading-relaxed
+                  [&_a]:text-accent [&_a]:underline [&_img]:max-w-full [&_table]:w-full [&_table]:border-collapse
+                  [&_td]:p-2 [&_th]:p-2 [&_td]:border [&_th]:border [&_td]:border-border [&_th]:border-border
+                  [&_blockquote]:border-l-2 [&_blockquote]:border-accent/30 [&_blockquote]:pl-3 [&_blockquote]:italic [&_blockquote]:text-muted"
+                  dangerouslySetInnerHTML={{ __html: emailBody }} />
               )}
             </div>
             <div className="flex gap-2 mt-4">
