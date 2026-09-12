@@ -100,10 +100,16 @@ export default function EmailFilter() {
       const res = await fetch(`${API_URL}/api/services/gmail/emails/${email.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
+      if (!res.ok) throw new Error('not ok')
       const data = await res.json()
       setEmailBody(data.body || email.preview || '')
     } catch { setEmailBody(email.preview || '') }
     finally { setEmailBodyLoading(false) }
+  }
+
+  const stripHtml = (html) => {
+    if (!html) return ''
+    return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
   }
 
   return (
@@ -208,11 +214,7 @@ export default function EmailFilter() {
                   <span className="iconify text-accent animate-spin" data-icon="lucide:loader-2" data-width="24"></span>
                 </div>
               ) : (
-                <div className="prose prose-sm max-w-none text-text leading-relaxed
-                  [&_a]:text-accent [&_a]:underline [&_img]:max-w-full [&_table]:w-full [&_table]:border-collapse
-                  [&_td]:p-2 [&_th]:p-2 [&_td]:border [&_th]:border [&_td]:border-border [&_th]:border-border
-                  [&_blockquote]:border-l-2 [&_blockquote]:border-accent/30 [&_blockquote]:pl-3 [&_blockquote]:italic [&_blockquote]:text-muted"
-                  dangerouslySetInnerHTML={{ __html: emailBody }} />
+                <pre className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed">{stripHtml(emailBody)}</pre>
               )}
             </div>
             <div className="flex gap-2 mt-4">
