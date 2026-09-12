@@ -8,6 +8,7 @@ const navItems = [
   { id: 'messages', label: 'Messages', icon: 'lucide:message-square' },
   { id: 'calendar', label: 'Calendrier', icon: 'lucide:calendar' },
   { id: 'tasks', label: 'Tâches', icon: 'lucide:check-square' },
+  { id: 'concentration', label: 'Concentration', icon: 'lucide:timer' },
 ]
 
 export default function Sidebar({ onToggle }) {

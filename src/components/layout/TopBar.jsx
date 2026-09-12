@@ -1,7 +1,9 @@
 import { useDashboard } from '../../hooks/useDashboard'
+import { useTheme } from '../../context/ThemeContext'
 
 export default function TopBar() {
   const { stats } = useDashboard()
+  const { isDark, toggleTheme } = useTheme()
   return (
     <header className="sticky top-0 z-30 h-14 flex items-center justify-between px-4 md:px-6 bg-bg/80 backdrop-blur-md border-b border-border">
       <div className="flex items-center gap-2 px-3 py-1.5 bg-surface border border-border rounded-lg w-48 md:w-72 ml-10 md:ml-0">
@@ -10,6 +12,11 @@ export default function TopBar() {
         <kbd className="hidden md:inline text-[10px] text-muted bg-bg px-1.5 py-0.5 rounded border border-border">⌘K</kbd>
       </div>
       <div className="flex items-center gap-2 md:gap-3">
+        <button onClick={toggleTheme}
+          className="p-2 rounded-lg text-muted hover:text-text hover:bg-surface transition-colors"
+          title={isDark ? 'Mode clair' : 'Mode sombre'}>
+          <span className="iconify" data-icon={isDark ? 'lucide:sun' : 'lucide:moon'} data-width="16"></span>
+        </button>
         <button className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-accent/5 border border-accent/20 rounded-lg text-accent text-xs font-medium hover:bg-accent/10 transition-colors">
           <span className="iconify" data-icon="lucide:zap" data-width="12"></span>Filtre intelligent
         </button>

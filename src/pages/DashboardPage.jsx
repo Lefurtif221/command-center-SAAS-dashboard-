@@ -8,6 +8,7 @@ import TodayFocus from '../components/dashboard/TodayFocus'
 import QuickActions from '../components/dashboard/QuickActions'
 import Calendar from '../components/dashboard/Calendar'
 import Tasks from '../components/dashboard/Tasks'
+import Concentration from '../components/dashboard/Concentration'
 import { useDashboard } from '../hooks/useDashboard'
 import { useAuth } from '../hooks/useAuth'
 
@@ -76,6 +77,12 @@ export default function DashboardPage() {
           {activeSection === 'tasks' && (
             <div className="animate-fade-in">
               <Tasks />
+            </div>
+          )}
+
+          {activeSection === 'concentration' && (
+            <div className="animate-fade-in">
+              <Concentration />
             </div>
           )}
 
