@@ -109,7 +109,32 @@ export default function EmailFilter() {
 
   const stripHtml = (html) => {
     if (!html) return ''
-    return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+    let text = html
+      .replace(/<style[\s\S]*?<\/style>/gi, '')
+      .replace(/<script[\s\S]*?<\/script>/gi, '')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/p>/gi, '\n\n')
+      .replace(/<\/div>/gi, '\n')
+      .replace(/<\/tr>/gi, '\n')
+      .replace(/<\/li>/gi, '\n')
+      .replace(/<[^>]+>/g, ' ')
+    const el = document.createElement('div')
+    el.innerHTML = text
+    text = el.textContent || el.innerText || ''
+    text = text.replace(/\n{3,}/g, '\n\n').trim()
+    return text
+  }
+
+  const renderEmailBody = (html) => {
+    const text = stripHtml(html)
+    const urlRegex = /(https?:\/\/[^\s<>"')\]]+)/g
+    const parts = text.split(urlRegex)
+    return parts.map((part, i) => {
+      if (part.match(urlRegex)) {
+        return <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-accent underline break-all">{part.length > 60 ? part.slice(0, 60) + '...' : part}</a>
+      }
+      return <span key={i}>{part}</span>
+    })
   }
 
   return (
@@ -214,7 +239,7 @@ export default function EmailFilter() {
                   <span className="iconify text-accent animate-spin" data-icon="lucide:loader-2" data-width="24"></span>
                 </div>
               ) : (
-                <pre className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed">{stripHtml(emailBody)}</pre>
+                <div className="text-sm text-text leading-relaxed whitespace-pre-wrap break-words">{renderEmailBody(emailBody)}</div>
               )}
             </div>
             <div className="flex gap-2 mt-4">
