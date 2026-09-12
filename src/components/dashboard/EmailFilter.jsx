@@ -216,13 +216,13 @@ export default function EmailFilter() {
               </div>
               <button onClick={() => setEmailModal(null)} className="text-muted hover:text-text ml-2"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
             </div>
-            <div className="flex-1 overflow-y-auto bg-bg rounded-lg p-4 border border-border">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden bg-bg rounded-lg p-4 border border-border">
               {emailBodyLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <span className="iconify text-accent animate-spin" data-icon="lucide:loader-2" data-width="24"></span>
                 </div>
               ) : (
-                <pre className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed break-words">{stripHtml(emailBody)}</pre>
+                <pre className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed break-all">{stripHtml(emailBody)}</pre>
               )}
             </div>
             <div className="flex gap-2 mt-4">
