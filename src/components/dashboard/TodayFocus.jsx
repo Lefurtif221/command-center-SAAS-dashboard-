@@ -1,40 +1,14 @@
-import { useState, useEffect } from 'react'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+import { useDashboard } from '../../hooks/useDashboard'
 
 const pCfg = { high: { label: 'Urgent', border: 'border-accentSec', dot: 'bg-accentSec' }, medium: { label: 'Moyen', border: 'border-warning', dot: 'bg-warning' }, low: { label: 'Faible', border: 'border-success', dot: 'bg-success' } }
 
 export default function TodayFocus() {
-  const [tasks, setTasks] = useState([])
+  const { tasks, toggleTask } = useDashboard()
   const today = new Date().toLocaleDateString('sv-SE')
   const todayLabel = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
 
-  useEffect(() => { fetchTasks() }, [])
-
-  const fetchTasks = async () => {
-    try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/tasks`, { headers: { Authorization: `Bearer ${token}` } })
-      const data = await res.json()
-      setTasks(data.tasks || [])
-    } catch (err) { console.error(err) }
-  }
-
   const todayTasks = tasks.filter(t => !t.completed && t.due_date === today)
   const overdueTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date < today).slice(0, 2)
-
-  const toggleTask = async (id, completed) => {
-    try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/tasks/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ completed: !completed }),
-      })
-      const data = await res.json()
-      if (data.task) setTasks(prev => prev.map(t => t.id === id ? data.task : t))
-    } catch (err) { console.error(err) }
-  }
 
   return (
     <div className="bg-surface border border-border rounded-lg">

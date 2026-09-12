@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-
 const WORK_DURATION = 25 * 60
 const BREAK_DURATION = 5 * 60
 const LONG_BREAK_DURATION = 15 * 60
@@ -36,8 +34,7 @@ function getTodayKey() {
 }
 
 export default function Concentration() {
-  const { tasks } = useDashboard()
-  const [events, setEvents] = useState([])
+  const { tasks, events } = useDashboard()
   const [selectedType, setSelectedType] = useState('')
   const [selectedId, setSelectedId] = useState('')
   const [selectedTitle, setSelectedTitle] = useState('')
@@ -52,21 +49,7 @@ export default function Concentration() {
   const phaseRef = useRef(phase)
   phaseRef.current = phase
 
-  useEffect(() => {
-    fetchEvents()
-    loadTodaySessions()
-  }, [])
-
-  const fetchEvents = async () => {
-    try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/calendar`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
-      setEvents(data.events || [])
-    } catch (err) { console.error(err) }
-  }
+  useEffect(() => { loadTodaySessions() }, [])
 
   const loadTodaySessions = () => {
     try {

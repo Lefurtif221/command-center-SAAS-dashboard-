@@ -1,71 +1,22 @@
-import { useState, useEffect } from 'react'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+import { useState } from 'react'
+import { useDashboard } from '../../hooks/useDashboard'
 
 export default function Tasks() {
-  const [tasks, setTasks] = useState([])
-  const [loading, setLoading] = useState(true)
+  const { tasks, addTask, toggleTask, deleteTask } = useDashboard()
   const [newTitle, setNewTitle] = useState('')
   const [newDate, setNewDate] = useState('')
   const [newPriority, setNewPriority] = useState('medium')
   const [adding, setAdding] = useState(false)
 
-  useEffect(() => { fetchTasks() }, [])
-
-  const fetchTasks = async () => {
-    try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/tasks`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
-      setTasks(data.tasks || [])
-    } catch (err) { console.error(err) }
-    finally { setLoading(false) }
-  }
-
-  const addTask = async () => {
+  const handleAdd = async () => {
     if (!newTitle.trim()) return
     setAdding(true)
-    try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/tasks`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ title: newTitle.trim(), priority: newPriority, due_date: newDate || null }),
-      })
-      const data = await res.json()
-      if (data.task) setTasks(prev => [data.task, ...prev])
-      setNewTitle(''); setNewDate(''); setNewPriority('medium')
-    } catch (err) { console.error(err) }
-    finally { setAdding(false) }
+    await addTask(newTitle.trim(), newPriority, newDate || null)
+    setNewTitle(''); setNewDate(''); setNewPriority('medium')
+    setAdding(false)
   }
 
-  const toggleTask = async (id, completed) => {
-    try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/tasks/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ completed: !completed }),
-      })
-      const data = await res.json()
-      if (data.task) setTasks(prev => prev.map(t => t.id === id ? data.task : t))
-    } catch (err) { console.error(err) }
-  }
-
-  const deleteTask = async (id) => {
-    try {
-      const token = localStorage.getItem('command_center_token')
-      await fetch(`${API_URL}/api/tasks/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      setTasks(prev => prev.filter(t => t.id !== id))
-    } catch (err) { console.error(err) }
-  }
-
-  const today = new Date().toISOString().split('T')[0]
+  const today = new Date().toLocaleDateString('sv-SE')
   const todayTasks = tasks.filter(t => !t.completed && t.due_date === today)
   const upcomingTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date > today)
   const noDateTasks = tasks.filter(t => !t.completed && !t.due_date)
@@ -107,7 +58,7 @@ export default function Tasks() {
       <div className="p-4 border-b border-border">
         <div className="flex flex-col sm:flex-row gap-2">
           <input type="text" placeholder="Nouvelle tâche..." value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && addTask()}
+            onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
             className="flex-1 px-3 py-2 bg-bg border border-border rounded-lg text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" />
           <div className="flex gap-2">
             <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)}
@@ -118,7 +69,7 @@ export default function Tasks() {
               <option value="medium">Moyen</option>
               <option value="low">Faible</option>
             </select>
-            <button onClick={addTask} disabled={adding || !newTitle.trim()}
+            <button onClick={handleAdd} disabled={adding || !newTitle.trim()}
               className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors disabled:opacity-50">
               {adding ? '...' : '+'}
             </button>
@@ -127,9 +78,7 @@ export default function Tasks() {
       </div>
 
       <div className="p-4 space-y-4">
-        {loading ? (
-          <p className="text-sm text-muted text-center py-4">Chargement...</p>
-        ) : tasks.length === 0 ? (
+        {tasks.length === 0 ? (
           <p className="text-sm text-muted text-center py-4">Aucune tâche. Ajoute-en une !</p>
         ) : (
           <>

@@ -1,6 +1,5 @@
-import { useState, useMemo, useEffect } from 'react'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+import { useState, useMemo } from 'react'
+import { useDashboard } from '../../hooks/useDashboard'
 
 const DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
@@ -29,36 +28,11 @@ function isSameDay(a, b) {
 }
 
 export default function Calendar() {
+  const { events, tasks, addEvent, removeEvent } = useDashboard()
   const [currentDate, setCurrentDate] = useState(new Date())
-  const [events, setEvents] = useState([])
-  const [tasks, setTasks] = useState([])
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [newEvent, setNewEvent] = useState({ title: '', color: 'accent' })
-
-  useEffect(() => { fetchEvents(); fetchTasks() }, [])
-
-  const fetchEvents = async () => {
-    try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/calendar`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
-      setEvents(data.events || [])
-    } catch (err) { console.error(err) }
-  }
-
-  const fetchTasks = async () => {
-    try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/tasks`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
-      setTasks(data.tasks || [])
-    } catch (err) { console.error(err) }
-  }
 
   const weekDates = useMemo(() => getWeekDates(currentDate), [currentDate])
   const today = new Date()
@@ -72,32 +46,12 @@ export default function Calendar() {
   }
   const colorLabels = { accent: 'Bleu', success: 'Vert', warning: 'Orange', accentSec: 'Rouge', purple: 'Violet' }
 
-  const addEvent = async () => {
+  const handleAddEvent = async () => {
     if (!selectedSlot || !newEvent.title.trim()) return
-    try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/calendar`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ title: newEvent.title.trim(), date: selectedSlot.date, hour: selectedSlot.hour, color: newEvent.color }),
-      })
-      const data = await res.json()
-      if (data.event) setEvents(prev => [...prev, data.event])
-      setNewEvent({ title: '', color: 'accent' })
-      setModalOpen(false)
-      setSelectedSlot(null)
-    } catch (err) { console.error(err) }
-  }
-
-  const removeEvent = async (id) => {
-    try {
-      const token = localStorage.getItem('command_center_token')
-      await fetch(`${API_URL}/api/calendar/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      setEvents(prev => prev.filter(e => e.id !== id))
-    } catch (err) { console.error(err) }
+    await addEvent(newEvent.title.trim(), selectedSlot.date, selectedSlot.hour, newEvent.color)
+    setNewEvent({ title: '', color: 'accent' })
+    setModalOpen(false)
+    setSelectedSlot(null)
   }
 
   const getEventAt = (dateStr, hour) => {
@@ -206,7 +160,7 @@ export default function Calendar() {
             <div className="space-y-3">
               <input type="text" placeholder="Titre de l'événement" value={newEvent.title} onChange={e => setNewEvent({ ...newEvent, title: e.target.value })}
                 className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" autoFocus
-                onKeyDown={e => e.key === 'Enter' && addEvent()} />
+                onKeyDown={e => e.key === 'Enter' && handleAddEvent()} />
               <div>
                 <label className="block text-xs text-muted mb-1.5">Couleur</label>
                 <div className="flex gap-2">
@@ -217,7 +171,7 @@ export default function Calendar() {
                 </div>
               </div>
               <div className="flex gap-2 pt-2">
-                <button onClick={addEvent} disabled={!newEvent.title.trim()} className="flex-1 px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors disabled:opacity-50">Ajouter</button>
+                <button onClick={handleAddEvent} disabled={!newEvent.title.trim()} className="flex-1 px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors disabled:opacity-50">Ajouter</button>
                 <button onClick={() => setModalOpen(false)} className="px-3 py-2 bg-bg border border-border text-sm text-muted rounded-lg hover:text-text transition-colors">Annuler</button>
               </div>
             </div>

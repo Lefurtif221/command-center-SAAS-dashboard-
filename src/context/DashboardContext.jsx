@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -17,16 +17,22 @@ export function DashboardProvider({ children }) {
   const [messages, setMessages] = useState([])
   const [filterPriority, setFilterPriority] = useState('all')
   const [filterTime, setFilterTime] = useState('today')
-  const [activeSection, setActiveSection] = useState('dashboard')
+  const [activeSection, setActiveSection] = useState(() => localStorage.getItem('activeSection') || 'dashboard')
+
+  useEffect(() => {
+    localStorage.setItem('activeSection', activeSection)
+  }, [activeSection])
 
   useEffect(() => {
     fetchConnectedServices()
     fetchTasks()
+    fetchEvents()
     const interval = setInterval(() => {
       const token = localStorage.getItem('command_center_token')
       if (token) {
         fetchGmailEmails()
         fetchTasks()
+        fetchEvents()
       }
     }, 30000)
     return () => clearInterval(interval)
@@ -41,6 +47,79 @@ export function DashboardProvider({ children }) {
       })
       const data = await res.json()
       if (data.tasks) setTasks(data.tasks)
+    } catch (err) { console.error(err) }
+  }
+
+  const fetchEvents = async () => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      if (!token) return
+      const res = await fetch(`${API_URL}/api/calendar`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      if (data.events) setEvents(data.events)
+    } catch (err) { console.error(err) }
+  }
+
+  const addTask = async (title, priority, due_date) => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      const res = await fetch(`${API_URL}/api/tasks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ title, priority, due_date }),
+      })
+      const data = await res.json()
+      if (data.task) setTasks(prev => [data.task, ...prev])
+    } catch (err) { console.error(err) }
+  }
+
+  const toggleTask = async (id, completed) => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      const res = await fetch(`${API_URL}/api/tasks/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ completed: !completed }),
+      })
+      const data = await res.json()
+      if (data.task) setTasks(prev => prev.map(t => t.id === id ? data.task : t))
+    } catch (err) { console.error(err) }
+  }
+
+  const deleteTask = async (id) => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      await fetch(`${API_URL}/api/tasks/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setTasks(prev => prev.filter(t => t.id !== id))
+    } catch (err) { console.error(err) }
+  }
+
+  const addEvent = async (title, date, hour, color) => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      const res = await fetch(`${API_URL}/api/calendar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ title, date, hour, color }),
+      })
+      const data = await res.json()
+      if (data.event) setEvents(prev => [...prev, data.event])
+    } catch (err) { console.error(err) }
+  }
+
+  const removeEvent = async (id) => {
+    try {
+      const token = localStorage.getItem('command_center_token')
+      await fetch(`${API_URL}/api/calendar/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setEvents(prev => prev.filter(e => e.id !== id))
     } catch (err) { console.error(err) }
   }
 
@@ -106,17 +185,10 @@ export function DashboardProvider({ children }) {
 
   const todayStr = new Date().toLocaleDateString('sv-SE')
 
-  const calendarActivity = (() => {
-    try {
-      const events = JSON.parse(localStorage.getItem('personalplace_calendar_events')) || []
-      return events.filter(e => e.date === todayStr).length
-    } catch { return 0 }
-  })()
-
   const stats = {
     unreadEmails: emails.filter(e => e.priority === 'high').length,
     pendingTasks: tasks.filter(t => !t.completed).length,
-    activity: calendarActivity,
+    activity: events.filter(e => e.date === todayStr).length,
     totalTasks: tasks.length,
   }
 
@@ -164,6 +236,7 @@ export function DashboardProvider({ children }) {
     services, emails, filteredEmails, tasks, events, messages, stats, emailError,
     filterPriority, filterTime, activeSection,
     setFilterPriority, setFilterTime, setActiveSection,
+    fetchTasks, fetchEvents, addTask, toggleTask, deleteTask, addEvent, removeEvent,
     connectService, disconnectService, syncService, markEmailRead, fetchConnectedServices, refreshEmails, updateEmailPriority
   }
 
