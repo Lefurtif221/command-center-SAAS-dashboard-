@@ -109,32 +109,15 @@ export default function EmailFilter() {
 
   const stripHtml = (html) => {
     if (!html) return ''
-    let text = html
-      .replace(/<style[\s\S]*?<\/style>/gi, '')
-      .replace(/<script[\s\S]*?<\/script>/gi, '')
+    const el = document.createElement('div')
+    el.innerHTML = html
       .replace(/<br\s*\/?>/gi, '\n')
       .replace(/<\/p>/gi, '\n\n')
       .replace(/<\/div>/gi, '\n')
       .replace(/<\/tr>/gi, '\n')
       .replace(/<\/li>/gi, '\n')
-      .replace(/<[^>]+>/g, ' ')
-    const el = document.createElement('div')
-    el.innerHTML = text
-    text = el.textContent || el.innerText || ''
-    text = text.replace(/\n{3,}/g, '\n\n').trim()
-    return text
-  }
-
-  const renderEmailBody = (html) => {
-    const text = stripHtml(html)
-    const urlRegex = /(https?:\/\/[^\s<>"')\]]+)/g
-    const parts = text.split(urlRegex)
-    return parts.map((part, i) => {
-      if (part.match(urlRegex)) {
-        return <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-accent underline break-all">{part.length > 60 ? part.slice(0, 60) + '...' : part}</a>
-      }
-      return <span key={i}>{part}</span>
-    })
+    let text = el.textContent || el.innerText || ''
+    return text.replace(/\n{3,}/g, '\n\n').trim()
   }
 
   return (
@@ -239,7 +222,7 @@ export default function EmailFilter() {
                   <span className="iconify text-accent animate-spin" data-icon="lucide:loader-2" data-width="24"></span>
                 </div>
               ) : (
-                <div className="text-sm text-text leading-relaxed whitespace-pre-wrap break-words">{renderEmailBody(emailBody)}</div>
+                <pre className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed break-words">{stripHtml(emailBody)}</pre>
               )}
             </div>
             <div className="flex gap-2 mt-4">
