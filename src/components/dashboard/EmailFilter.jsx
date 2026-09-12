@@ -222,7 +222,7 @@ export default function EmailFilter() {
                   <span className="iconify text-accent animate-spin" data-icon="lucide:loader-2" data-width="24"></span>
                 </div>
               ) : (
-                <div className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed break-words overflow-hidden">{stripHtml(emailBody)}</div>
+                <div className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed break-words overflow-hidden" style={{ wordBreak: 'break-all', maxWidth: '100%' }}>{stripHtml(emailBody)}</div>
               )}
             </div>
             <div className="flex gap-2 p-4 border-t border-border flex-shrink-0">
