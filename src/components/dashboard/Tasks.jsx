@@ -33,7 +33,7 @@ export default function Tasks() {
 
   const TaskItem = ({ task }) => (
     <div className={`flex items-center gap-3 p-3 rounded-lg border-l-2 bg-bg hover:bg-bg/80 transition-colors group ${priorityColors[task.priority]}`}>
-      <button onClick={() => toggleTask(task.id, task.completed)} className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${task.completed ? 'bg-accent border-accent' : 'border-border hover:border-accent'}`}>
+      <button onClick={() => toggleTask(task.id, task.completed)} className={`w-6 h-6 rounded border flex-shrink-0 flex items-center justify-center transition-colors ${task.completed ? 'bg-accent border-accent' : 'border-border hover:border-accent'}`}>
         {task.completed && <span className="text-bg text-[10px]">✓</span>}
       </button>
       <div className="flex-1 min-w-0">

@@ -34,7 +34,7 @@ export default function TodayFocus() {
               const c = pCfg[task.priority] || pCfg.medium
               return (
                 <div key={task.id} className={`flex items-center gap-3 p-3 bg-bg rounded-lg border-l-2 ${c.border} mb-2`}>
-                  <button onClick={() => toggleTask(task.id, task.completed)} className="w-4 h-4 rounded border border-border flex-shrink-0 hover:border-accent transition-colors" />
+                  <button onClick={() => toggleTask(task.id, task.completed)} className="w-6 h-6 rounded border border-border flex-shrink-0 hover:border-accent transition-colors flex items-center justify-center" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-text truncate">{task.title}</p>
                     <p className="text-[10px] text-accentSec">{task.due_date}</p>
@@ -53,7 +53,7 @@ export default function TodayFocus() {
               const c = pCfg[task.priority] || pCfg.medium
               return (
                 <div key={task.id} className={`flex items-center gap-3 p-3 bg-bg rounded-lg border-l-2 ${c.border} mb-2`}>
-                  <button onClick={() => toggleTask(task.id, task.completed)} className="w-4 h-4 rounded border border-border flex-shrink-0 hover:border-accent transition-colors" />
+                  <button onClick={() => toggleTask(task.id, task.completed)} className="w-6 h-6 rounded border border-border flex-shrink-0 hover:border-accent transition-colors flex items-center justify-center" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-text truncate">{task.title}</p>
                   </div>

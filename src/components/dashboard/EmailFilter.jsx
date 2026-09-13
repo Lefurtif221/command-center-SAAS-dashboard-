@@ -127,18 +127,18 @@ export default function EmailFilter() {
           <span className="iconify text-accent" data-icon="lucide:zap" data-width="14"></span>
           <h3 className="text-sm font-medium">Filtre intelligent des emails</h3>
         </div>
-        <div className="flex items-center gap-2">
-          <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} className="px-2 py-1 bg-bg border border-border rounded text-xs text-text focus:outline-none focus:border-accent cursor-pointer">
+        <div className="flex items-center gap-2 flex-wrap">
+          <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} className="px-2 py-2 bg-bg border border-border rounded text-xs text-text focus:outline-none focus:border-accent cursor-pointer">
             <option value="all">Tous</option>
             <option value="high">Importants</option>
             <option value="low">Non importants</option>
           </select>
-          <select value={filterTime} onChange={(e) => setFilterTime(e.target.value)} className="px-2 py-1 bg-bg border border-border rounded text-xs text-text focus:outline-none focus:border-accent cursor-pointer">
+          <select value={filterTime} onChange={(e) => setFilterTime(e.target.value)} className="px-2 py-2 bg-bg border border-border rounded text-xs text-text focus:outline-none focus:border-accent cursor-pointer">
             <option value="today">Aujourd'hui</option>
             <option value="week">Cette semaine</option>
             <option value="all">Tout</option>
           </select>
-          <button onClick={() => setShowKeywordForm(!showKeywordForm)} className="px-2 py-1 bg-accent/10 border border-accent/30 text-accent rounded text-xs hover:bg-accent/20 transition-colors">
+          <button onClick={() => setShowKeywordForm(!showKeywordForm)} className="px-2 py-2 bg-accent/10 border border-accent/30 text-accent rounded text-xs hover:bg-accent/20 transition-colors">
             Règles
           </button>
         </div>
@@ -197,9 +197,9 @@ export default function EmailFilter() {
                 <p className={`text-sm ${email.unread ? 'font-medium text-text' : 'text-muted'}`}>{email.subject}</p>
                 <p className="text-xs text-muted/70 truncate mt-0.5">{email.preview}</p>
               </div>
-              <div className="text-right flex-shrink-0">
-                <p className="text-[10px] text-muted">{email.time}</p>
-                <p className="text-[10px] text-accent mt-0.5">{email.sender}</p>
+              <div className="text-right flex-shrink-0 max-w-[100px]">
+                <p className="text-[10px] text-muted truncate">{email.time}</p>
+                <p className="text-[10px] text-accent mt-0.5 truncate">{email.sender}</p>
               </div>
             </div>
           </div>
@@ -225,13 +225,13 @@ export default function EmailFilter() {
                 <p className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed">{stripHtml(emailBody)}</p>
               )}
             </div>
-            <div className="flex gap-2 p-4 border-t border-border flex-shrink-0">
+            <div className="flex flex-wrap gap-2 p-4 border-t border-border flex-shrink-0">
               <button onClick={() => { setEmailModal(null); setReplyModal(emailModal); setReplyBody('') }}
-                className="px-3 py-1.5 bg-accent text-bg text-xs font-medium rounded hover:bg-[#33c2ff] transition-colors">Répondre</button>
+                className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded hover:bg-[#33c2ff] transition-colors">Répondre</button>
               <button onClick={() => markImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
-                className="px-3 py-1.5 bg-accentSec/10 border border-accentSec/30 text-xs text-accentSec rounded hover:bg-accentSec/20 transition-colors disabled:opacity-50">Important</button>
+                className="px-3 py-2 bg-accentSec/10 border border-accentSec/30 text-xs text-accentSec rounded hover:bg-accentSec/20 transition-colors disabled:opacity-50">Important</button>
               <button onClick={() => markNotImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
-                className="px-3 py-1.5 bg-bg border border-border text-xs text-muted rounded hover:text-text transition-colors disabled:opacity-50">Non important</button>
+                className="px-3 py-2 bg-bg border border-border text-xs text-muted rounded hover:text-text transition-colors disabled:opacity-50">Non important</button>
             </div>
           </div>
         </div>

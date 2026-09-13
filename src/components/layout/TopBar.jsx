@@ -49,7 +49,7 @@ export default function TopBar() {
 
   return (
     <header className="sticky top-0 z-30 h-14 flex items-center justify-between px-4 md:px-6 bg-bg/80 backdrop-blur-md border-b border-border">
-      <div className="relative w-48 md:w-72 ml-10 md:ml-0">
+        <div className="relative flex-1 md:w-72 ml-10 md:ml-0">
         <div className="flex items-center gap-2 px-3 py-1.5 bg-surface border border-border rounded-lg">
           <span className="iconify text-muted" data-icon="lucide:search" data-width="14"></span>
           <input ref={inputRef} type="text" placeholder="Rechercher..." value={query}

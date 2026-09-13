@@ -29,7 +29,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-bg">
       <Sidebar />
 
-      <div className="md:ml-56">
+      <div className="md:ml-56 overflow-x-hidden">
         <TopBar />
 
         <main className="p-4 md:p-6">

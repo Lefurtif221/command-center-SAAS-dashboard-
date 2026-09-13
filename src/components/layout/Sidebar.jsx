@@ -81,7 +81,7 @@ export default function Sidebar({ onToggle }) {
   return (
     <>
       {/* Mobile hamburger button */}
-      <button onClick={() => setMobileOpen(true)} className="fixed top-3 left-3 z-50 p-2 rounded-lg bg-surface border border-border text-muted hover:text-text transition-colors md:hidden">
+      <button onClick={() => setMobileOpen(true)} className="fixed top-3 left-3 z-50 p-2.5 rounded-lg bg-surface border border-border text-muted hover:text-text transition-colors md:hidden">
         <span className="iconify" data-icon="lucide:menu" data-width="20"></span>
       </button>
 

@@ -83,15 +83,15 @@ export default function ConnectedServices() {
               </div>
               <div className="flex gap-2">
                 {service.external ? (
-                  <a href={service.url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 bg-accent/10 border border-accent/30 rounded text-xs text-accent hover:bg-accent/20 transition-colors text-center">
+                  <a href={service.url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 bg-accent/10 border border-accent/30 rounded text-xs text-accent hover:bg-accent/20 transition-colors text-center">
                     Ouvrir
                   </a>
                 ) : isConnected ? (
-                  <button onClick={() => handleDisconnect(service.id)} className="flex-1 px-2 py-1.5 bg-bg border border-border rounded text-xs text-accentSec hover:bg-accentSec/5 transition-colors">
+                  <button onClick={() => handleDisconnect(service.id)} className="flex-1 px-2 py-2.5 bg-bg border border-border rounded text-xs text-accentSec hover:bg-accentSec/5 transition-colors">
                     Déconnecter
                   </button>
                 ) : (
-                  <button onClick={() => handleConnect(service.id)} disabled={loading === service.id} className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 bg-accent/10 border border-accent/30 rounded text-xs text-accent hover:bg-accent/20 transition-colors disabled:opacity-50">
+                  <button onClick={() => handleConnect(service.id)} disabled={loading === service.id} className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 bg-accent/10 border border-accent/30 rounded text-xs text-accent hover:bg-accent/20 transition-colors disabled:opacity-50">
                     {loading === service.id ? '...' : 'Connecter'}
                   </button>
                 )}
