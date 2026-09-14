@@ -17,6 +17,7 @@ export default function Tasks() {
   }
 
   const today = new Date().toLocaleDateString('sv-SE')
+  const overdueTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date < today)
   const todayTasks = tasks.filter(t => !t.completed && t.due_date === today)
   const upcomingTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date > today)
   const noDateTasks = tasks.filter(t => !t.completed && !t.due_date)
@@ -82,6 +83,12 @@ export default function Tasks() {
           <p className="text-sm text-muted text-center py-4">Aucune tâche. Ajoute-en une !</p>
         ) : (
           <>
+            {overdueTasks.length > 0 && (
+              <div>
+                <p className="text-[10px] text-accentSec font-medium uppercase tracking-wider mb-2">En retard ({overdueTasks.length})</p>
+                <div className="space-y-1">{overdueTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
+              </div>
+            )}
             {todayTasks.length > 0 && (
               <div>
                 <p className="text-[10px] text-accent font-medium uppercase tracking-wider mb-2">Aujourd'hui</p>
