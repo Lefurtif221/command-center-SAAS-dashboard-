@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
 
 export default function Tasks() {
@@ -8,6 +8,31 @@ export default function Tasks() {
   const [newPriority, setNewPriority] = useState('medium')
   const [adding, setAdding] = useState(false)
 
+  useEffect(() => {
+    const tracked = JSON.parse(localStorage.getItem('lastWarningTasks') || '{}')
+    const today = new Date().toLocaleDateString('sv-SE')
+    const now = Date.now()
+
+    const lastWarning = tasks.filter(t => !t.completed && t.due_date && t.due_date < new Date(new Date().setDate(new Date().getDate() - 7)).toLocaleDateString('sv-SE'))
+
+    lastWarning.forEach(t => {
+      if (!tracked[t.id]) {
+        tracked[t.id] = now
+      } else if (now - tracked[t.id] > 24 * 60 * 60 * 1000) {
+        deleteTask(t.id)
+        delete tracked[t.id]
+      }
+    })
+
+    Object.keys(tracked).forEach(id => {
+      if (!lastWarning.find(t => String(t.id) === id)) {
+        delete tracked[id]
+      }
+    })
+
+    localStorage.setItem('lastWarningTasks', JSON.stringify(tracked))
+  }, [tasks, deleteTask])
+
   const handleAdd = async () => {
     if (!newTitle.trim()) return
     setAdding(true)
@@ -16,10 +41,16 @@ export default function Tasks() {
     setAdding(false)
   }
 
-  const today = new Date().toLocaleDateString('sv-SE')
-  const overdueTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date < today)
-  const todayTasks = tasks.filter(t => !t.completed && t.due_date === today)
-  const upcomingTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date > today)
+  const today = new Date()
+  const todayStr = today.toLocaleDateString('sv-SE')
+  const sevenDaysAgo = new Date(today)
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+  const sevenDaysAgoStr = sevenDaysAgo.toLocaleDateString('sv-SE')
+
+  const overdueTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date < todayStr && t.due_date >= sevenDaysAgoStr)
+  const lastWarningTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date < sevenDaysAgoStr)
+  const todayTasks = tasks.filter(t => !t.completed && t.due_date === todayStr)
+  const upcomingTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date > todayStr)
   const noDateTasks = tasks.filter(t => !t.completed && !t.due_date)
   const doneTasks = tasks.filter(t => t.completed)
 
@@ -83,6 +114,16 @@ export default function Tasks() {
           <p className="text-sm text-muted text-center py-4">Aucune tâche. Ajoute-en une !</p>
         ) : (
           <>
+            {lastWarningTasks.length > 0 && (
+              <div className="bg-accentSec/5 border border-accentSec/20 rounded-lg p-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="iconify text-accentSec" data-icon="lucide:alert-triangle" data-width="14"></span>
+                  <p className="text-[10px] text-accentSec font-medium uppercase tracking-wider">Dernier rappel — supprimées demain ({lastWarningTasks.length})</p>
+                </div>
+                <p className="text-[10px] text-muted mb-2">Ces tâches datent de plus d'une semaine. Elles seront supprimées automatiquement.</p>
+                <div className="space-y-1">{lastWarningTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
+              </div>
+            )}
             {overdueTasks.length > 0 && (
               <div>
                 <p className="text-[10px] text-accentSec font-medium uppercase tracking-wider mb-2">En retard ({overdueTasks.length})</p>
