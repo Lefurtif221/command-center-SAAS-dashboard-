@@ -228,7 +228,7 @@ export function DashboardProvider({ children }) {
 
   const updateEmailPriority = (senderEmail, priority) => {
     setEmails(prev => prev.map(email =>
-      email.from === senderEmail ? { ...email, priority } : email
+      email.senderEmail === senderEmail ? { ...email, priority } : email
     ))
   }
 
