@@ -1,10 +1,11 @@
 import { useDashboard } from '../../hooks/useDashboard'
+import { Mail, CheckSquare, Calendar, List } from 'lucide-react'
 
 const statCards = [
-  { id: 'emails', label: 'Emails importants', icon: 'lucide:mail', key: 'unreadEmails' },
-  { id: 'tasks', label: 'Tâches à faire', icon: 'lucide:check-square', key: 'pendingTasks' },
-  { id: 'activity', label: "Activité aujourd'hui", icon: 'lucide:calendar', key: 'activity' },
-  { id: 'totalTasks', label: 'Total tâches', icon: 'lucide:list', key: 'totalTasks' },
+  { id: 'emails', label: 'Emails importants', icon: Mail, key: 'unreadEmails' },
+  { id: 'tasks', label: 'Tâches à faire', icon: CheckSquare, key: 'pendingTasks' },
+  { id: 'activity', label: "Activité aujourd'hui", icon: Calendar, key: 'activity' },
+  { id: 'totalTasks', label: 'Total tâches', icon: List, key: 'totalTasks' },
 ]
 
 export default function StatsGrid() {
@@ -16,7 +17,7 @@ export default function StatsGrid() {
         return (
           <div key={card.id} className="glass rounded-xl p-4 gradient-border group hover:bg-accent/5 transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
             <div className="flex items-center gap-2 mb-2">
-              <span className="iconify text-accent" data-icon={card.icon} data-width="14"></span>
+              <card.icon size={14} className="text-accent" />
               <span className="text-xs text-muted font-mono">{card.label}</span>
             </div>
             <div className="text-xl font-display font-semibold tracking-tight">{value}</div>

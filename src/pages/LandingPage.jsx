@@ -1,13 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { Sparkles, ArrowRight, ShieldCheck, LayoutDashboard, Play, Mail, MessageSquare, Calendar, CheckSquare, TrendingUp, LayoutGrid, Settings, Check, Fingerprint, FileText, CheckCircle } from 'lucide-react'
 
 const features = [
-  { icon: 'lucide:mail', title: 'Emails intelligents', desc: 'Filtre automatique des emails importants. Zéro distraction, tout le signal.' },
-  { icon: 'lucide:file-text', title: 'Notes & Documents', desc: 'Sync avec Notion, Google Docs, Evernote. Vos idées toujours accessibles.' },
-  { icon: 'lucide:message-square', title: 'Messages unifiés', desc: 'WhatsApp, Slack, Discord - tous vos messages au même endroit.' },
-  { icon: 'lucide:calendar', title: 'Calendrier sync', desc: 'Google Calendar, Outlook - vue unifiée de vos événements.' },
-  { icon: 'lucide:check-square', title: 'Tâches & Projets', desc: "Trello, Asana, Todoist - suivez tout sans changer d'outil." },
-  { icon: 'lucide:trending-up', title: 'Investissements', desc: 'Suivez votre portfolio, actions, crypto et métaux en temps réel.' }
+  { icon: Mail, title: 'Emails intelligents', desc: 'Filtre automatique des emails importants. Zéro distraction, tout le signal.' },
+  { icon: FileText, title: 'Notes & Documents', desc: 'Sync avec Notion, Google Docs, Evernote. Vos idées toujours accessibles.' },
+  { icon: MessageSquare, title: 'Messages unifiés', desc: 'WhatsApp, Slack, Discord - tous vos messages au même endroit.' },
+  { icon: Calendar, title: 'Calendrier sync', desc: 'Google Calendar, Outlook - vue unifiée de vos événements.' },
+  { icon: CheckSquare, title: 'Tâches & Projets', desc: "Trello, Asana, Todoist - suivez tout sans changer d'outil." },
+  { icon: TrendingUp, title: 'Investissements', desc: 'Suivez votre portfolio, actions, crypto et métaux en temps réel.' }
 ]
 
 const pricingPlans = [
@@ -28,7 +29,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
-              <span className="iconify text-accent" data-icon="lucide:sparkles" data-width="14" data-stroke-width="1.5"></span>
+              <Sparkles size={14} className="text-accent" />
             </div>
             <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
           </div>
@@ -41,7 +42,7 @@ export default function LandingPage() {
             <button onClick={go} className="text-xs font-medium text-muted hover:text-text hidden sm:block transition-colors">{isAuthenticated ? 'Dashboard' : 'Connexion'}</button>
             <button onClick={go} className="glass rounded-xl text-xs font-medium px-4 py-2.5 transition-all duration-200 flex items-center gap-2 group hover:bg-accent/10 hover:text-accent hover:shadow-[0_0_20px_-5px_rgba(125,211,252,0.3)]">
               <span>{isAuthenticated ? 'Mon Espace' : 'Commencer gratuitement'}</span>
-              <span className="iconify group-hover:translate-x-0.5 transition-transform" data-icon="lucide:arrow-right" data-width="14"></span>
+              <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
@@ -51,7 +52,7 @@ export default function LandingPage() {
       <header className="relative pt-32 pb-20 md:pt-40 md:pb-32 px-6 hero-glow overflow-hidden">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-accent text-xs font-medium mb-6">
-            <span className="iconify" data-icon="lucide:shield-check" data-width="12"></span>
+            <ShieldCheck size={12} />
             Privé & Sécurisé
           </div>
           <h1 className="text-4xl md:text-6xl font-display font-semibold tracking-tighter-custom mb-6 leading-[1.05]">
@@ -63,11 +64,11 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button onClick={go} className="w-full sm:w-auto bg-accent text-bg hover:bg-[#8dd8fc] font-semibold text-sm px-6 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_0_30px_-5px_rgba(125,211,252,0.4)] hover:shadow-[0_0_40px_-5px_rgba(125,211,252,0.5)]">
-              <span className="iconify" data-icon="lucide:layout-dashboard" data-width="18"></span>
+               <LayoutDashboard size={18} />
               {isAuthenticated ? 'Accéder au Dashboard' : 'Créer mon espace gratuit'}
             </button>
             <button className="w-full sm:w-auto glass rounded-xl text-text font-medium text-sm px-6 py-3 transition-all duration-200 flex items-center justify-center gap-2 hover:bg-accent/5 hover:border-accent/30">
-              <span className="iconify" data-icon="lucide:play" data-width="18"></span>
+               <Play size={18} />
               Voir la démo
             </button>
           </div>
@@ -88,32 +89,32 @@ export default function LandingPage() {
             <div className="w-16 md:w-56 glass border-r border-border/50 flex flex-col justify-between py-6">
               <div className="px-4 flex flex-col gap-6">
                 <div className="flex items-center gap-3 px-2 text-accent">
-                  <span className="iconify" data-icon="lucide:layout-grid" data-width="20"></span>
+                   <LayoutGrid size={20} />
                   <span className="hidden md:block font-display font-medium text-sm">Dashboard</span>
                 </div>
                 <div className="flex flex-col gap-1">
                   <div className="text-[10px] font-medium text-muted/50 px-2 mb-2 hidden md:block uppercase tracking-wider font-mono">MODULES</div>
                   <a href="#" className="flex items-center gap-3 px-2 py-2 text-muted hover:text-text hover:bg-white/5 rounded-xl transition-colors">
-                    <span className="iconify" data-icon="lucide:mail" data-width="18"></span>
+                     <Mail size={18} />
                     <span className="hidden md:block text-sm">Emails</span>
                   </a>
                   <a href="#" className="flex items-center gap-3 px-2 py-2 text-muted hover:text-text hover:bg-white/5 rounded-xl transition-colors">
-                    <span className="iconify" data-icon="lucide:message-square" data-width="18"></span>
+                     <MessageSquare size={18} />
                     <span className="hidden md:block text-sm">Messages</span>
                   </a>
                   <a href="#" className="flex items-center gap-3 px-2 py-2 text-muted hover:text-text hover:bg-white/5 rounded-xl transition-colors">
-                    <span className="iconify" data-icon="lucide:calendar" data-width="18"></span>
+                     <Calendar size={18} />
                     <span className="hidden md:block text-sm">Calendrier</span>
                   </a>
                   <a href="#" className="flex items-center gap-3 px-2 py-2 text-accent hover:bg-accent/5 rounded-xl transition-colors">
-                    <span className="iconify" data-icon="lucide:trending-up" data-width="18"></span>
+                     <TrendingUp size={18} />
                     <span className="hidden md:block text-sm">Investissements</span>
                   </a>
                 </div>
               </div>
               <div className="px-4">
                 <div className="flex items-center gap-3 px-2 py-2 text-muted hover:text-text cursor-pointer rounded-xl transition-colors">
-                  <span className="iconify" data-icon="lucide:settings" data-width="18"></span>
+                   <Settings size={18} />
                   <span className="hidden md:block text-sm">Settings</span>
                 </div>
               </div>
@@ -124,7 +125,7 @@ export default function LandingPage() {
                   <div className="text-xs text-muted mb-1">Emails importants</div>
                   <div className="text-xl font-display font-semibold tracking-tight font-mono">12</div>
                   <div className="text-xs text-success flex items-center gap-1 mt-1">
-                    <span className="iconify" data-icon="lucide:trending-up" data-width="12"></span> +3
+                                         <TrendingUp size={12} /> +3
                   </div>
                 </div>
                 <div className="glass rounded-xl p-4 gradient-border">
@@ -150,7 +151,7 @@ export default function LandingPage() {
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 p-3 glass rounded-xl">
-                      <span className="iconify text-accent" data-icon="lucide:mail" data-width="16"></span>
+                       <Mail size={16} className="text-accent" />
                       <div className="flex-1">
                         <p className="text-sm">Réunion client demain</p>
                         <p className="text-xs text-muted">Sophie Martin • Il y a 2h</p>
@@ -158,7 +159,7 @@ export default function LandingPage() {
                       <span className="text-xs text-accentSec bg-accentSec/10 px-2 py-0.5 rounded-full font-mono">Urgent</span>
                     </div>
                     <div className="flex items-center gap-3 p-3 glass rounded-xl">
-                      <span className="iconify text-success" data-icon="lucide:check-circle" data-width="16"></span>
+                       <CheckCircle size={16} className="text-success" />
                       <div className="flex-1">
                         <p className="text-sm">Tâche complétée</p>
                         <p className="text-xs text-muted">Rapport hebdomadaire • Hier</p>
@@ -166,7 +167,7 @@ export default function LandingPage() {
                       <span className="text-xs text-success bg-success/10 px-2 py-0.5 rounded-full font-mono">Fait</span>
                     </div>
                     <div className="flex items-center gap-3 p-3 glass rounded-xl">
-                      <span className="iconify text-warning" data-icon="lucide:trending-up" data-width="16"></span>
+                       <TrendingUp size={16} className="text-warning" />
                       <div className="flex-1">
                         <p className="text-sm">Investissement: +5.2%</p>
                         <p className="text-xs text-muted">Portfolio Tech • Aujourd'hui</p>
@@ -206,7 +207,7 @@ export default function LandingPage() {
           {features.map((f, i) => (
             <div key={i} className="glass rounded-2xl p-6 transition-all duration-300 card-glow gradient-border group">
               <div className="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center mb-4 text-accent group-hover:bg-accent/15 transition-colors">
-                <span className="iconify" data-icon={f.icon} data-width="20"></span>
+                 <f.icon size={20} />
               </div>
               <h3 className="text-lg font-display font-medium mb-2">{f.title}</h3>
               <p className="text-sm text-muted leading-relaxed">{f.desc}</p>
@@ -256,7 +257,7 @@ export default function LandingPage() {
               <ul className="space-y-3 mb-6">
                 {plan.features.map((f, j) => (
                   <li key={j} className="flex items-center gap-2.5 text-sm text-muted">
-                    <span className="iconify text-success" data-icon="lucide:check" data-width="14"></span>{f}
+                                         <Check size={14} className="text-success" />{f}
                   </li>
                 ))}
               </ul>
@@ -270,12 +271,12 @@ export default function LandingPage() {
       <section className="py-20 px-6">
         <div className="max-w-3xl mx-auto glass-strong noise rounded-2xl p-8 text-center shadow-2xl gradient-border">
           <div className="inline-block p-3 rounded-xl bg-accent/10 mb-4">
-            <span className="iconify text-accent" data-icon="lucide:fingerprint" data-width="24"></span>
+             <Fingerprint size={24} className="text-accent" />
           </div>
           <h2 className="text-2xl font-display font-semibold tracking-tight mb-3">Privé par défaut</h2>
           <p className="text-muted mb-8 leading-relaxed">Vos données vous appartiennent. Stockage local ou chiffré. Pas d'abonnement, pas de vente de données.</p>
           <a href="#" className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:text-accent/80 transition-colors group">
-            En savoir plus sur la sécurité <span className="iconify group-hover:translate-x-0.5 transition-transform" data-icon="lucide:arrow-right" data-width="14"></span>
+             En savoir plus sur la sécurité <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
           </a>
         </div>
       </section>
@@ -285,7 +286,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2.5">
             <div className="w-6 h-6 rounded-md bg-accent/10 flex items-center justify-center">
-              <span className="iconify text-muted" data-icon="lucide:sparkles" data-width="12"></span>
+               <Sparkles size={12} className="text-muted" />
             </div>
             <span className="text-sm font-display font-medium text-muted">Personal Place</span>
           </div>

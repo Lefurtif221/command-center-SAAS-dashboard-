@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { ArrowLeft, Sparkles, Mail, Lock, TrendingUp } from 'lucide-react'
 
 export default function AuthPage() {
   const navigate = useNavigate()
@@ -39,11 +40,11 @@ export default function AuthPage() {
         <div className="absolute inset-0 hero-glow" />
         <div className="relative z-10 flex flex-col justify-center px-16">
           <button onClick={() => navigate('/')} className="absolute top-8 left-8 flex items-center gap-2 text-muted hover:text-text transition-colors text-sm group">
-            <span className="iconify group-hover:-translate-x-0.5 transition-transform" data-icon="lucide:arrow-left" data-width="16"></span><span>Retour</span>
+            <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" /><span>Retour</span>
           </button>
           <div className="flex items-center gap-2.5 mb-12">
             <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-              <span className="iconify text-accent" data-icon="lucide:sparkles" data-width="16"></span>
+              <Sparkles size={16} className="text-accent" />
             </div>
             <span className="font-display font-semibold tracking-tight text-lg">Personal Place</span>
           </div>
@@ -53,13 +54,13 @@ export default function AuthPage() {
           <p className="text-muted text-lg mb-8 leading-relaxed">Connectez tous vos outils et commencez à travailler plus intelligemment.</p>
           <div className="space-y-3">
             {[
-              { icon: 'lucide:mail', title: 'Emails intelligents', sub: 'Filtre automatique' },
-              { icon: 'lucide:lock', title: 'Données sécurisées', sub: 'Chiffrement de bout en bout' },
-              { icon: 'lucide:trending-up', title: 'Investissements', sub: 'Suivi de portfolio intégré' }
+              { icon: Mail, title: 'Emails intelligents', sub: 'Filtre automatique' },
+              { icon: Lock, title: 'Données sécurisées', sub: 'Chiffrement de bout en bout' },
+              { icon: TrendingUp, title: 'Investissements', sub: 'Suivi de portfolio intégré' }
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-4 p-4 glass rounded-xl">
                 <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
-                  <span className="iconify" data-icon={item.icon} data-width="20"></span>
+                  <item.icon size={20} />
                 </div>
                 <div>
                   <p className="font-display font-medium text-sm">{item.title}</p>
@@ -76,7 +77,7 @@ export default function AuthPage() {
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-2.5 mb-8">
             <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
-              <span className="iconify text-accent" data-icon="lucide:sparkles" data-width="14"></span>
+              <Sparkles size={14} className="text-accent" />
             </div>
             <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
           </div>

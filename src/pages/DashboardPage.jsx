@@ -11,6 +11,7 @@ import Tasks from '../components/dashboard/Tasks'
 import Concentration from '../components/dashboard/Concentration'
 import { useDashboard } from '../hooks/useDashboard'
 import { useAuth } from '../hooks/useAuth'
+import { MessageSquare, ExternalLink } from 'lucide-react'
 
 export default function DashboardPage() {
   const { activeSection } = useDashboard()
@@ -56,12 +57,12 @@ export default function DashboardPage() {
           {activeSection === 'messages' && (
             <div className="animate-fade-in">
               <div className="bg-surface border border-border rounded-lg p-6 md:p-8 text-center">
-                <span className="iconify text-muted mx-auto mb-3" data-icon="lucide:message-square" data-width="48"></span>
+                <MessageSquare size={48} className="text-muted mx-auto mb-3" />
                 <h3 className="text-lg font-medium mb-2">Messages</h3>
                 <p className="text-sm text-muted mb-4">WhatsApp et autres services de messagerie.</p>
                 <a href="https://web.whatsapp.com" target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors">
-                  <span className="iconify" data-icon="lucide:external-link" data-width="14"></span>
+                  <ExternalLink size={14} />
                   Ouvrir WhatsApp Web
                 </a>
               </div>

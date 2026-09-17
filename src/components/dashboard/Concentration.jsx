@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
+import { List, CheckSquare, Calendar as CalendarIcon, Timer, Play, Pause, RotateCcw, BarChart3 } from 'lucide-react'
 
 const WORK_DURATION = 25 * 60
 const BREAK_DURATION = 5 * 60
@@ -138,7 +139,7 @@ export default function Concentration() {
         {/* Left: Selector */}
         <div className="glass rounded-xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center gap-2 mb-4">
-            <span className="iconify text-accent" data-icon="lucide:list" data-width="16"></span>
+            <List size={16} className="text-accent" />
             <h3 className="text-sm font-display font-medium">Sélectionner une cible</h3>
           </div>
 
@@ -151,7 +152,7 @@ export default function Concentration() {
               <button key={task.id} onClick={() => handleSelect('task', task.id, task.title)}
                 className={`glass w-full text-left p-3 rounded-xl transition-all duration-200 ${selectedType === 'task' && selectedId === task.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`} style={{ background: 'var(--color-surface-solid)' }}>
                 <div className="flex items-center gap-2">
-                  <span className="iconify text-warning" data-icon="lucide:check-square" data-width="14"></span>
+                  <CheckSquare size={14} className="text-warning" />
                   <span className="text-sm text-text truncate">{task.title}</span>
                 </div>
                 {task.due_date && <p className="text-[10px] text-muted mt-1 ml-5 font-mono">Échéance : {task.due_date}</p>}
@@ -166,7 +167,7 @@ export default function Concentration() {
               <button key={evt.id} onClick={() => handleSelect('event', evt.id, evt.title)}
                 className={`glass w-full text-left p-3 rounded-xl transition-all duration-200 ${selectedType === 'event' && selectedId === evt.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`} style={{ background: 'var(--color-surface-solid)' }}>
                 <div className="flex items-center gap-2">
-                  <span className="iconify text-accent" data-icon="lucide:calendar" data-width="14"></span>
+                  <CalendarIcon size={14} className="text-accent" />
                   <span className="text-sm text-text truncate">{evt.title}</span>
                 </div>
                 <p className="text-[10px] text-muted mt-1 ml-5 font-mono">{evt.date} à {String(evt.hour).padStart(2, '0')}:00</p>
@@ -178,7 +179,7 @@ export default function Concentration() {
         {/* Center: Timer */}
         <div className="glass rounded-xl p-4 md:p-5 flex flex-col items-center justify-center" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center gap-2 mb-6 self-start">
-            <span className="iconify text-accent" data-icon="lucide:timer" data-width="16"></span>
+            <Timer size={16} className="text-accent" />
             <h3 className="text-sm font-display font-medium">Pomodoro</h3>
           </div>
 
@@ -211,17 +212,17 @@ export default function Concentration() {
             {!isRunning ? (
               <button onClick={handleStart} disabled={!selectedTitle}
                 className="flex items-center gap-2 px-5 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#8dd8fc] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_0_20px_-5px_rgba(125,211,252,0.4)]">
-                <span className="iconify" data-icon="lucide:play" data-width="16"></span> Démarrer
+                <Play size={16} /> Démarrer
               </button>
             ) : (
               <button onClick={handlePause}
                 className="flex items-center gap-2 px-5 py-2.5 bg-warning text-bg text-sm font-medium rounded-xl hover:opacity-90 transition-all duration-200">
-                <span className="iconify" data-icon="lucide:pause" data-width="16"></span> Pause
+                <Pause size={16} /> Pause
               </button>
             )}
             <button onClick={handleReset}
               className="glass flex items-center gap-2 px-4 py-2.5 text-sm text-muted rounded-xl hover:text-text transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-              <span className="iconify" data-icon="lucide:rotate-ccw" data-width="16"></span> Reset
+              <RotateCcw size={16} /> Reset
             </button>
           </div>
 
@@ -237,7 +238,7 @@ export default function Concentration() {
         {/* Right: Stats */}
         <div className="glass rounded-xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center gap-2 mb-4">
-            <span className="iconify text-accent" data-icon="lucide:bar-chart-3" data-width="16"></span>
+            <BarChart3 size={16} className="text-accent" />
             <h3 className="text-sm font-display font-medium">Aujourd'hui</h3>
           </div>
 

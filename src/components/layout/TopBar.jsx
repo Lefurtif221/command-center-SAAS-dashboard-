@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
 import { useTheme } from '../../context/ThemeContext'
+import { Search, Mail, CheckSquare, Sun, Moon, Sparkles, Bell } from 'lucide-react'
 
 export default function TopBar() {
   const { stats, emails, tasks, setActiveSection } = useDashboard()
@@ -28,13 +29,13 @@ export default function TopBar() {
 
     emails.forEach(e => {
       if (e.subject?.toLowerCase().includes(q) || e.sender?.toLowerCase().includes(q) || e.preview?.toLowerCase().includes(q)) {
-        found.push({ type: 'email', icon: 'lucide:mail', label: e.subject, sub: e.sender, section: 'emails', color: 'text-accent' })
+        found.push({ type: 'email', icon: Mail, label: e.subject, sub: e.sender, section: 'emails', color: 'text-accent' })
       }
     })
 
     tasks.forEach(t => {
       if (t.title?.toLowerCase().includes(q)) {
-        found.push({ type: 'task', icon: 'lucide:check-square', label: t.title, sub: t.due_date || 'Pas de date', section: 'tasks', color: 'text-warning' })
+        found.push({ type: 'task', icon: CheckSquare, label: t.title, sub: t.due_date || 'Pas de date', section: 'tasks', color: 'text-warning' })
       }
     })
 
@@ -51,7 +52,7 @@ export default function TopBar() {
     <header className="sticky top-0 z-30 h-14 flex items-center justify-between px-4 md:px-6 border-b" style={{ background: 'var(--color-surface-solid)', borderColor: 'var(--color-border)' }}>
       <div className="relative flex-1 md:w-72 ml-10 md:ml-0">
         <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-          <span className="iconify text-muted" data-icon="lucide:search" data-width="14"></span>
+          <Search size={14} className="text-muted" />
           <input ref={inputRef} type="text" placeholder="Rechercher..." value={query}
             onChange={(e) => { setQuery(e.target.value); setOpen(true) }}
             onFocus={() => setOpen(true)}
@@ -64,7 +65,7 @@ export default function TopBar() {
             {results.map((item, i) => (
               <button key={i} onClick={() => handleSelect(item)}
                 className="w-full flex items-center gap-3 px-4 py-3 hover:bg-accent/5 transition-colors text-left border-b border-border/30 last:border-0">
-                <span className={`iconify ${item.color}`} data-icon={item.icon} data-width="14"></span>
+                <item.icon size={14} className={item.color} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-text truncate">{item.label}</p>
                   <p className="text-[10px] text-muted truncate">{item.sub}</p>
@@ -84,13 +85,13 @@ export default function TopBar() {
         <button onClick={toggleTheme}
           className="p-2.5 rounded-xl text-muted hover:text-text hover:bg-accent/10 hover:text-accent transition-all duration-200"
           title={isDark ? 'Mode clair' : 'Mode sombre'}>
-          <span className="iconify" data-icon={isDark ? 'lucide:sun' : 'lucide:moon'} data-width="16"></span>
+          {isDark ? <Sun size={16} /> : <Moon size={16} />}
         </button>
         <button className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl text-accent text-xs font-medium transition-all duration-200" style={{ background: 'rgba(125,211,252,0.1)', border: '1px solid rgba(125,211,252,0.2)' }}>
-          <span className="iconify" data-icon="lucide:sparkles" data-width="12"></span>Filtre intelligent
+          <Sparkles size={12} />Filtre intelligent
         </button>
         <button className="relative p-2.5 rounded-xl text-muted hover:text-text hover:bg-accent/10 transition-all duration-200">
-          <span className="iconify" data-icon="lucide:bell" data-width="16"></span>
+          <Bell size={16} />
           {stats.unreadEmails > 0 && (
             <span className="absolute top-1 right-1 w-3.5 h-3.5 text-[8px] font-mono font-bold bg-accentSec text-white rounded-full flex items-center justify-center animate-glow-pulse">{stats.unreadEmails}</span>
           )}

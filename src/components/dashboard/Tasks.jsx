@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
+import { Trash2, CheckSquare, AlertTriangle } from 'lucide-react'
 
 export default function Tasks() {
   const { tasks, addTask, toggleTask, deleteTask } = useDashboard()
@@ -74,7 +75,7 @@ export default function Tasks() {
       </div>
       <div className={`w-2 h-2 rounded-full flex-shrink-0 ${priorityDots[task.priority]}`} />
       <button onClick={() => deleteTask(task.id)} className="opacity-0 group-hover:opacity-100 text-muted hover:text-accentSec transition-all duration-200">
-        <span className="iconify" data-icon="lucide:trash-2" data-width="14"></span>
+        <Trash2 size={14} />
       </button>
     </div>
   )
@@ -82,7 +83,7 @@ export default function Tasks() {
   return (
     <div className="glass rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex items-center gap-2 p-4 border-b border-border/50">
-        <span className="iconify text-accent" data-icon="lucide:check-square" data-width="14"></span>
+        <CheckSquare size={14} className="text-accent" />
         <h3 className="text-sm font-display font-medium">Tâches</h3>
         <span className="text-[10px] text-muted ml-auto font-mono">{tasks.filter(t => !t.completed).length} en cours</span>
       </div>
@@ -117,7 +118,7 @@ export default function Tasks() {
             {lastWarningTasks.length > 0 && (
               <div className="bg-accentSec/5 border border-accentSec/20 rounded-xl p-3">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="iconify text-accentSec" data-icon="lucide:alert-triangle" data-width="14"></span>
+                  <AlertTriangle size={14} className="text-accentSec" />
                   <p className="text-[10px] text-accentSec font-mono font-medium uppercase tracking-wider">Dernier rappel — supprimées demain ({lastWarningTasks.length})</p>
                 </div>
                 <p className="text-[10px] text-muted mb-2 font-mono">Ces tâches datent de plus d'une semaine. Elles seront supprimées automatiquement.</p>

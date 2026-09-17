@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, X } from 'lucide-react'
 
 const DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
@@ -88,17 +89,17 @@ export default function Calendar() {
     <div className="glass rounded-xl overflow-hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex items-center justify-between p-4 border-b border-border/50">
         <div className="flex items-center gap-3">
-          <span className="iconify text-accent" data-icon="lucide:calendar" data-width="16"></span>
+          <CalendarIcon size={16} className="text-accent" />
           <h3 className="text-sm font-display font-medium">Calendrier</h3>
         </div>
         <div className="flex items-center gap-1 sm:gap-2">
           <span className="text-xs sm:text-sm font-display font-medium text-text mr-1 sm:mr-2">{weekLabel}</span>
           <button onClick={goToToday} className="px-1.5 sm:px-2 py-1 text-[10px] sm:text-xs text-accent border border-accent/20 rounded-lg hover:bg-accent/10 transition-all duration-200 font-mono">Aujourd'hui</button>
           <button onClick={() => navigateWeek(-1)} className="p-1 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors">
-            <span className="iconify" data-icon="lucide:chevron-left" data-width="16"></span>
+            <ChevronLeft size={16} />
           </button>
           <button onClick={() => navigateWeek(1)} className="p-1 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors">
-            <span className="iconify" data-icon="lucide:chevron-right" data-width="16"></span>
+            <ChevronRight size={16} />
           </button>
         </div>
       </div>
@@ -154,7 +155,7 @@ export default function Calendar() {
           <div className="glass rounded-2xl p-5 w-full max-w-sm mx-4 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-sm font-display font-medium">Nouvel événement</h4>
-              <button onClick={() => setModalOpen(false)} className="text-muted hover:text-text transition-colors"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
+              <button onClick={() => setModalOpen(false)} className="text-muted hover:text-text transition-colors"><X size={16} /></button>
             </div>
             <p className="text-xs text-muted mb-4 font-mono">{selectedSlot && `${new Date(selectedSlot.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} à ${String(selectedSlot.hour).padStart(2, '0')}:00`}</p>
             <div className="space-y-3">

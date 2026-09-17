@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import { useDashboard } from '../../hooks/useDashboard'
+import { LayoutGrid, Mail, MessageSquare, Calendar, CheckSquare, Timer, Sparkles, ChevronLeft, ChevronRight, X, Settings, LogOut, Menu } from 'lucide-react'
 
 const navItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: 'lucide:layout-grid' },
-  { id: 'emails', label: 'Emails', icon: 'lucide:mail', badge: 'emails' },
-  { id: 'messages', label: 'Messages', icon: 'lucide:message-square' },
-  { id: 'calendar', label: 'Calendrier', icon: 'lucide:calendar' },
-  { id: 'tasks', label: 'Tâches', icon: 'lucide:check-square' },
-  { id: 'concentration', label: 'Concentration', icon: 'lucide:timer' },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
+  { id: 'emails', label: 'Emails', icon: Mail, badge: 'emails' },
+  { id: 'messages', label: 'Messages', icon: MessageSquare },
+  { id: 'calendar', label: 'Calendrier', icon: Calendar },
+  { id: 'tasks', label: 'Tâches', icon: CheckSquare },
+  { id: 'concentration', label: 'Concentration', icon: Timer },
 ]
 
 export default function Sidebar({ onToggle }) {
@@ -35,16 +36,16 @@ export default function Sidebar({ onToggle }) {
         {!collapsed && (
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
-              <span className="iconify text-accent" data-icon="lucide:sparkles" data-width="14"></span>
+              <Sparkles size={14} className="text-accent" />
             </div>
             <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
           </div>
         )}
         <button onClick={() => { setCollapsed(!collapsed); onToggle && onToggle(!collapsed) }} className="p-1.5 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors hidden md:block">
-          <span className="iconify" data-icon={collapsed ? "lucide:chevron-right" : "lucide:chevron-left"} data-width="16"></span>
+          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
         <button onClick={() => setMobileOpen(false)} className="p-1.5 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors md:hidden">
-          <span className="iconify" data-icon="lucide:x" data-width="16"></span>
+          <X size={16} />
         </button>
       </div>
       <nav className="flex-1 py-4 px-2 overflow-y-auto">
@@ -60,7 +61,7 @@ export default function Sidebar({ onToggle }) {
                     ? 'bg-accent/10 text-accent shadow-[0_0_12px_-4px_rgba(125,211,252,0.3)]'
                     : 'text-muted hover:text-text hover:bg-white/5'
                 }`}>
-                <span className="iconify" data-icon={item.icon} data-width="18"></span>
+                <item.icon size={18} />
                 {!collapsed && (
                   <>
                     <span className="flex-1 text-left text-sm font-medium">{item.label}</span>
@@ -74,11 +75,11 @@ export default function Sidebar({ onToggle }) {
       </nav>
       <div className="px-2 pb-4 space-y-0.5">
         <button onClick={() => handleNav('settings')} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${activeSection === 'settings' ? 'bg-accent/10 text-accent' : 'text-muted hover:text-text hover:bg-white/5'}`}>
-          <span className="iconify" data-icon="lucide:settings" data-width="18"></span>
+          <Settings size={18} />
           {!collapsed && <span className="text-sm font-medium">Settings</span>}
         </button>
         <button onClick={logout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted hover:text-accentSec hover:bg-accentSec/5 transition-all duration-200">
-          <span className="iconify" data-icon="lucide:log-out" data-width="18"></span>
+          <LogOut size={18} />
           {!collapsed && <span className="text-sm font-medium">Déconnexion</span>}
         </button>
       </div>
@@ -99,7 +100,7 @@ export default function Sidebar({ onToggle }) {
   return (
     <>
       <button onClick={() => setMobileOpen(true)} className="fixed top-3 left-3 z-50 p-2.5 rounded-xl text-muted hover:text-text transition-all duration-200 md:hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-        <span className="iconify" data-icon="lucide:menu" data-width="20"></span>
+        <Menu size={20} />
       </button>
 
       <aside className={`hidden md:flex fixed left-0 top-0 bottom-0 z-40 flex-col transition-all duration-300 ${collapsed ? 'w-16' : 'w-56'}`} style={{ background: 'var(--color-surface-solid)', borderRight: '1px solid var(--color-border)' }}>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { ArrowLeft, Sparkles, CheckCircle } from 'lucide-react'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -42,12 +43,12 @@ export default function ResetPassword() {
     <div className="min-h-screen bg-bg noise flex items-center justify-center p-8">
       <div className="w-full max-w-md">
         <button onClick={() => navigate('/auth')} className="flex items-center gap-2 text-muted hover:text-text transition-colors text-sm mb-8 group">
-          <span className="iconify group-hover:-translate-x-0.5 transition-transform" data-icon="lucide:arrow-left" data-width="16"></span><span>Retour</span>
+          <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" /><span>Retour</span>
         </button>
 
         <div className="flex items-center gap-2.5 mb-8">
           <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
-            <span className="iconify text-accent" data-icon="lucide:sparkles" data-width="14"></span>
+            <Sparkles size={14} className="text-accent" />
           </div>
           <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
         </div>
@@ -57,7 +58,7 @@ export default function ResetPassword() {
 
         {success ? (
           <div className="glass-strong noise rounded-2xl p-6 text-center shadow-2xl">
-            <span className="iconify text-success mx-auto mb-3 block" data-icon="lucide:check-circle" data-width="40"></span>
+            <CheckCircle size={40} className="text-success mx-auto mb-3 block" />
             <h3 className="text-sm font-display font-medium mb-2">Mot de passe réinitialisé !</h3>
             <p className="text-xs text-muted mb-4 leading-relaxed">Votre mot de passe a été mis à jour. Vous pouvez maintenant vous connecter.</p>
             <button onClick={() => navigate('/auth')} className="px-4 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#8dd8fc] transition-all duration-200 shadow-[0_0_20px_-5px_rgba(125,211,252,0.3)]">

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
+import { Target, CheckCircle } from 'lucide-react'
 
 const pCfg = { high: { label: 'Urgent', border: 'border-accentSec', dot: 'bg-accentSec' }, medium: { label: 'Moyen', border: 'border-warning', dot: 'bg-warning' }, low: { label: 'Faible', border: 'border-success', dot: 'bg-success' } }
 
@@ -18,7 +19,7 @@ export default function TodayFocus() {
     <div className="glass rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex items-center justify-between p-4 border-b border-border/50">
         <div className="flex items-center gap-2">
-          <span className="iconify text-accent" data-icon="lucide:target" data-width="14"></span>
+          <Target size={14} className="text-accent" />
           <h3 className="text-sm font-display font-medium">Focus du jour</h3>
         </div>
         <span className="text-[10px] text-muted capitalize font-mono">{todayLabel}</span>
@@ -26,7 +27,7 @@ export default function TodayFocus() {
       <div className="p-4 space-y-4">
         {todayTasks.length === 0 && allOverdueTasks.length === 0 && (
           <div className="py-6 text-center">
-            <span className="iconify text-muted mx-auto mb-2 block" data-icon="lucide:check-circle" data-width="24"></span>
+            <CheckCircle size={24} className="text-muted mx-auto mb-2 block" />
             <p className="text-xs text-muted">Rien de prévu pour aujourd'hui</p>
           </div>
         )}
