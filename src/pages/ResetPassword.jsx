@@ -47,7 +47,7 @@ export default function ResetPassword() {
 
         <div className="flex items-center gap-2.5 mb-8">
           <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
-            <span className="iconify text-accent" data-icon="lucide:zap" data-width="14"></span>
+            <span className="iconify text-accent" data-icon="lucide:sparkles" data-width="14"></span>
           </div>
           <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
         </div>

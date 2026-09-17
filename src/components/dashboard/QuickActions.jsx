@@ -13,7 +13,7 @@ export default function QuickActions() {
   return (
     <div className="glass rounded-xl">
       <div className="flex items-center gap-2 p-4 border-b border-border/50">
-        <span className="iconify text-accent" data-icon="lucide:zap" data-width="14"></span>
+        <span className="iconify text-accent" data-icon="lucide:sparkles" data-width="14"></span>
         <h3 className="text-sm font-display font-medium">Actions rapides</h3>
       </div>
       <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-3">

@@ -28,7 +28,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
-              <span className="iconify text-accent" data-icon="lucide:zap" data-width="14" data-stroke-width="1.5"></span>
+              <span className="iconify text-accent" data-icon="lucide:sparkles" data-width="14" data-stroke-width="1.5"></span>
             </div>
             <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
           </div>
@@ -285,7 +285,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2.5">
             <div className="w-6 h-6 rounded-md bg-accent/10 flex items-center justify-center">
-              <span className="iconify text-muted" data-icon="lucide:zap" data-width="12"></span>
+              <span className="iconify text-muted" data-icon="lucide:sparkles" data-width="12"></span>
             </div>
             <span className="text-sm font-display font-medium text-muted">Personal Place</span>
           </div>

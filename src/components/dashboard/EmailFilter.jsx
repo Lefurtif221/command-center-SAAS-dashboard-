@@ -124,7 +124,7 @@ export default function EmailFilter() {
     <div className="glass rounded-xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border-b border-border/50">
         <div className="flex items-center gap-2">
-          <span className="iconify text-accent" data-icon="lucide:zap" data-width="14"></span>
+          <span className="iconify text-accent" data-icon="lucide:sparkles" data-width="14"></span>
           <h3 className="text-sm font-display font-medium">Filtre intelligent des emails</h3>
         </div>
         <div className="flex items-center gap-2 flex-wrap">

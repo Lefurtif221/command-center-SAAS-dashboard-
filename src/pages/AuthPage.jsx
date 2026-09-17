@@ -43,7 +43,7 @@ export default function AuthPage() {
           </button>
           <div className="flex items-center gap-2.5 mb-12">
             <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-              <span className="iconify text-accent" data-icon="lucide:zap" data-width="16"></span>
+              <span className="iconify text-accent" data-icon="lucide:sparkles" data-width="16"></span>
             </div>
             <span className="font-display font-semibold tracking-tight text-lg">Personal Place</span>
           </div>
@@ -76,7 +76,7 @@ export default function AuthPage() {
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-2.5 mb-8">
             <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
-              <span className="iconify text-accent" data-icon="lucide:zap" data-width="14"></span>
+              <span className="iconify text-accent" data-icon="lucide:sparkles" data-width="14"></span>
             </div>
             <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
           </div>
