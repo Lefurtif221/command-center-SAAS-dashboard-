@@ -208,21 +208,21 @@ export default function EmailFilter() {
 
       {emailModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setEmailModal(null)}>
-          <div className="glass-strong noise rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="glass-strong rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-border/50 flex-shrink-0">
               <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-display font-medium truncate">{emailModal.subject}</h4>
+                <h4 className="text-sm font-display font-medium">{emailModal.subject}</h4>
                 <p className="text-[10px] text-muted mt-0.5 font-mono">De : {emailModal.sender} &lt;{emailModal.senderEmail}&gt;</p>
               </div>
               <button onClick={() => setEmailModal(null)} className="text-muted hover:text-text ml-2 flex-shrink-0 transition-colors"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4" style={{ wordBreak: 'break-all' }}>
+            <div className="flex-1 overflow-y-auto p-5" style={{ wordBreak: 'break-word' }}>
               {emailBodyLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <span className="iconify text-accent animate-spin" data-icon="lucide:loader-2" data-width="24"></span>
                 </div>
               ) : (
-                <p className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed">{stripHtml(emailBody)}</p>
+                <div className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{stripHtml(emailBody)}</div>
               )}
             </div>
             <div className="flex flex-wrap gap-2 p-4 border-t border-border/50 flex-shrink-0">
