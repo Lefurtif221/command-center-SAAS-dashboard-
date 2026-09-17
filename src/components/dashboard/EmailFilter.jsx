@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { useDashboard } from '../../hooks/useDashboard'
+import { Sparkles, Inbox, X, Loader2 } from 'lucide-react'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -17,10 +19,19 @@ export default function EmailFilter() {
   const [emailModal, setEmailModal] = useState(null)
   const [emailBody, setEmailBody] = useState('')
   const [emailBodyLoading, setEmailBodyLoading] = useState(false)
+  const [pendingReadId, setPendingReadId] = useState(null)
   const pColors = { high: 'bg-accentSec', low: 'bg-success' }
   const pLabels = { high: 'Important', low: 'Non important' }
+  const modalRef = useRef(null)
 
   useEffect(() => { fetchRules() }, [])
+
+  useEffect(() => {
+    if (pendingReadId) {
+      markEmailRead(pendingReadId)
+      setPendingReadId(null)
+    }
+  }, [pendingReadId])
 
   const fetchRules = async () => {
     try {
@@ -75,12 +86,9 @@ export default function EmailFilter() {
     } catch (err) { console.error(err) }
   }
 
-  useEffect(() => {
-    if (emailModal && emailModal.unread) markEmailRead(emailModal.id)
-  }, [emailModal])
-
   const openEmailFull = async (email) => {
     setEmailModal(email); setEmailBody(''); setEmailBodyLoading(true)
+    if (email.unread) setPendingReadId(email.id)
     try {
       const token = localStorage.getItem('command_center_token')
       const res = await fetch(`${API_URL}/api/services/gmail/emails/${email.id}`, { headers: { Authorization: `Bearer ${token}` } })
@@ -98,11 +106,92 @@ export default function EmailFilter() {
     return text.replace(/\n{3,}/g, '\n\n').trim()
   }
 
+  const closeEmailModal = useCallback(() => setEmailModal(null), [])
+
+  const emailModalOverlay = emailModal ? createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={closeEmailModal}>
+      <div className="w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden rounded-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between p-4 flex-shrink-0" style={{ borderBottom: '1px solid var(--color-border)' }}>
+          <div className="flex-1 min-w-0">
+            <h4 className="text-sm font-medium">{emailModal.subject}</h4>
+            <p className="text-[10px] text-muted mt-0.5">De : {emailModal.sender} &lt;{emailModal.senderEmail}&gt;</p>
+          </div>
+          <button onClick={closeEmailModal} className="text-muted hover:text-text ml-2 flex-shrink-0 transition-colors"><X size={16} /></button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-5">
+          {emailBodyLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="text-accent animate-spin" size={24} />
+            </div>
+          ) : (
+            <div className="text-sm text-text whitespace-pre-wrap leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{stripHtml(emailBody)}</div>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2 p-4 flex-shrink-0" style={{ borderTop: '1px solid var(--color-border)' }}>
+          <button onClick={() => { setEmailModal(null); setReplyModal(emailModal); setReplyBody('') }}
+            className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity">Répondre</button>
+          <button onClick={() => markImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
+            className="px-3 py-2 text-xs text-accentSec rounded-lg hover:opacity-80 transition-opacity disabled:opacity-50" style={{ background: 'rgba(244,114,182,0.1)', border: '1px solid rgba(244,114,182,0.2)' }}>Important</button>
+          <button onClick={() => markNotImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
+            className="px-3 py-2 text-xs text-muted rounded-lg hover:text-text transition-colors disabled:opacity-50" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Non important</button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  ) : null
+
+  const replyModalOverlay = replyModal ? createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => { setReplyModal(null); setSendResult(null) }}>
+      <div className="rounded-2xl p-5 w-full max-w-lg mx-4 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="text-sm font-medium">Répondre</h4>
+          <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="text-muted hover:text-text transition-colors"><X size={16} /></button>
+        </div>
+        <div className="space-y-3">
+          <div className="text-xs"><span className="text-muted">À : </span><span className="text-text">{replyModal.senderEmail}</span></div>
+          <div className="text-xs"><span className="text-muted">Sujet : </span><span className="text-text">Re: {replyModal.subject.replace(/^Re:\s*/i, '')}</span></div>
+          {sendResult ? (
+            <div className={`p-3 rounded-lg text-sm ${sendResult.success ? 'bg-success/10 text-success' : 'bg-accentSec/10 text-accentSec'}`}>
+              {sendResult.success ? 'Email envoyé avec succès !' : sendResult.error}
+            </div>
+          ) : (
+            <textarea placeholder="Votre réponse..." value={replyBody} onChange={(e) => setReplyBody(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors h-32 resize-none" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} autoFocus />
+          )}
+          <div className="flex gap-2 justify-end">
+            {sendResult ? (
+              <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:opacity-90 transition-opacity">Fermer</button>
+            ) : (
+              <>
+                <button onClick={() => setReplyModal(null)} className="px-3 py-2 text-sm text-muted rounded-lg hover:text-text transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Annuler</button>
+                <button onClick={async () => {
+                  if (!replyBody.trim()) return; setSending(true)
+                  try {
+                    const token = localStorage.getItem('command_center_token')
+                    const res = await fetch(`${API_URL}/api/services/gmail/reply`, {
+                      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                      body: JSON.stringify({ to: replyModal.senderEmail, subject: replyModal.subject, body: replyBody.trim() }),
+                    })
+                    const data = await res.json()
+                    setSendResult(data.success ? { success: true } : { success: false, error: data.error })
+                  } catch (err) { setSendResult({ success: false, error: err.message }) } finally { setSending(false) }
+                }} disabled={sending || !replyBody.trim()} className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50">
+                  {sending ? 'Envoi...' : 'Envoyer'}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  ) : null
+
   return (
     <div style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', borderRadius: '12px' }}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
         <div className="flex items-center gap-2">
-          <span className="iconify text-accent" data-icon="lucide:sparkles" data-width="14"></span>
+          <Sparkles className="text-accent" size={14} />
           <h3 className="text-sm font-medium">Filtre intelligent des emails</h3>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -146,7 +235,7 @@ export default function EmailFilter() {
                     </span>
                   </span>
                   <button onClick={() => deleteRule(rule.id)} className="text-muted hover:text-accentSec transition-colors">
-                    <span className="iconify" data-icon="lucide:x" data-width="12"></span>
+                    <X size={12} />
                   </button>
                 </div>
               ))}
@@ -159,7 +248,7 @@ export default function EmailFilter() {
       <div>
         {filteredEmails.length === 0 ? (
           <div className="p-8 text-center">
-            <span className="iconify text-muted mx-auto mb-2 block" data-icon="lucide:inbox" data-width="32"></span>
+            <Inbox className="text-muted mx-auto mb-2" size={32} />
             <p className="text-sm text-muted">Aucun email ne correspond aux filtres</p>
           </div>
         ) : filteredEmails.map((email) => (
@@ -184,82 +273,8 @@ export default function EmailFilter() {
         ))}
       </div>
 
-      {emailModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => setEmailModal(null)}>
-          <div className="w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden rounded-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-4 flex-shrink-0" style={{ borderBottom: '1px solid var(--color-border)' }}>
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-medium">{emailModal.subject}</h4>
-                <p className="text-[10px] text-muted mt-0.5">De : {emailModal.sender} &lt;{emailModal.senderEmail}&gt;</p>
-              </div>
-              <button onClick={() => setEmailModal(null)} className="text-muted hover:text-text ml-2 flex-shrink-0 transition-colors"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-5">
-              {emailBodyLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <span className="iconify text-accent animate-spin" data-icon="lucide:loader-2" data-width="24"></span>
-                </div>
-              ) : (
-                <div className="text-sm text-text whitespace-pre-wrap leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{stripHtml(emailBody)}</div>
-              )}
-            </div>
-            <div className="flex flex-wrap gap-2 p-4 flex-shrink-0" style={{ borderTop: '1px solid var(--color-border)' }}>
-              <button onClick={() => { setEmailModal(null); setReplyModal(emailModal); setReplyBody('') }}
-                className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity">Répondre</button>
-              <button onClick={() => markImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
-                className="px-3 py-2 text-xs text-accentSec rounded-lg hover:opacity-80 transition-opacity disabled:opacity-50" style={{ background: 'rgba(244,114,182,0.1)', border: '1px solid rgba(244,114,182,0.2)' }}>Important</button>
-              <button onClick={() => markNotImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
-                className="px-3 py-2 text-xs text-muted rounded-lg hover:text-text transition-colors disabled:opacity-50" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Non important</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {replyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => { setReplyModal(null); setSendResult(null) }}>
-          <div className="rounded-2xl p-5 w-full max-w-lg mx-4 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-sm font-medium">Répondre</h4>
-              <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="text-muted hover:text-text transition-colors"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
-            </div>
-            <div className="space-y-3">
-              <div className="text-xs"><span className="text-muted">À : </span><span className="text-text">{replyModal.senderEmail}</span></div>
-              <div className="text-xs"><span className="text-muted">Sujet : </span><span className="text-text">Re: {replyModal.subject.replace(/^Re:\s*/i, '')}</span></div>
-              {sendResult ? (
-                <div className={`p-3 rounded-lg text-sm ${sendResult.success ? 'bg-success/10 text-success' : 'bg-accentSec/10 text-accentSec'}`}>
-                  {sendResult.success ? 'Email envoyé avec succès !' : sendResult.error}
-                </div>
-              ) : (
-                <textarea placeholder="Votre réponse..." value={replyBody} onChange={(e) => setReplyBody(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors h-32 resize-none" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} autoFocus />
-              )}
-              <div className="flex gap-2 justify-end">
-                {sendResult ? (
-                  <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:opacity-90 transition-opacity">Fermer</button>
-                ) : (
-                  <>
-                    <button onClick={() => setReplyModal(null)} className="px-3 py-2 text-sm text-muted rounded-lg hover:text-text transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Annuler</button>
-                    <button onClick={async () => {
-                      if (!replyBody.trim()) return; setSending(true)
-                      try {
-                        const token = localStorage.getItem('command_center_token')
-                        const res = await fetch(`${API_URL}/api/services/gmail/reply`, {
-                          method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                          body: JSON.stringify({ to: replyModal.senderEmail, subject: replyModal.subject, body: replyBody.trim() }),
-                        })
-                        const data = await res.json()
-                        setSendResult(data.success ? { success: true } : { success: false, error: data.error })
-                      } catch (err) { setSendResult({ success: false, error: err.message }) } finally { setSending(false) }
-                    }} disabled={sending || !replyBody.trim()} className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50">
-                      {sending ? 'Envoi...' : 'Envoyer'}
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {emailModalOverlay}
+      {replyModalOverlay}
     </div>
   )
 }
