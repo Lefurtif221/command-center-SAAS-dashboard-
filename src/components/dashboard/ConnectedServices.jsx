@@ -65,33 +65,33 @@ export default function ConnectedServices() {
   ]
 
   return (
-    <div className="bg-surface border border-border rounded-lg">
-      <div className="flex items-center justify-between p-4 border-b border-border">
-        <h3 className="text-sm font-medium">Services connectés</h3>
+    <div className="glass rounded-xl">
+      <div className="flex items-center justify-between p-4 border-b border-border/50">
+        <h3 className="text-sm font-display font-medium">Services connectés</h3>
       </div>
       <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
         {allServices.map((service) => {
           const isConnected = connectedList.includes(service.id) || service.external
           return (
-            <div key={service.id} className={`p-3 rounded-lg border transition-all ${isConnected ? 'bg-bg border-success/20' : 'bg-bg border-border hover:border-muted'}`}>
+            <div key={service.id} className={`p-3 rounded-xl border transition-all duration-200 ${isConnected ? 'glass border-success/20' : 'glass hover:border-muted/50'}`}>
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-xl">{service.icon}</span>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">{service.name}</p>
-                  <p className="text-[10px] text-muted">{service.desc}</p>
+                  <p className="text-sm font-display font-medium">{service.name}</p>
+                  <p className="text-[10px] text-muted font-mono">{service.desc}</p>
                 </div>
               </div>
               <div className="flex gap-2">
                 {service.external ? (
-                  <a href={service.url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 bg-accent/10 border border-accent/30 rounded text-xs text-accent hover:bg-accent/20 transition-colors text-center">
+                  <a href={service.url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 bg-accent/10 border border-accent/20 rounded-xl text-xs text-accent hover:bg-accent/15 transition-all duration-200 text-center">
                     Ouvrir
                   </a>
                 ) : isConnected ? (
-                  <button onClick={() => handleDisconnect(service.id)} className="flex-1 px-2 py-2.5 bg-bg border border-border rounded text-xs text-accentSec hover:bg-accentSec/5 transition-colors">
+                  <button onClick={() => handleDisconnect(service.id)} className="flex-1 px-2 py-2.5 glass rounded-xl text-xs text-accentSec hover:bg-accentSec/5 transition-all duration-200">
                     Déconnecter
                   </button>
                 ) : (
-                  <button onClick={() => handleConnect(service.id)} disabled={loading === service.id} className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 bg-accent/10 border border-accent/30 rounded text-xs text-accent hover:bg-accent/20 transition-colors disabled:opacity-50">
+                  <button onClick={() => handleConnect(service.id)} disabled={loading === service.id} className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 bg-accent/10 border border-accent/20 rounded-xl text-xs text-accent hover:bg-accent/15 transition-all duration-200 disabled:opacity-50">
                     {loading === service.id ? '...' : 'Connecter'}
                   </button>
                 )}

@@ -11,15 +11,15 @@ export default function QuickActions() {
   ]
 
   return (
-    <div className="bg-surface border border-border rounded-lg">
-      <div className="flex items-center gap-2 p-4 border-b border-border">
+    <div className="glass rounded-xl">
+      <div className="flex items-center gap-2 p-4 border-b border-border/50">
         <span className="iconify text-accent" data-icon="lucide:zap" data-width="14"></span>
-        <h3 className="text-sm font-medium">Actions rapides</h3>
+        <h3 className="text-sm font-display font-medium">Actions rapides</h3>
       </div>
       <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-3">
         {actions.map((a) => (
           <button key={a.id} onClick={() => setActiveSection(a.section)}
-            className="flex flex-col items-center gap-2 p-4 bg-bg border border-border rounded-lg hover:border-accent/30 hover:bg-accent/5 transition-all group">
+            className="flex flex-col items-center gap-2 p-4 glass rounded-xl hover:bg-accent/5 hover:border-accent/30 transition-all duration-200 group gradient-border">
             <span className="iconify text-muted group-hover:text-accent transition-colors" data-icon={a.icon} data-width="20"></span>
             <span className="text-xs font-medium">{a.label}</span>
           </button>

@@ -14,12 +14,12 @@ export default function StatsGrid() {
       {statCards.map((card) => {
         const value = stats[card.key]
         return (
-          <div key={card.id} className="bg-surface border border-border p-4 rounded-lg">
+          <div key={card.id} className="glass rounded-xl p-4 gradient-border group hover:bg-accent/5 transition-all duration-200">
             <div className="flex items-center gap-2 mb-2">
               <span className="iconify text-accent" data-icon={card.icon} data-width="14"></span>
-              <span className="text-xs text-muted">{card.label}</span>
+              <span className="text-xs text-muted font-mono">{card.label}</span>
             </div>
-            <div className="text-xl font-semibold tracking-tight">{value}</div>
+            <div className="text-xl font-display font-semibold tracking-tight">{value}</div>
           </div>
         )
       })}

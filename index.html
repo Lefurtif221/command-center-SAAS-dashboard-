@@ -6,7 +6,7 @@
   <title>Personal Place - Espace Personnel</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -31,13 +31,15 @@
             border: 'var(--color-border)',
             text: 'var(--color-text)',
             muted: 'var(--color-muted)',
-            accent: '#00d1ff',
-            accentSec: '#f87171',
-            success: '#34d399',
-            warning: '#fbbf24',
+            accent: '#7dd3fc',
+            accentSec: '#f472b6',
+            success: '#6ee7b7',
+            warning: '#fcd34d',
           },
           fontFamily: {
+            display: ['Outfit', 'system-ui', 'sans-serif'],
             sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
           }
         }
       }
@@ -45,28 +47,30 @@
   </script>
   <style>
     :root {
-      --color-bg: #f8fafc;
+      --color-bg: #f0f2f5;
       --color-surface: #ffffff;
-      --color-border: #e2e8f0;
-      --color-text: #0f172a;
-      --color-muted: #64748b;
-      --scrollbar-track: #f1f5f9;
-      --scrollbar-thumb: #cbd5e1;
-      --scrollbar-hover: #94a3b8;
-      --checkbox-bg: #f1f5f9;
-      --checkbox-border: #cbd5e1;
+      --color-border: #e2e5ea;
+      --color-text: #0f1218;
+      --color-muted: #6b7280;
+      --scrollbar-track: #f0f2f5;
+      --scrollbar-thumb: #d1d5db;
+      --scrollbar-hover: #9ca3af;
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.5);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
     }
     .dark {
-      --color-bg: #0b0f14;
-      --color-surface: #111820;
-      --color-border: #1e293b;
-      --color-text: #e6eef6;
-      --color-muted: #64748b;
-      --scrollbar-track: #0b0f14;
-      --scrollbar-thumb: #1e293b;
-      --scrollbar-hover: #334155;
-      --checkbox-bg: #0f1720;
-      --checkbox-border: #2d3748;
+      --color-bg: #0a0e14;
+      --color-surface: rgba(255, 255, 255, 0.03);
+      --color-border: rgba(255, 255, 255, 0.06);
+      --color-text: #e8edf4;
+      --color-muted: #5a6577;
+      --scrollbar-track: #0a0e14;
+      --scrollbar-thumb: #1e2530;
+      --scrollbar-hover: #2d3748;
+      --glass-bg: rgba(15, 20, 30, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
     body { background-color: var(--color-bg); color: var(--color-text); -webkit-font-smoothing: antialiased; }
     .tracking-tighter-custom { letter-spacing: -0.04em; }
@@ -74,18 +78,89 @@
     ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
     ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
-    .hero-glow { background: radial-gradient(circle at 50% 0%, rgba(0, 209, 255, 0.08) 0%, rgba(11, 15, 20, 0) 60%); }
-    .card-hover:hover { border-color: rgba(0, 209, 255, 0.3); transform: translateY(-1px); }
-    input[type="checkbox"] { accent-color: #00d1ff; background-color: var(--checkbox-bg); border-color: var(--checkbox-border); }
-    .gradient-text { background: linear-gradient(135deg, #00d1ff 0%, #34d399 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+    }
+    .glass-strong {
+      background: var(--glass-bg);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+    }
+
+    .hero-glow {
+      background: radial-gradient(ellipse at 50% 0%, rgba(125, 211, 252, 0.12) 0%, rgba(10, 14, 20, 0) 60%);
+    }
+    .dark .hero-glow {
+      background: radial-gradient(ellipse at 50% 0%, rgba(125, 211, 252, 0.08) 0%, rgba(10, 14, 20, 0) 60%);
+    }
+    .hero-glow-light {
+      background: radial-gradient(ellipse at 50% 0%, rgba(125, 211, 252, 0.15) 0%, rgba(240, 242, 245, 0) 60%);
+    }
+
+    .card-glow:hover {
+      box-shadow: 0 0 0 1px rgba(125, 211, 252, 0.2), 0 8px 40px -12px rgba(125, 211, 252, 0.15);
+    }
+    .dark .card-glow:hover {
+      box-shadow: 0 0 0 1px rgba(125, 211, 252, 0.15), 0 8px 40px -12px rgba(125, 211, 252, 0.1);
+    }
+
+    input[type="checkbox"] { accent-color: #7dd3fc; }
+    .gradient-text {
+      background: linear-gradient(135deg, #7dd3fc 0%, #a78bfa 50%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .gradient-border {
+      position: relative;
+    }
+    .gradient-border::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(125, 211, 252, 0.3), rgba(167, 139, 250, 0.3), rgba(244, 114, 182, 0.3));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .gradient-border:hover::before { opacity: 1; }
+
+    .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
     .animate-slide-in { animation: slideIn 0.4s ease-out forwards; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-glow-pulse { animation: glowPulse 3s ease-in-out infinite; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes glowPulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+    .noise {
+      position: relative;
+    }
+    .noise::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.015;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      border-radius: inherit;
+    }
 
     #google-signin-btn { width: 100%; }
-    #google-signin-btn iframe { width: 100% !important; height: 44px !important; border-radius: 0.5rem !important; }
-    div[role="button"] { border-radius: 0.5rem !important; }
+    #google-signin-btn iframe { width: 100% !important; height: 44px !important; border-radius: 0.75rem !important; }
+    div[role="button"] { border-radius: 0.75rem !important; }
   </style>
 </head>
 <body class="bg-bg text-text antialiased selection:bg-accent selection:text-bg flex flex-col min-h-screen">

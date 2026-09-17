@@ -129,63 +129,63 @@ export default function Concentration() {
   const circumference = 2 * Math.PI * 90
   const strokeDashoffset = circumference - (progress / 100) * circumference
 
-  const phaseColor = phase === 'work' ? '#00d1ff' : phase === 'break' ? '#22c55e' : '#a855f7'
+  const phaseColor = phase === 'work' ? '#7dd3fc' : phase === 'break' ? '#6ee7b7' : '#a78bfa'
   const todayTotal = todaySessions.reduce((acc, s) => acc + (s.duration || 0), 0)
 
   return (
     <div className="space-y-4 md:space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Left: Selector */}
-        <div className="bg-surface border border-border rounded-lg p-4 md:p-5">
+        <div className="glass rounded-xl p-4 md:p-5">
           <div className="flex items-center gap-2 mb-4">
             <span className="iconify text-accent" data-icon="lucide:list" data-width="16"></span>
-            <h3 className="text-sm font-medium">Sélectionner une cible</h3>
+            <h3 className="text-sm font-display font-medium">Sélectionner une cible</h3>
           </div>
 
           <div className="space-y-2 max-h-[400px] overflow-y-auto">
-            <p className="text-[10px] text-muted uppercase tracking-wider font-medium">Tâches</p>
+            <p className="text-[10px] text-muted uppercase tracking-wider font-medium font-mono">Tâches</p>
             {tasks.filter(t => !t.completed).length === 0 && (
               <p className="text-xs text-muted py-2">Aucune tâche en cours</p>
             )}
             {tasks.filter(t => !t.completed).map(task => (
               <button key={task.id} onClick={() => handleSelect('task', task.id, task.title)}
-                className={`w-full text-left p-3 rounded-lg border transition-colors ${selectedType === 'task' && selectedId === task.id ? 'border-accent bg-accent/5' : 'border-border hover:border-accent/30 bg-bg'}`}>
+                className={`w-full text-left p-3 glass rounded-xl transition-all duration-200 ${selectedType === 'task' && selectedId === task.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`}>
                 <div className="flex items-center gap-2">
                   <span className="iconify text-warning" data-icon="lucide:check-square" data-width="14"></span>
                   <span className="text-sm text-text truncate">{task.title}</span>
                 </div>
-                {task.due_date && <p className="text-[10px] text-muted mt-1 ml-5">Échéance : {task.due_date}</p>}
+                {task.due_date && <p className="text-[10px] text-muted mt-1 ml-5 font-mono">Échéance : {task.due_date}</p>}
               </button>
             ))}
 
-            <p className="text-[10px] text-muted uppercase tracking-wider font-medium mt-4">Événements calendrier</p>
+            <p className="text-[10px] text-muted uppercase tracking-wider font-medium mt-4 font-mono">Événements calendrier</p>
             {events.length === 0 && (
               <p className="text-xs text-muted py-2">Aucun événement</p>
             )}
             {events.map(evt => (
               <button key={evt.id} onClick={() => handleSelect('event', evt.id, evt.title)}
-                className={`w-full text-left p-3 rounded-lg border transition-colors ${selectedType === 'event' && selectedId === evt.id ? 'border-accent bg-accent/5' : 'border-border hover:border-accent/30 bg-bg'}`}>
+                className={`w-full text-left p-3 glass rounded-xl transition-all duration-200 ${selectedType === 'event' && selectedId === evt.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`}>
                 <div className="flex items-center gap-2">
                   <span className="iconify text-accent" data-icon="lucide:calendar" data-width="14"></span>
                   <span className="text-sm text-text truncate">{evt.title}</span>
                 </div>
-                <p className="text-[10px] text-muted mt-1 ml-5">{evt.date} à {String(evt.hour).padStart(2, '0')}:00</p>
+                <p className="text-[10px] text-muted mt-1 ml-5 font-mono">{evt.date} à {String(evt.hour).padStart(2, '0')}:00</p>
               </button>
             ))}
           </div>
         </div>
 
         {/* Center: Timer */}
-        <div className="bg-surface border border-border rounded-lg p-4 md:p-5 flex flex-col items-center justify-center">
+        <div className="glass rounded-xl p-4 md:p-5 flex flex-col items-center justify-center">
           <div className="flex items-center gap-2 mb-6 self-start">
             <span className="iconify text-accent" data-icon="lucide:timer" data-width="16"></span>
-            <h3 className="text-sm font-medium">Pomodoro</h3>
+            <h3 className="text-sm font-display font-medium">Pomodoro</h3>
           </div>
 
           {selectedTitle ? (
             <>
-              <p className="text-xs text-muted mb-1">Cible :</p>
-              <p className="text-sm font-medium text-accent mb-6 text-center">{selectedTitle}</p>
+              <p className="text-xs text-muted mb-1 font-mono">Cible :</p>
+              <p className="text-sm font-display font-medium text-accent mb-6 text-center">{selectedTitle}</p>
             </>
           ) : (
             <p className="text-xs text-muted mb-6">Choisissez une tâche ou un événement</p>
@@ -195,14 +195,14 @@ export default function Concentration() {
           <div className="relative w-48 h-48 mb-6">
             <svg className="w-full h-full -rotate-90" viewBox="0 0 200 200">
               <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" strokeWidth="6"
-                className="text-border opacity-30" />
+                className="text-border opacity-20" />
               <circle cx="100" cy="100" r="90" fill="none" stroke={phaseColor} strokeWidth="6"
                 strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset}
-                className="transition-all duration-1000" />
+                className="transition-all duration-1000 drop-shadow-[0_0_8px_rgba(125,211,252,0.4)]" />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-3xl font-mono font-bold text-text">{formatTime(timeLeft)}</span>
-              <span className="text-[10px] text-muted mt-1 uppercase tracking-wider">{PHASES[phase]}</span>
+              <span className="text-[10px] text-muted mt-1 uppercase tracking-wider font-mono">{PHASES[phase]}</span>
             </div>
           </div>
 
@@ -210,17 +210,17 @@ export default function Concentration() {
           <div className="flex items-center gap-3 mb-4">
             {!isRunning ? (
               <button onClick={handleStart} disabled={!selectedTitle}
-                className="flex items-center gap-2 px-5 py-2.5 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                className="flex items-center gap-2 px-5 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#8dd8fc] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_0_20px_-5px_rgba(125,211,252,0.4)]">
                 <span className="iconify" data-icon="lucide:play" data-width="16"></span> Démarrer
               </button>
             ) : (
               <button onClick={handlePause}
-                className="flex items-center gap-2 px-5 py-2.5 bg-warning text-bg text-sm font-medium rounded-lg hover:opacity-90 transition-colors">
+                className="flex items-center gap-2 px-5 py-2.5 bg-warning text-bg text-sm font-medium rounded-xl hover:opacity-90 transition-all duration-200">
                 <span className="iconify" data-icon="lucide:pause" data-width="16"></span> Pause
               </button>
             )}
             <button onClick={handleReset}
-              className="flex items-center gap-2 px-4 py-2.5 bg-bg border border-border text-sm text-muted rounded-lg hover:text-text transition-colors">
+              className="flex items-center gap-2 px-4 py-2.5 glass text-sm text-muted rounded-xl hover:text-text transition-all duration-200">
               <span className="iconify" data-icon="lucide:rotate-ccw" data-width="16"></span> Reset
             </button>
           </div>
@@ -228,38 +228,38 @@ export default function Concentration() {
           {/* Sessions */}
           <div className="flex items-center gap-2">
             {Array.from({ length: SESSIONS_BEFORE_LONG_BREAK }).map((_, i) => (
-              <div key={i} className={`w-3 h-3 rounded-full transition-colors ${i < (sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK) ? 'bg-accent' : 'bg-border'}`} />
+              <div key={i} className={`w-3 h-3 rounded-full transition-all duration-300 ${i < (sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK) ? 'bg-accent shadow-[0_0_8px_rgba(125,211,252,0.5)]' : 'bg-border/50'}`} />
             ))}
-            <span className="text-[10px] text-muted ml-2">{sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK}/{SESSIONS_BEFORE_LONG_BREAK}</span>
+            <span className="text-[10px] text-muted ml-2 font-mono">{sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK}/{SESSIONS_BEFORE_LONG_BREAK}</span>
           </div>
         </div>
 
         {/* Right: Stats */}
-        <div className="bg-surface border border-border rounded-lg p-4 md:p-5">
+        <div className="glass rounded-xl p-4 md:p-5">
           <div className="flex items-center gap-2 mb-4">
             <span className="iconify text-accent" data-icon="lucide:bar-chart-3" data-width="16"></span>
-            <h3 className="text-sm font-medium">Aujourd'hui</h3>
+            <h3 className="text-sm font-display font-medium">Aujourd'hui</h3>
           </div>
 
           <div className="space-y-4">
-            <div className="bg-bg rounded-lg p-4 border border-border">
-              <p className="text-[10px] text-muted uppercase tracking-wider">Sessions terminées</p>
-              <p className="text-2xl font-bold text-text mt-1">{todaySessions.length}</p>
+            <div className="glass rounded-xl p-4">
+              <p className="text-[10px] text-muted uppercase tracking-wider font-mono">Sessions terminées</p>
+              <p className="text-2xl font-display font-bold text-text mt-1">{todaySessions.length}</p>
             </div>
-            <div className="bg-bg rounded-lg p-4 border border-border">
-              <p className="text-[10px] text-muted uppercase tracking-wider">Temps total</p>
-              <p className="text-2xl font-bold text-text mt-1">{Math.floor(todayTotal / 60)}min</p>
+            <div className="glass rounded-xl p-4">
+              <p className="text-[10px] text-muted uppercase tracking-wider font-mono">Temps total</p>
+              <p className="text-2xl font-display font-bold text-text mt-1">{Math.floor(todayTotal / 60)}min</p>
             </div>
           </div>
 
           {todaySessions.length > 0 && (
             <div className="mt-4">
-              <p className="text-[10px] text-muted uppercase tracking-wider font-medium mb-2">Historique</p>
+              <p className="text-[10px] text-muted uppercase tracking-wider font-medium mb-2 font-mono">Historique</p>
               <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
                 {[...todaySessions].reverse().map((s, i) => (
-                  <div key={i} className="flex items-center justify-between p-2 bg-bg rounded border border-border">
+                  <div key={i} className="flex items-center justify-between p-2 glass rounded-lg">
                     <span className="text-xs text-text truncate">{s.title}</span>
-                    <span className="text-[10px] text-muted flex-shrink-0 ml-2">{Math.floor(s.duration / 60)}min</span>
+                    <span className="text-[10px] text-muted flex-shrink-0 ml-2 font-mono">{Math.floor(s.duration / 60)}min</span>
                   </div>
                 ))}
               </div>

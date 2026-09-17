@@ -121,49 +121,49 @@ export default function EmailFilter() {
   }
 
   return (
-    <div className="bg-surface border border-border rounded-lg">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border-b border-border">
+    <div className="glass rounded-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border-b border-border/50">
         <div className="flex items-center gap-2">
           <span className="iconify text-accent" data-icon="lucide:zap" data-width="14"></span>
-          <h3 className="text-sm font-medium">Filtre intelligent des emails</h3>
+          <h3 className="text-sm font-display font-medium">Filtre intelligent des emails</h3>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} className="px-2 py-2 bg-bg border border-border rounded text-xs text-text focus:outline-none focus:border-accent cursor-pointer">
+          <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} className="px-2 py-2 glass rounded-xl text-xs text-text focus:outline-none focus:border-accent/50 cursor-pointer transition-all duration-200">
             <option value="all">Tous</option>
             <option value="high">Importants</option>
             <option value="low">Non importants</option>
           </select>
-          <select value={filterTime} onChange={(e) => setFilterTime(e.target.value)} className="px-2 py-2 bg-bg border border-border rounded text-xs text-text focus:outline-none focus:border-accent cursor-pointer">
+          <select value={filterTime} onChange={(e) => setFilterTime(e.target.value)} className="px-2 py-2 glass rounded-xl text-xs text-text focus:outline-none focus:border-accent/50 cursor-pointer transition-all duration-200">
             <option value="today">Aujourd'hui</option>
             <option value="week">Cette semaine</option>
             <option value="all">Tout</option>
           </select>
-          <button onClick={() => setShowKeywordForm(!showKeywordForm)} className="px-2 py-2 bg-accent/10 border border-accent/30 text-accent rounded text-xs hover:bg-accent/20 transition-colors">
+          <button onClick={() => setShowKeywordForm(!showKeywordForm)} className="px-2 py-2 bg-accent/10 border border-accent/20 text-accent rounded-xl text-xs hover:bg-accent/15 transition-all duration-200">
             Règles
           </button>
         </div>
       </div>
 
       {showKeywordForm && (
-        <div className="p-4 border-b border-border bg-bg/50">
-          <p className="text-xs text-muted mb-2">Ajouter un mot-clé (ex: linkedin, promo, facture...)</p>
+        <div className="p-4 border-b border-border/50 glass">
+          <p className="text-xs text-muted mb-2 font-mono">Ajouter un mot-clé (ex: linkedin, promo, facture...)</p>
           <div className="flex gap-2 mb-3">
             <input type="text" placeholder="Mot-clé..." value={keywordInput} onChange={(e) => setKeywordInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addKeywordRule()}
-              className="flex-1 px-3 py-1.5 bg-bg border border-border rounded text-xs text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" />
-            <select value={keywordPriority} onChange={(e) => setKeywordPriority(e.target.value)} className="px-2 py-1.5 bg-bg border border-border rounded text-xs text-text focus:outline-none focus:border-accent cursor-pointer">
+              className="flex-1 px-3 py-2 glass rounded-xl text-xs text-text placeholder:text-muted focus:outline-none focus:border-accent/50 transition-all duration-200" />
+            <select value={keywordPriority} onChange={(e) => setKeywordPriority(e.target.value)} className="px-2 py-2 glass rounded-xl text-xs text-text focus:outline-none focus:border-accent/50 cursor-pointer transition-all duration-200">
               <option value="high">Important</option>
               <option value="low">Non important</option>
             </select>
-            <button onClick={addKeywordRule} disabled={!keywordInput.trim()} className="px-3 py-1.5 bg-accent text-bg text-xs font-medium rounded hover:bg-[#33c2ff] transition-colors disabled:opacity-50">+</button>
+            <button onClick={addKeywordRule} disabled={!keywordInput.trim()} className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded-xl hover:bg-[#8dd8fc] transition-all duration-200 disabled:opacity-50 shadow-[0_0_10px_-2px_rgba(125,211,252,0.3)]">+</button>
           </div>
           {rules.length > 0 && (
             <div className="space-y-1">
               {rules.map((rule) => (
-                <div key={rule.id} className="flex items-center justify-between px-2 py-1.5 bg-bg rounded text-xs">
+                <div key={rule.id} className="flex items-center justify-between px-2 py-1.5 glass rounded-lg text-xs">
                   <span className="text-text">
                     {rule.keyword ? <><span className="text-accent">Mot-clé:</span> {rule.keyword}</> : <><span className="text-accent">Expéditeur:</span> {rule.sender}</>}
-                    <span className={`ml-2 px-1.5 py-0.5 rounded text-[10px] ${rule.priority === 'high' ? 'bg-accentSec/10 text-accentSec' : 'bg-success/10 text-success'}`}>
+                    <span className={`ml-2 px-1.5 py-0.5 rounded text-[10px] font-mono ${rule.priority === 'high' ? 'bg-accentSec/10 text-accentSec' : 'bg-success/10 text-success'}`}>
                       {rule.priority === 'high' ? 'Important' : 'Non important'}
                     </span>
                   </span>
@@ -177,28 +177,28 @@ export default function EmailFilter() {
         </div>
       )}
 
-      {emailError && <div className="px-4 py-2 bg-accentSec/10 border-b border-accentSec/30 text-accentSec text-xs">{emailError}</div>}
-      <div className="divide-y divide-border">
+      {emailError && <div className="px-4 py-2 bg-accentSec/10 border-b border-accentSec/20 text-accentSec text-xs font-mono">{emailError}</div>}
+      <div className="divide-y divide-border/30">
         {filteredEmails.length === 0 ? (
           <div className="p-8 text-center">
             <span className="iconify text-muted mx-auto mb-2 block" data-icon="lucide:inbox" data-width="32"></span>
             <p className="text-sm text-muted">Aucun email ne correspond aux filtres</p>
           </div>
         ) : filteredEmails.map((email) => (
-          <div key={email.id} className={`p-4 transition-colors cursor-pointer ${email.unread ? 'bg-accent/5 hover:bg-accent/10' : 'hover:bg-bg/50'}`}
+          <div key={email.id} className={`p-4 transition-all duration-200 cursor-pointer ${email.unread ? 'bg-accent/5 hover:bg-accent/10' : 'hover:bg-white/[0.02]'}`}
             onClick={() => { openEmailFull(email); if (email.unread) markEmailRead(email.id) }}>
             <div className="flex items-start gap-3">
               <div className={`w-1.5 h-1.5 mt-2 rounded-full flex-shrink-0 ${pColors[email.priority] || 'bg-muted'}`} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  {email.unread && <span className="w-1.5 h-1.5 bg-accent rounded-full" />}
-                  <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${email.priority === 'high' ? 'bg-accentSec/10 text-accentSec' : 'bg-success/10 text-success'}`}>{pLabels[email.priority] || email.priority}</span>
+                  {email.unread && <span className="w-1.5 h-1.5 bg-accent rounded-full animate-glow-pulse" />}
+                  <span className={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded-lg ${email.priority === 'high' ? 'bg-accentSec/10 text-accentSec' : 'bg-success/10 text-success'}`}>{pLabels[email.priority] || email.priority}</span>
                 </div>
                 <p className={`text-sm ${email.unread ? 'font-medium text-text' : 'text-muted'}`}>{email.subject}</p>
                 <p className="text-xs text-muted/70 truncate mt-0.5">{email.preview}</p>
               </div>
               <div className="text-right flex-shrink-0 max-w-[100px]">
-                <p className="text-[10px] text-muted truncate">{email.time}</p>
+                <p className="text-[10px] text-muted truncate font-mono">{email.time}</p>
                 <p className="text-[10px] text-accent mt-0.5 truncate">{email.sender}</p>
               </div>
             </div>
@@ -207,14 +207,14 @@ export default function EmailFilter() {
       </div>
 
       {emailModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4" onClick={() => setEmailModal(null)}>
-          <div className="bg-surface border border-border rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-4 border-b border-border flex-shrink-0">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setEmailModal(null)}>
+          <div className="glass-strong noise rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-border/50 flex-shrink-0">
               <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-medium truncate">{emailModal.subject}</h4>
-                <p className="text-[10px] text-muted mt-0.5">De : {emailModal.sender} &lt;{emailModal.senderEmail}&gt;</p>
+                <h4 className="text-sm font-display font-medium truncate">{emailModal.subject}</h4>
+                <p className="text-[10px] text-muted mt-0.5 font-mono">De : {emailModal.sender} &lt;{emailModal.senderEmail}&gt;</p>
               </div>
-              <button onClick={() => setEmailModal(null)} className="text-muted hover:text-text ml-2 flex-shrink-0"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
+              <button onClick={() => setEmailModal(null)} className="text-muted hover:text-text ml-2 flex-shrink-0 transition-colors"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
             </div>
             <div className="flex-1 overflow-y-auto p-4" style={{ wordBreak: 'break-all' }}>
               {emailBodyLoading ? (
@@ -225,46 +225,46 @@ export default function EmailFilter() {
                 <p className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed">{stripHtml(emailBody)}</p>
               )}
             </div>
-            <div className="flex flex-wrap gap-2 p-4 border-t border-border flex-shrink-0">
+            <div className="flex flex-wrap gap-2 p-4 border-t border-border/50 flex-shrink-0">
               <button onClick={() => { setEmailModal(null); setReplyModal(emailModal); setReplyBody('') }}
-                className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded hover:bg-[#33c2ff] transition-colors">Répondre</button>
+                className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded-xl hover:bg-[#8dd8fc] transition-all duration-200 shadow-[0_0_15px_-3px_rgba(125,211,252,0.3)]">Répondre</button>
               <button onClick={() => markImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
-                className="px-3 py-2 bg-accentSec/10 border border-accentSec/30 text-xs text-accentSec rounded hover:bg-accentSec/20 transition-colors disabled:opacity-50">Important</button>
+                className="px-3 py-2 bg-accentSec/10 border border-accentSec/20 text-xs text-accentSec rounded-xl hover:bg-accentSec/15 transition-all duration-200 disabled:opacity-50">Important</button>
               <button onClick={() => markNotImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
-                className="px-3 py-2 bg-bg border border-border text-xs text-muted rounded hover:text-text transition-colors disabled:opacity-50">Non important</button>
+                className="px-3 py-2 glass text-xs text-muted rounded-xl hover:text-text transition-all duration-200 disabled:opacity-50">Non important</button>
             </div>
           </div>
         </div>
       )}
 
       {replyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => { setReplyModal(null); setSendResult(null) }}>
-          <div className="bg-surface border border-border rounded-lg p-5 w-full max-w-lg mx-4" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => { setReplyModal(null); setSendResult(null) }}>
+          <div className="glass-strong noise rounded-2xl p-5 w-full max-w-lg mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-sm font-medium">Répondre</h4>
-              <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="text-muted hover:text-text"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
+              <h4 className="text-sm font-display font-medium">Répondre</h4>
+              <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="text-muted hover:text-text transition-colors"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
             </div>
             <div className="space-y-3">
               <div className="text-xs">
-                <span className="text-muted">À : </span><span className="text-text">{replyModal.senderEmail}</span>
+                <span className="text-muted font-mono">À : </span><span className="text-text">{replyModal.senderEmail}</span>
               </div>
               <div className="text-xs">
-                <span className="text-muted">Sujet : </span><span className="text-text">Re: {replyModal.subject.replace(/^Re:\s*/i, '')}</span>
+                <span className="text-muted font-mono">Sujet : </span><span className="text-text">Re: {replyModal.subject.replace(/^Re:\s*/i, '')}</span>
               </div>
               {sendResult ? (
-                <div className={`p-3 rounded-lg text-sm ${sendResult.success ? 'bg-success/10 text-success' : 'bg-accentSec/10 text-accentSec'}`}>
+                <div className={`p-3 rounded-xl text-sm ${sendResult.success ? 'bg-success/10 text-success' : 'bg-accentSec/10 text-accentSec'}`}>
                   {sendResult.success ? 'Email envoyé avec succès !' : sendResult.error}
                 </div>
               ) : (
                 <textarea placeholder="Votre réponse..." value={replyBody} onChange={(e) => setReplyBody(e.target.value)}
-                  className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors h-32 resize-none" autoFocus />
+                  className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 transition-all duration-200 h-32 resize-none" autoFocus />
               )}
               <div className="flex gap-2 justify-end">
                 {sendResult ? (
-                  <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors">Fermer</button>
+                  <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="px-3 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#8dd8fc] transition-all duration-200">Fermer</button>
                 ) : (
                   <>
-                    <button onClick={() => setReplyModal(null)} className="px-3 py-2 bg-bg border border-border text-sm text-muted rounded-lg hover:text-text transition-colors">Annuler</button>
+                    <button onClick={() => setReplyModal(null)} className="px-3 py-2.5 glass text-sm text-muted rounded-xl hover:text-text transition-all duration-200">Annuler</button>
                     <button onClick={async () => {
                       if (!replyBody.trim()) return
                       setSending(true)
@@ -279,7 +279,7 @@ export default function EmailFilter() {
                         setSendResult(data.success ? { success: true } : { success: false, error: data.error })
                       } catch (err) { setSendResult({ success: false, error: err.message }) }
                       finally { setSending(false) }
-                    }} disabled={sending || !replyBody.trim()} className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors disabled:opacity-50">
+                    }} disabled={sending || !replyBody.trim()} className="px-3 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#8dd8fc] transition-all duration-200 disabled:opacity-50 shadow-[0_0_15px_-3px_rgba(125,211,252,0.3)]">
                       {sending ? 'Envoi...' : 'Envoyer'}
                     </button>
                   </>
