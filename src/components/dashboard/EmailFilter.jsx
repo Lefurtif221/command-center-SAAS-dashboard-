@@ -207,22 +207,22 @@ export default function EmailFilter() {
       </div>
 
       {emailModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setEmailModal(null)}>
-          <div className="glass-strong rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-4 border-b border-border/50 flex-shrink-0">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4" onClick={() => setEmailModal(null)}>
+          <div className="w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden rounded-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 flex-shrink-0" style={{ borderBottom: '1px solid var(--color-border)' }}>
               <div className="flex-1 min-w-0">
                 <h4 className="text-sm font-display font-medium">{emailModal.subject}</h4>
                 <p className="text-[10px] text-muted mt-0.5 font-mono">De : {emailModal.sender} &lt;{emailModal.senderEmail}&gt;</p>
               </div>
               <button onClick={() => setEmailModal(null)} className="text-muted hover:text-text ml-2 flex-shrink-0 transition-colors"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
             </div>
-            <div className="flex-1 overflow-y-auto p-5" style={{ wordBreak: 'break-word' }}>
+            <div className="flex-1 overflow-y-auto p-5">
               {emailBodyLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <span className="iconify text-accent animate-spin" data-icon="lucide:loader-2" data-width="24"></span>
                 </div>
               ) : (
-                <div className="text-sm text-text whitespace-pre-wrap font-sans leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{stripHtml(emailBody)}</div>
+                <div className="text-sm text-text whitespace-pre-wrap leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{stripHtml(emailBody)}</div>
               )}
             </div>
             <div className="flex flex-wrap gap-2 p-4 border-t border-border/50 flex-shrink-0">
@@ -238,8 +238,8 @@ export default function EmailFilter() {
       )}
 
       {replyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => { setReplyModal(null); setSendResult(null) }}>
-          <div className="glass-strong noise rounded-2xl p-5 w-full max-w-lg mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => { setReplyModal(null); setSendResult(null) }}>
+          <div className="rounded-2xl p-5 w-full max-w-lg mx-4 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-sm font-display font-medium">Répondre</h4>
               <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="text-muted hover:text-text transition-colors"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>

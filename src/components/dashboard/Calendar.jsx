@@ -150,8 +150,8 @@ export default function Calendar() {
       </div>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setModalOpen(false)}>
-          <div className="glass-strong noise rounded-2xl p-5 w-full max-w-sm mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setModalOpen(false)}>
+          <div className="rounded-2xl p-5 w-full max-w-sm mx-4 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-sm font-display font-medium">Nouvel événement</h4>
               <button onClick={() => setModalOpen(false)} className="text-muted hover:text-text transition-colors"><span className="iconify" data-icon="lucide:x" data-width="16"></span></button>
