@@ -14,7 +14,7 @@ export default function StatsGrid() {
       {statCards.map((card) => {
         const value = stats[card.key]
         return (
-          <div key={card.id} className="glass rounded-xl p-4 gradient-border group hover:bg-accent/5 transition-all duration-200">
+          <div key={card.id} className="rounded-xl p-4 gradient-border group hover:bg-accent/5 transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
             <div className="flex items-center gap-2 mb-2">
               <span className="iconify text-accent" data-icon={card.icon} data-width="14"></span>
               <span className="text-xs text-muted font-mono">{card.label}</span>

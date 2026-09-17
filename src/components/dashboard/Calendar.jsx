@@ -85,7 +85,7 @@ export default function Calendar() {
   const weekLabel = `${MONTHS[weekDates[0].getMonth()]} ${weekDates[0].getFullYear()}`
 
   return (
-    <div className="glass rounded-xl overflow-hidden">
+    <div className="rounded-xl overflow-hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex items-center justify-between p-4 border-b border-border/50">
         <div className="flex items-center gap-3">
           <span className="iconify text-accent" data-icon="lucide:calendar" data-width="16"></span>
@@ -159,7 +159,7 @@ export default function Calendar() {
             <p className="text-xs text-muted mb-4 font-mono">{selectedSlot && `${new Date(selectedSlot.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} à ${String(selectedSlot.hour).padStart(2, '0')}:00`}</p>
             <div className="space-y-3">
               <input type="text" placeholder="Titre de l'événement" value={newEvent.title} onChange={e => setNewEvent({ ...newEvent, title: e.target.value })}
-                className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 transition-all duration-200" autoFocus
+                className="w-full px-3 py-2.5 rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} autoFocus
                 onKeyDown={e => e.key === 'Enter' && handleAddEvent()} />
               <div>
                 <label className="block text-xs text-muted mb-1.5 font-mono">Couleur</label>
@@ -172,7 +172,7 @@ export default function Calendar() {
               </div>
               <div className="flex gap-2 pt-2">
                 <button onClick={handleAddEvent} disabled={!newEvent.title.trim()} className="flex-1 px-3 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#8dd8fc] transition-all duration-200 disabled:opacity-50 shadow-[0_0_15px_-3px_rgba(125,211,252,0.3)]">Ajouter</button>
-                <button onClick={() => setModalOpen(false)} className="px-3 py-2.5 glass text-sm text-muted rounded-xl hover:text-text transition-all duration-200">Annuler</button>
+                <button onClick={() => setModalOpen(false)} className="px-3 py-2.5 text-sm text-muted rounded-xl hover:text-text transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>Annuler</button>
               </div>
             </div>
           </div>

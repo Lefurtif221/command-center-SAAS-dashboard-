@@ -64,7 +64,7 @@ export default function Tasks() {
   }
 
   const TaskItem = ({ task }) => (
-    <div className={`flex items-center gap-3 p-3 glass rounded-xl border-l-2 hover:bg-accent/5 transition-all duration-200 group ${priorityColors[task.priority]}`}>
+    <div className={`flex items-center gap-3 p-3 rounded-xl border-l-2 hover:bg-accent/5 transition-all duration-200 group ${priorityColors[task.priority]}`} style={{ background: 'var(--color-surface-solid)' }}>
       <button onClick={() => toggleTask(task.id, task.completed)} className={`w-6 h-6 rounded-lg border flex-shrink-0 flex items-center justify-center transition-all duration-200 ${task.completed ? 'bg-accent border-accent' : 'border-border/50 hover:border-accent/50 hover:bg-accent/5'}`}>
         {task.completed && <span className="text-bg text-[10px]">✓</span>}
       </button>
@@ -80,7 +80,7 @@ export default function Tasks() {
   )
 
   return (
-    <div className="glass rounded-xl">
+    <div className="rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex items-center gap-2 p-4 border-b border-border/50">
         <span className="iconify text-accent" data-icon="lucide:check-square" data-width="14"></span>
         <h3 className="text-sm font-display font-medium">Tâches</h3>
@@ -91,12 +91,12 @@ export default function Tasks() {
         <div className="flex flex-col sm:flex-row gap-2">
           <input type="text" placeholder="Nouvelle tâche..." value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-            className="flex-1 px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 transition-all duration-200" />
+            className="flex-1 px-3 py-2.5 rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} />
           <div className="flex gap-2">
             <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)}
-              className="flex-1 sm:flex-none px-2 py-2.5 glass rounded-xl text-xs text-text focus:outline-none focus:border-accent/50 transition-all duration-200 font-mono" />
+              className="flex-1 sm:flex-none px-2 py-2.5 rounded-xl text-xs text-text focus:outline-none focus:border-accent/50 transition-all duration-200 font-mono" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} />
             <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)}
-              className="px-2 py-2.5 glass rounded-xl text-xs text-text focus:outline-none focus:border-accent/50 cursor-pointer transition-all duration-200">
+              className="px-2 py-2.5 rounded-xl text-xs text-text focus:outline-none focus:border-accent/50 cursor-pointer transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
               <option value="high">Urgent</option>
               <option value="medium">Moyen</option>
               <option value="low">Faible</option>

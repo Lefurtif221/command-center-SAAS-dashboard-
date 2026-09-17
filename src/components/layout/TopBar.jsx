@@ -86,7 +86,7 @@ export default function TopBar() {
           title={isDark ? 'Mode clair' : 'Mode sombre'}>
           <span className="iconify" data-icon={isDark ? 'lucide:sun' : 'lucide:moon'} data-width="16"></span>
         </button>
-        <button className="hidden md:flex items-center gap-2 px-3 py-2 glass rounded-xl text-accent text-xs font-medium hover:bg-accent/10 transition-all duration-200">
+        <button className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl text-accent text-xs font-medium transition-all duration-200" style={{ background: 'rgba(125,211,252,0.1)', border: '1px solid rgba(125,211,252,0.2)' }}>
           <span className="iconify" data-icon="lucide:sparkles" data-width="12"></span>Filtre intelligent
         </button>
         <button className="relative p-2.5 rounded-xl text-muted hover:text-text hover:bg-accent/10 transition-all duration-200">
