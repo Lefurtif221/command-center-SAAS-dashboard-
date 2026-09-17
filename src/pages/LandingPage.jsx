@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { Sparkles, ArrowRight, ShieldCheck, LayoutDashboard, Play, Mail, MessageSquare, Calendar, CheckSquare, TrendingUp, LayoutGrid, Settings, Check, Fingerprint, FileText, CheckCircle } from 'lucide-react'
+import { Sparkles, ArrowRight, ShieldCheck, LayoutDashboard, Play, Mail, MessageSquare, Calendar, CheckSquare, TrendingUp, LayoutGrid, Settings, Check, FileText, CheckCircle } from 'lucide-react'
 
 const features = [
   { icon: Mail, title: 'Emails intelligents', desc: 'Filtre automatique des emails importants. Zéro distraction, tout le signal.' },
@@ -264,20 +264,6 @@ export default function LandingPage() {
               <button onClick={go} className={`w-full py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${plan.featured ? 'bg-accent text-bg hover:bg-[#8dd8fc] shadow-[0_0_20px_-5px_rgba(125,211,252,0.3)]' : 'glass hover:bg-accent/5 hover:border-accent/30'}`}>{plan.cta}</button>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Privacy */}
-      <section className="py-20 px-6">
-        <div className="max-w-3xl mx-auto glass-strong noise rounded-2xl p-8 text-center shadow-2xl gradient-border">
-          <div className="inline-block p-3 rounded-xl bg-accent/10 mb-4">
-             <Fingerprint size={24} className="text-accent" />
-          </div>
-          <h2 className="text-2xl font-display font-semibold tracking-tight mb-3">Privé par défaut</h2>
-          <p className="text-muted mb-8 leading-relaxed">Vos données vous appartiennent. Stockage local ou chiffré. Pas d'abonnement, pas de vente de données.</p>
-          <a href="#" className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:text-accent/80 transition-colors group">
-             En savoir plus sur la sécurité <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-          </a>
         </div>
       </section>
 
