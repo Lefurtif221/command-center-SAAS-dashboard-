@@ -75,6 +75,10 @@ export default function EmailFilter() {
     } catch (err) { console.error(err) }
   }
 
+  useEffect(() => {
+    if (emailModal && emailModal.unread) markEmailRead(emailModal.id)
+  }, [emailModal])
+
   const openEmailFull = async (email) => {
     setEmailModal(email); setEmailBody(''); setEmailBodyLoading(true)
     try {
@@ -160,7 +164,7 @@ export default function EmailFilter() {
           </div>
         ) : filteredEmails.map((email) => (
           <div key={email.id} className="p-4 cursor-pointer transition-colors" style={{ borderBottom: '1px solid var(--color-border)', background: email.unread ? 'rgba(125,211,252,0.05)' : 'transparent' }}
-            onClick={() => { openEmailFull(email); if (email.unread) markEmailRead(email.id) }}>
+            onClick={() => openEmailFull(email)}>
             <div className="flex items-start gap-3">
               <div className={`w-1.5 h-1.5 mt-2 rounded-full flex-shrink-0 ${pColors[email.priority] || 'bg-muted'}`} />
               <div className="flex-1 min-w-0">
