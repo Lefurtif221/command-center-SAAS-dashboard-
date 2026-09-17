@@ -136,7 +136,7 @@ export default function Concentration() {
     <div className="space-y-4 md:space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Left: Selector */}
-        <div className="rounded-xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+        <div className="glass rounded-xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center gap-2 mb-4">
             <span className="iconify text-accent" data-icon="lucide:list" data-width="16"></span>
             <h3 className="text-sm font-display font-medium">Sélectionner une cible</h3>
@@ -149,7 +149,7 @@ export default function Concentration() {
             )}
             {tasks.filter(t => !t.completed).map(task => (
               <button key={task.id} onClick={() => handleSelect('task', task.id, task.title)}
-                className={`w-full text-left p-3 rounded-xl transition-all duration-200 ${selectedType === 'task' && selectedId === task.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`} style={{ background: 'var(--color-surface-solid)' }}>
+                className={`glass w-full text-left p-3 rounded-xl transition-all duration-200 ${selectedType === 'task' && selectedId === task.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`} style={{ background: 'var(--color-surface-solid)' }}>
                 <div className="flex items-center gap-2">
                   <span className="iconify text-warning" data-icon="lucide:check-square" data-width="14"></span>
                   <span className="text-sm text-text truncate">{task.title}</span>
@@ -164,7 +164,7 @@ export default function Concentration() {
             )}
             {events.map(evt => (
               <button key={evt.id} onClick={() => handleSelect('event', evt.id, evt.title)}
-                className={`w-full text-left p-3 rounded-xl transition-all duration-200 ${selectedType === 'event' && selectedId === evt.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`} style={{ background: 'var(--color-surface-solid)' }}>
+                className={`glass w-full text-left p-3 rounded-xl transition-all duration-200 ${selectedType === 'event' && selectedId === evt.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`} style={{ background: 'var(--color-surface-solid)' }}>
                 <div className="flex items-center gap-2">
                   <span className="iconify text-accent" data-icon="lucide:calendar" data-width="14"></span>
                   <span className="text-sm text-text truncate">{evt.title}</span>
@@ -176,7 +176,7 @@ export default function Concentration() {
         </div>
 
         {/* Center: Timer */}
-        <div className="rounded-xl p-4 md:p-5 flex flex-col items-center justify-center" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+        <div className="glass rounded-xl p-4 md:p-5 flex flex-col items-center justify-center" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center gap-2 mb-6 self-start">
             <span className="iconify text-accent" data-icon="lucide:timer" data-width="16"></span>
             <h3 className="text-sm font-display font-medium">Pomodoro</h3>
@@ -220,7 +220,7 @@ export default function Concentration() {
               </button>
             )}
             <button onClick={handleReset}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm text-muted rounded-xl hover:text-text transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+              className="glass flex items-center gap-2 px-4 py-2.5 text-sm text-muted rounded-xl hover:text-text transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
               <span className="iconify" data-icon="lucide:rotate-ccw" data-width="16"></span> Reset
             </button>
           </div>
@@ -235,18 +235,18 @@ export default function Concentration() {
         </div>
 
         {/* Right: Stats */}
-        <div className="rounded-xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+        <div className="glass rounded-xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center gap-2 mb-4">
             <span className="iconify text-accent" data-icon="lucide:bar-chart-3" data-width="16"></span>
             <h3 className="text-sm font-display font-medium">Aujourd'hui</h3>
           </div>
 
           <div className="space-y-4">
-            <div className="rounded-xl p-4" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+            <div className="glass rounded-xl p-4" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
               <p className="text-[10px] text-muted uppercase tracking-wider font-mono">Sessions terminées</p>
               <p className="text-2xl font-display font-bold text-text mt-1">{todaySessions.length}</p>
             </div>
-            <div className="rounded-xl p-4" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+            <div className="glass rounded-xl p-4" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
               <p className="text-[10px] text-muted uppercase tracking-wider font-mono">Temps total</p>
               <p className="text-2xl font-display font-bold text-text mt-1">{Math.floor(todayTotal / 60)}min</p>
             </div>
@@ -257,7 +257,7 @@ export default function Concentration() {
               <p className="text-[10px] text-muted uppercase tracking-wider font-medium mb-2 font-mono">Historique</p>
               <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
                 {[...todaySessions].reverse().map((s, i) => (
-                  <div key={i} className="flex items-center justify-between p-2 rounded-lg" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+                  <div key={i} className="glass flex items-center justify-between p-2 rounded-lg" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
                     <span className="text-xs text-text truncate">{s.title}</span>
                     <span className="text-[10px] text-muted flex-shrink-0 ml-2 font-mono">{Math.floor(s.duration / 60)}min</span>
                   </div>

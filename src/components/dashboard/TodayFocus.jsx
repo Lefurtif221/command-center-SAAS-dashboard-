@@ -15,7 +15,7 @@ export default function TodayFocus() {
   const hasMoreOverdue = allOverdueTasks.length > 3
 
   return (
-    <div className="rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+    <div className="glass rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex items-center justify-between p-4 border-b border-border/50">
         <div className="flex items-center gap-2">
           <span className="iconify text-accent" data-icon="lucide:target" data-width="14"></span>
@@ -37,7 +37,7 @@ export default function TodayFocus() {
             {overdueTasks.map((task) => {
               const c = pCfg[task.priority] || pCfg.medium
               return (
-                <div key={task.id} className={`flex items-center gap-3 p-3 rounded-xl border-l-2 ${c.border} mb-2`} style={{ background: 'var(--color-surface-solid)' }}>
+                <div key={task.id} className={`glass flex items-center gap-3 p-3 rounded-xl border-l-2 ${c.border} mb-2`} style={{ background: 'var(--color-surface-solid)' }}>
                   <button onClick={() => toggleTask(task.id, task.completed)} className="w-6 h-6 rounded-lg border border-border/50 flex-shrink-0 hover:border-accent/50 hover:bg-accent/5 transition-all duration-200 flex items-center justify-center" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-text">{task.title}</p>
@@ -61,7 +61,7 @@ export default function TodayFocus() {
             {todayTasks.map((task) => {
               const c = pCfg[task.priority] || pCfg.medium
               return (
-                <div key={task.id} className={`flex items-center gap-3 p-3 rounded-xl border-l-2 ${c.border} mb-2`} style={{ background: 'var(--color-surface-solid)' }}>
+                <div key={task.id} className={`glass flex items-center gap-3 p-3 rounded-xl border-l-2 ${c.border} mb-2`} style={{ background: 'var(--color-surface-solid)' }}>
                   <button onClick={() => toggleTask(task.id, task.completed)} className="w-6 h-6 rounded-lg border border-border/50 flex-shrink-0 hover:border-accent/50 hover:bg-accent/5 transition-all duration-200 flex items-center justify-center" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-text">{task.title}</p>

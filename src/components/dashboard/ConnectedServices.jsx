@@ -65,7 +65,7 @@ export default function ConnectedServices() {
   ]
 
   return (
-    <div className="rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+    <div className="glass rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex items-center justify-between p-4 border-b border-border/50">
         <h3 className="text-sm font-display font-medium">Services connectés</h3>
       </div>
@@ -73,7 +73,7 @@ export default function ConnectedServices() {
         {allServices.map((service) => {
           const isConnected = connectedList.includes(service.id) || service.external
           return (
-            <div key={service.id} className={`p-3 rounded-xl border transition-all duration-200 ${isConnected ? 'border-success/20' : 'hover:border-muted/50'}`} style={{ background: 'var(--color-surface-solid)' }}>
+            <div key={service.id} className={`glass p-3 rounded-xl border transition-all duration-200 ${isConnected ? 'border-success/20' : 'hover:border-muted/50'}`} style={{ background: 'var(--color-surface-solid)' }}>
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-xl">{service.icon}</span>
                 <div className="flex-1">
@@ -87,7 +87,7 @@ export default function ConnectedServices() {
                     Ouvrir
                   </a>
                 ) : isConnected ? (
-                  <button onClick={() => handleDisconnect(service.id)} className="flex-1 px-2 py-2.5 rounded-xl text-xs text-accentSec hover:bg-accentSec/5 transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+                  <button onClick={() => handleDisconnect(service.id)} className="glass flex-1 px-2 py-2.5 rounded-xl text-xs text-accentSec hover:bg-accentSec/5 transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
                     Déconnecter
                   </button>
                 ) : (
