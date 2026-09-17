@@ -98,18 +98,18 @@ export default function Sidebar({ onToggle }) {
 
   return (
     <>
-      <button onClick={() => setMobileOpen(true)} className="fixed top-3 left-3 z-50 p-2.5 rounded-xl glass text-muted hover:text-text transition-all duration-200 md:hidden">
+      <button onClick={() => setMobileOpen(true)} className="fixed top-3 left-3 z-50 p-2.5 rounded-xl text-muted hover:text-text transition-all duration-200 md:hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
         <span className="iconify" data-icon="lucide:menu" data-width="20"></span>
       </button>
 
-      <aside className={`hidden md:flex fixed left-0 top-0 bottom-0 z-40 flex-col glass-strong noise transition-all duration-300 ${collapsed ? 'w-16' : 'w-56'}`}>
+      <aside className={`hidden md:flex fixed left-0 top-0 bottom-0 z-40 flex-col transition-all duration-300 ${collapsed ? 'w-16' : 'w-56'}`} style={{ background: 'var(--color-surface-solid)', borderRight: '1px solid var(--color-border)' }}>
         {sidebarContent}
       </aside>
 
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-64 flex flex-col glass-strong noise animate-slide-in">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
+          <aside className="absolute left-0 top-0 bottom-0 w-64 flex flex-col animate-slide-in" style={{ background: 'var(--color-surface-solid)', borderRight: '1px solid var(--color-border)' }}>
             {sidebarContent}
           </aside>
         </div>

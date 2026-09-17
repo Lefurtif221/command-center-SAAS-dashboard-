@@ -48,9 +48,9 @@ export default function TopBar() {
   }
 
   return (
-    <header className="sticky top-0 z-30 h-14 flex items-center justify-between px-4 md:px-6 glass-strong border-b border-border/50">
+    <header className="sticky top-0 z-30 h-14 flex items-center justify-between px-4 md:px-6 border-b" style={{ background: 'var(--color-surface-solid)', borderColor: 'var(--color-border)' }}>
       <div className="relative flex-1 md:w-72 ml-10 md:ml-0">
-        <div className="flex items-center gap-2 px-3 py-2 glass rounded-xl">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
           <span className="iconify text-muted" data-icon="lucide:search" data-width="14"></span>
           <input ref={inputRef} type="text" placeholder="Rechercher..." value={query}
             onChange={(e) => { setQuery(e.target.value); setOpen(true) }}
@@ -60,7 +60,7 @@ export default function TopBar() {
           <kbd className="hidden md:inline text-[10px] text-muted font-mono bg-bg/50 px-1.5 py-0.5 rounded-md border border-border/50">⌘K</kbd>
         </div>
         {open && results.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-2 glass-strong rounded-xl shadow-2xl overflow-hidden z-50">
+          <div className="absolute top-full left-0 right-0 mt-2 rounded-xl shadow-2xl overflow-hidden z-50" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
             {results.map((item, i) => (
               <button key={i} onClick={() => handleSelect(item)}
                 className="w-full flex items-center gap-3 px-4 py-3 hover:bg-accent/5 transition-colors text-left border-b border-border/30 last:border-0">
@@ -75,7 +75,7 @@ export default function TopBar() {
           </div>
         )}
         {open && query.trim() && results.length === 0 && (
-          <div className="absolute top-full left-0 right-0 mt-2 glass-strong rounded-xl shadow-2xl p-4 z-50">
+          <div className="absolute top-full left-0 right-0 mt-2 rounded-xl shadow-2xl p-4 z-50" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
             <p className="text-xs text-muted text-center">Aucun résultat</p>
           </div>
         )}
