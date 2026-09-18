@@ -5,7 +5,7 @@ import { Sparkles, Inbox, X, Loader2, FileText } from 'lucide-react'
 import { apiFetch } from '../../utils/api'
 
 export default function EmailFilter() {
-  const { filteredEmails, filterPriority, filterTime, setFilterPriority, setFilterTime, markEmailRead, emailError, refreshEmails, updateEmailPriority } = useDashboard()
+  const { filteredEmails, filterPriority, filterTime, setFilterPriority, setFilterTime, markEmailRead, emailError, gmailReconnect, refreshEmails, updateEmailPriority } = useDashboard()
   const [ruleLoading, setRuleLoading] = useState(null)
   const [keywordInput, setKeywordInput] = useState('')
   const [keywordPriority, setKeywordPriority] = useState('high')
@@ -289,7 +289,21 @@ export default function EmailFilter() {
         </div>
       )}
 
-      {emailError && <div className="px-4 py-2 text-accentSec text-xs" style={{ background: 'rgba(244,114,182,0.1)', borderBottom: '1px solid rgba(244,114,182,0.2)' }}>{emailError}</div>}
+      {emailError && (
+        <div className="px-4 py-3 text-accentSec text-xs flex items-center justify-between gap-3 flex-wrap" style={{ background: 'rgba(244,114,182,0.1)', borderBottom: '1px solid rgba(244,114,182,0.2)' }}>
+          <span>{emailError}</span>
+          {gmailReconnect && (
+            <button onClick={() => {
+              const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+              const token = localStorage.getItem('command_center_token')
+              fetch(`${API_URL}/api/services/gmail/authorize`, { headers: { Authorization: `Bearer ${token}` } })
+                .then(r => r.json()).then(d => { if (d.url) window.location.href = d.url })
+            }} className="px-3 py-1.5 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap">
+              Reconnecter Gmail
+            </button>
+          )}
+        </div>
+      )}
       <div>
         {filteredEmails.length === 0 ? (
           <div className="p-8 text-center">

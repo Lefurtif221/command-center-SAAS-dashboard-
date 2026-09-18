@@ -11,6 +11,7 @@ export function DashboardProvider({ children }) {
 
   const [emails, setEmails] = useState([])
   const [emailError, setEmailError] = useState(null)
+  const [gmailReconnect, setGmailReconnect] = useState(false)
   const [tasks, setTasks] = useState([])
   const [events, setEvents] = useState([])
   const [filterPriority, setFilterPriority] = useState('all')
@@ -113,9 +114,13 @@ export function DashboardProvider({ children }) {
   const fetchGmailEmails = async () => {
     try {
       setEmailError(null)
+      setGmailReconnect(false)
       const data = await apiFetch('/api/services/gmail/emails')
       if (data.emails) setEmails(data.emails)
-      else if (data.error) setEmailError(data.error)
+      else if (data.error) {
+        setEmailError(data.error)
+        if (data.reconnect) setGmailReconnect(true)
+      }
     } catch (err) {
       console.error('Failed to fetch Gmail emails:', err)
       setEmailError(err.message)
@@ -194,7 +199,7 @@ export function DashboardProvider({ children }) {
   }
 
   const value = {
-    services, emails, filteredEmails, tasks, events, stats, emailError,
+    services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect,
     filterPriority, filterTime, activeSection,
     setFilterPriority, setFilterTime, setActiveSection,
     fetchTasks, fetchEvents, addTask, toggleTask, deleteTask, addEvent, removeEvent,
