@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Sparkles, CheckCircle } from 'lucide-react'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+import { apiFetch } from '../utils/api'
 
 export default function ResetPassword() {
   const navigate = useNavigate()
@@ -24,13 +23,10 @@ export default function ResetPassword() {
     if (password.length < 8) { setError('Le mot de passe doit contenir au moins 8 caractères'); return }
     setLoading(true)
     try {
-      const res = await fetch(`${API_URL}/api/auth/reset-password`, {
+      await apiFetch('/api/auth/reset-password', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, password }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
       setSuccess(true)
     } catch (err) {
       setError(err.message || 'Une erreur est survenue')

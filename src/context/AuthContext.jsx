@@ -1,19 +1,7 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useState, useEffect } from 'react'
+import { apiFetch } from '../utils/api'
 
 const AuthContext = createContext(null)
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-
-function apiFetch(path, options = {}) {
-  const token = localStorage.getItem('command_center_token')
-  const headers = { 'Content-Type': 'application/json', ...options.headers }
-  if (token) headers.Authorization = `Bearer ${token}`
-  return fetch(`${API_URL}${path}`, { ...options, headers }).then(async (res) => {
-    const data = await res.json()
-    if (!res.ok) throw new Error(data.error || 'Erreur serveur')
-    return data
-  })
-}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)

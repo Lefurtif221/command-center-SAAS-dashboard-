@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
 import { useAuth } from '../../hooks/useAuth'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+import { apiFetch } from '../../utils/api'
 
 export default function ConnectedServices() {
   const { services, disconnectService } = useDashboard()
@@ -16,11 +15,7 @@ export default function ConnectedServices() {
 
   const fetchServices = async () => {
     try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/services`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
+      const data = await apiFetch('/api/services')
       setConnectedList(data.services || [])
     } catch (err) {
       console.error('Failed to fetch services:', err)
@@ -30,11 +25,7 @@ export default function ConnectedServices() {
   const handleConnect = async (serviceName) => {
     setLoading(serviceName)
     try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/services/${serviceName}/authorize`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
+      const data = await apiFetch(`/api/services/${serviceName}/authorize`)
       if (data.url) {
         window.location.href = data.url
       }
@@ -47,11 +38,7 @@ export default function ConnectedServices() {
   const handleDisconnect = async (serviceName) => {
     if (!window.confirm(`Déconnecter ${serviceName} ?`)) return
     try {
-      const token = localStorage.getItem('command_center_token')
-      await fetch(`${API_URL}/api/services/${serviceName}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      await apiFetch(`/api/services/${serviceName}`, { method: 'DELETE' })
       setConnectedList(prev => prev.filter(s => s !== serviceName))
       disconnectService(serviceName)
     } catch (err) {

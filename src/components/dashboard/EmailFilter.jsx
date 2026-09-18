@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useDashboard } from '../../hooks/useDashboard'
 import { Sparkles, Inbox, X, Loader2 } from 'lucide-react'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+import { apiFetch } from '../../utils/api'
 
 export default function EmailFilter() {
   const { filteredEmails, filterPriority, filterTime, setFilterPriority, setFilterTime, markEmailRead, emailError, refreshEmails, updateEmailPriority } = useDashboard()
@@ -22,7 +21,6 @@ export default function EmailFilter() {
   const [pendingReadId, setPendingReadId] = useState(null)
   const pColors = { high: 'bg-accentSec', low: 'bg-success' }
   const pLabels = { high: 'Important', low: 'Non important' }
-  const modalRef = useRef(null)
 
   useEffect(() => { fetchRules() }, [])
 
@@ -35,9 +33,7 @@ export default function EmailFilter() {
 
   const fetchRules = async () => {
     try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/services/email-rules`, { headers: { Authorization: `Bearer ${token}` } })
-      const data = await res.json()
+      const data = await apiFetch('/api/services/email-rules')
       setRules(data.rules || [])
     } catch (err) { console.error(err) }
   }
@@ -45,9 +41,8 @@ export default function EmailFilter() {
   const markImportant = async (senderEmail, e) => {
     e.stopPropagation(); setRuleLoading(senderEmail)
     try {
-      const token = localStorage.getItem('command_center_token')
-      await fetch(`${API_URL}/api/services/email-rules`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      await apiFetch('/api/services/email-rules', {
+        method: 'POST',
         body: JSON.stringify({ sender: senderEmail, priority: 'high' }),
       })
       await fetchRules(); updateEmailPriority(senderEmail, 'high')
@@ -57,9 +52,8 @@ export default function EmailFilter() {
   const markNotImportant = async (senderEmail, e) => {
     e.stopPropagation(); setRuleLoading(senderEmail)
     try {
-      const token = localStorage.getItem('command_center_token')
-      await fetch(`${API_URL}/api/services/email-rules`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      await apiFetch('/api/services/email-rules', {
+        method: 'POST',
         body: JSON.stringify({ sender: senderEmail, priority: 'low' }),
       })
       await fetchRules(); updateEmailPriority(senderEmail, 'low')
@@ -69,9 +63,8 @@ export default function EmailFilter() {
   const addKeywordRule = async () => {
     if (!keywordInput.trim()) return
     try {
-      const token = localStorage.getItem('command_center_token')
-      await fetch(`${API_URL}/api/services/email-rules`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      await apiFetch('/api/services/email-rules', {
+        method: 'POST',
         body: JSON.stringify({ keyword: keywordInput.trim(), priority: keywordPriority }),
       })
       setKeywordInput(''); await fetchRules()
@@ -80,8 +73,7 @@ export default function EmailFilter() {
 
   const deleteRule = async (id) => {
     try {
-      const token = localStorage.getItem('command_center_token')
-      await fetch(`${API_URL}/api/services/email-rules/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
+      await apiFetch(`/api/services/email-rules/${id}`, { method: 'DELETE' })
       setRules(prev => prev.filter(r => r.id !== id))
     } catch (err) { console.error(err) }
   }
@@ -90,10 +82,7 @@ export default function EmailFilter() {
     setEmailModal(email); setEmailBody(''); setEmailBodyLoading(true)
     if (email.unread) setPendingReadId(email.id)
     try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/services/gmail/emails/${email.id}`, { headers: { Authorization: `Bearer ${token}` } })
-      if (!res.ok) throw new Error('not ok')
-      const data = await res.json()
+      const data = await apiFetch(`/api/services/gmail/emails/${email.id}`)
       setEmailBody(data.body || email.preview || '')
     } catch { setEmailBody(email.preview || '') } finally { setEmailBodyLoading(false) }
   }
@@ -167,12 +156,10 @@ export default function EmailFilter() {
                 <button onClick={async () => {
                   if (!replyBody.trim()) return; setSending(true)
                   try {
-                    const token = localStorage.getItem('command_center_token')
-                    const res = await fetch(`${API_URL}/api/services/gmail/reply`, {
-                      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                    const data = await apiFetch('/api/services/gmail/reply', {
+                      method: 'POST',
                       body: JSON.stringify({ to: replyModal.senderEmail, subject: replyModal.subject, body: replyBody.trim() }),
                     })
-                    const data = await res.json()
                     setSendResult(data.success ? { success: true } : { success: false, error: data.error })
                   } catch (err) { setSendResult({ success: false, error: err.message }) } finally { setSending(false) }
                 }} disabled={sending || !replyBody.trim()} className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50">

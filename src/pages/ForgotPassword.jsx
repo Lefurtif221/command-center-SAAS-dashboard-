@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Sparkles, MailCheck } from 'lucide-react'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+import { apiFetch } from '../utils/api'
 
 export default function ForgotPassword() {
   const navigate = useNavigate()
@@ -14,13 +13,10 @@ export default function ForgotPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault(); setError(''); setLoading(true)
     try {
-      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
+      await apiFetch('/api/auth/forgot-password', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
       setSent(true)
     } catch (err) {
       setError(err.message || 'Une erreur est survenue')

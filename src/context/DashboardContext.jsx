@@ -1,6 +1,5 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+import { createContext, useState, useEffect } from 'react'
+import { apiFetch } from '../utils/api'
 
 const DashboardContext = createContext(null)
 
@@ -14,7 +13,6 @@ export function DashboardProvider({ children }) {
   const [emailError, setEmailError] = useState(null)
   const [tasks, setTasks] = useState([])
   const [events, setEvents] = useState([])
-  const [messages, setMessages] = useState([])
   const [filterPriority, setFilterPriority] = useState('all')
   const [filterTime, setFilterTime] = useState('today')
   const [activeSection, setActiveSection] = useState(() => localStorage.getItem('activeSection') || 'dashboard')
@@ -28,8 +26,7 @@ export function DashboardProvider({ children }) {
     fetchTasks()
     fetchEvents()
     const interval = setInterval(() => {
-      const token = localStorage.getItem('command_center_token')
-      if (token) {
+      if (localStorage.getItem('command_center_token')) {
         fetchGmailEmails()
         fetchTasks()
         fetchEvents()
@@ -40,97 +37,65 @@ export function DashboardProvider({ children }) {
 
   const fetchTasks = async () => {
     try {
-      const token = localStorage.getItem('command_center_token')
-      if (!token) return
-      const res = await fetch(`${API_URL}/api/tasks`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
+      const data = await apiFetch('/api/tasks')
       if (data.tasks) setTasks(data.tasks)
     } catch (err) { console.error(err) }
   }
 
   const fetchEvents = async () => {
     try {
-      const token = localStorage.getItem('command_center_token')
-      if (!token) return
-      const res = await fetch(`${API_URL}/api/calendar`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
+      const data = await apiFetch('/api/calendar')
       if (data.events) setEvents(data.events)
     } catch (err) { console.error(err) }
   }
 
   const addTask = async (title, priority, due_date) => {
     try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/tasks`, {
+      const data = await apiFetch('/api/tasks', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ title, priority, due_date }),
       })
-      const data = await res.json()
       if (data.task) setTasks(prev => [data.task, ...prev])
     } catch (err) { console.error(err) }
   }
 
   const toggleTask = async (id, completed) => {
     try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/tasks/${id}`, {
+      const data = await apiFetch(`/api/tasks/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ completed: !completed }),
       })
-      const data = await res.json()
       if (data.task) setTasks(prev => prev.map(t => t.id === id ? data.task : t))
     } catch (err) { console.error(err) }
   }
 
   const deleteTask = async (id) => {
     try {
-      const token = localStorage.getItem('command_center_token')
-      await fetch(`${API_URL}/api/tasks/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      await apiFetch(`/api/tasks/${id}`, { method: 'DELETE' })
       setTasks(prev => prev.filter(t => t.id !== id))
     } catch (err) { console.error(err) }
   }
 
   const addEvent = async (title, date, hour, color) => {
     try {
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/calendar`, {
+      const data = await apiFetch('/api/calendar', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ title, date, hour, color }),
       })
-      const data = await res.json()
       if (data.event) setEvents(prev => [...prev, data.event])
     } catch (err) { console.error(err) }
   }
 
   const removeEvent = async (id) => {
     try {
-      const token = localStorage.getItem('command_center_token')
-      await fetch(`${API_URL}/api/calendar/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      await apiFetch(`/api/calendar/${id}`, { method: 'DELETE' })
       setEvents(prev => prev.filter(e => e.id !== id))
     } catch (err) { console.error(err) }
   }
 
   const fetchConnectedServices = async () => {
     try {
-      const token = localStorage.getItem('command_center_token')
-      if (!token) return
-      const res = await fetch(`${API_URL}/api/services`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
+      const data = await apiFetch('/api/services')
       const connected = data.services || []
       setServices(prev => {
         const updated = { ...prev }
@@ -148,11 +113,7 @@ export function DashboardProvider({ children }) {
   const fetchGmailEmails = async () => {
     try {
       setEmailError(null)
-      const token = localStorage.getItem('command_center_token')
-      const res = await fetch(`${API_URL}/api/services/gmail/emails`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
+      const data = await apiFetch('/api/services/gmail/emails')
       if (data.emails) setEmails(data.emails)
       else if (data.error) setEmailError(data.error)
     } catch (err) {
@@ -233,7 +194,7 @@ export function DashboardProvider({ children }) {
   }
 
   const value = {
-    services, emails, filteredEmails, tasks, events, messages, stats, emailError,
+    services, emails, filteredEmails, tasks, events, stats, emailError,
     filterPriority, filterTime, activeSection,
     setFilterPriority, setFilterTime, setActiveSection,
     fetchTasks, fetchEvents, addTask, toggleTask, deleteTask, addEvent, removeEvent,

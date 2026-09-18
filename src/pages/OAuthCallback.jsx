@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+import { apiFetch } from '../utils/api'
 
 export default function OAuthCallback() {
   const { service } = useParams()
@@ -29,13 +28,10 @@ export default function OAuthCallback() {
       return
     }
 
-    const token = localStorage.getItem('command_center_token')
-    fetch(`${API_URL}/api/services/${service}/callback`, {
+    apiFetch(`/api/services/${service}/callback`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ code }),
     })
-      .then(res => res.json())
       .then(data => {
         if (data.success) {
           setStatus(`${service} connecté avec succès !`)
