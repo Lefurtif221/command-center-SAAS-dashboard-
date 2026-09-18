@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { ArrowLeft, Sparkles, Mail, Lock, TrendingUp } from 'lucide-react'
+import { ArrowLeft, Sparkles, Mail, Lock, TrendingUp, Eye, EyeOff } from 'lucide-react'
 
 export default function AuthPage() {
   const navigate = useNavigate()
@@ -11,6 +11,9 @@ export default function AuthPage() {
   const [error, setError] = useState('')
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
   const [signupForm, setSignupForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
+  const [showLoginPassword, setShowLoginPassword] = useState(false)
+  const [showSignupPassword, setShowSignupPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   useEffect(() => {
     if (isAuthenticated) navigate('/dashboard')
@@ -95,7 +98,12 @@ export default function AuthPage() {
               </div>
               <div>
                 <label className="block text-xs text-muted mb-1.5 font-mono">Mot de passe</label>
-                <input type="password" placeholder="••••••••" value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)] transition-all duration-200" required />
+                <div className="relative">
+                  <input type={showLoginPassword ? 'text' : 'password'} placeholder="••••••••" value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} className="w-full px-3 py-2.5 pr-10 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)] transition-all duration-200" required />
+                  <button type="button" onClick={() => setShowLoginPassword(!showLoginPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-text transition-colors">
+                    {showLoginPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <label className="flex items-center gap-2 text-muted"><input type="checkbox" defaultChecked /> Se souvenir de moi</label>
@@ -115,11 +123,21 @@ export default function AuthPage() {
               </div>
               <div>
                 <label className="block text-xs text-muted mb-1.5 font-mono">Mot de passe</label>
-                <input type="password" placeholder="8 caractères minimum" value={signupForm.password} onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })} className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)] transition-all duration-200" required />
+                <div className="relative">
+                  <input type={showSignupPassword ? 'text' : 'password'} placeholder="8 caractères minimum" value={signupForm.password} onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })} className="w-full px-3 py-2.5 pr-10 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)] transition-all duration-200" required />
+                  <button type="button" onClick={() => setShowSignupPassword(!showSignupPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-text transition-colors">
+                    {showSignupPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
               <div>
                 <label className="block text-xs text-muted mb-1.5 font-mono">Confirmer</label>
-                <input type="password" placeholder="••••••••" value={signupForm.confirmPassword} onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })} className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)] transition-all duration-200" required />
+                <div className="relative">
+                  <input type={showConfirmPassword ? 'text' : 'password'} placeholder="••••••••" value={signupForm.confirmPassword} onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })} className="w-full px-3 py-2.5 pr-10 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)] transition-all duration-200" required />
+                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-text transition-colors">
+                    {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
               <div className="flex items-start gap-2 text-xs">
                 <input type="checkbox" required className="mt-0.5" />
