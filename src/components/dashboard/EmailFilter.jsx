@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useDashboard } from '../../hooks/useDashboard'
-import { Sparkles, Inbox, X, Loader2 } from 'lucide-react'
+import { Sparkles, Inbox, X, Loader2, FileText } from 'lucide-react'
 import { apiFetch } from '../../utils/api'
 
 export default function EmailFilter() {
@@ -19,6 +19,11 @@ export default function EmailFilter() {
   const [emailBody, setEmailBody] = useState('')
   const [emailBodyLoading, setEmailBodyLoading] = useState(false)
   const [pendingReadId, setPendingReadId] = useState(null)
+  const [summaryModal, setSummaryModal] = useState(null)
+  const [summaryText, setSummaryText] = useState('')
+  const [summaryFullBody, setSummaryFullBody] = useState('')
+  const [summaryLoading, setSummaryLoading] = useState(false)
+  const [showFullEmail, setShowFullEmail] = useState(false)
   const pColors = { high: 'bg-accentSec', low: 'bg-success' }
   const pLabels = { high: 'Important', low: 'Non important' }
 
@@ -85,6 +90,17 @@ export default function EmailFilter() {
       const data = await apiFetch(`/api/services/gmail/emails/${email.id}`)
       setEmailBody(data.body || email.preview || '')
     } catch { setEmailBody(email.preview || '') } finally { setEmailBodyLoading(false) }
+  }
+
+  const openSummary = async (email, e) => {
+    e.stopPropagation()
+    setSummaryModal(email); setSummaryText(''); setSummaryFullBody(''); setSummaryLoading(true); setShowFullEmail(false)
+    if (email.unread) setPendingReadId(email.id)
+    try {
+      const data = await apiFetch(`/api/services/gmail/emails/${email.id}/summary`)
+      setSummaryText(data.summary || 'Résumé non disponible.')
+      setSummaryFullBody(data.body || '')
+    } catch { setSummaryText('Erreur lors du chargement du résumé.') } finally { setSummaryLoading(false) }
   }
 
   const stripHtml = (html) => {
@@ -174,6 +190,48 @@ export default function EmailFilter() {
     document.body
   ) : null
 
+  const summaryModalOverlay = summaryModal ? createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => setSummaryModal(null)}>
+      <div className="w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden rounded-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between p-4 flex-shrink-0" style={{ borderBottom: '1px solid var(--color-border)' }}>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <FileText size={16} className="text-accent flex-shrink-0" />
+            <div className="min-w-0">
+              <h4 className="text-sm font-medium truncate">{summaryModal.subject}</h4>
+              <p className="text-[10px] text-muted mt-0.5">De : {summaryModal.sender}</p>
+            </div>
+          </div>
+          <button onClick={() => setSummaryModal(null)} className="text-muted hover:text-text ml-2 flex-shrink-0 transition-colors"><X size={16} /></button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-5">
+          {summaryLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="text-accent animate-spin" size={24} />
+            </div>
+          ) : showFullEmail ? (
+            <div className="text-sm text-text whitespace-pre-wrap leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{stripHtml(summaryFullBody)}</div>
+          ) : (
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-accent/10 text-accent">Résumé IA</span>
+              </div>
+              <div className="text-sm text-text whitespace-pre-wrap leading-relaxed">{summaryText}</div>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2 p-4 flex-shrink-0" style={{ borderTop: '1px solid var(--color-border)' }}>
+          <button onClick={() => setShowFullEmail(!showFullEmail)}
+            className="px-3 py-2 text-xs font-medium rounded-lg transition-all" style={{ background: showFullEmail ? 'rgba(125,211,252,0.15)' : 'var(--color-bg)', border: '1px solid var(--color-border)', color: showFullEmail ? 'var(--color-accent)' : 'var(--color-text)' }}>
+            {showFullEmail ? 'Voir le résumé' : 'Voir le mail complet'}
+          </button>
+          <button onClick={() => { setSummaryModal(null); setReplyModal(summaryModal); setReplyBody('') }}
+            className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity">Répondre</button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  ) : null
+
   return (
     <div style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', borderRadius: '12px' }}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
@@ -239,7 +297,7 @@ export default function EmailFilter() {
             <p className="text-sm text-muted">Aucun email ne correspond aux filtres</p>
           </div>
         ) : filteredEmails.map((email) => (
-          <div key={email.id} className="p-4 cursor-pointer transition-colors" style={{ borderBottom: '1px solid var(--color-border)', background: email.unread ? 'rgba(125,211,252,0.05)' : 'transparent' }}
+          <div key={email.id} className="p-4 cursor-pointer transition-colors group" style={{ borderBottom: '1px solid var(--color-border)', background: email.unread ? 'rgba(125,211,252,0.05)' : 'transparent' }}
             onClick={() => openEmailFull(email)}>
             <div className="flex items-start gap-3">
               <div className={`w-1.5 h-1.5 mt-2 rounded-full flex-shrink-0 ${pColors[email.priority] || 'bg-muted'}`} />
@@ -251,9 +309,14 @@ export default function EmailFilter() {
                 <p className={`text-sm ${email.unread ? 'font-medium text-text' : 'text-muted'}`}>{email.subject}</p>
                 <p className="text-xs text-muted truncate mt-0.5">{email.preview}</p>
               </div>
-              <div className="text-right flex-shrink-0 max-w-[100px]">
-                <p className="text-[10px] text-muted truncate">{email.time}</p>
-                <p className="text-[10px] text-accent mt-0.5 truncate">{email.sender}</p>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button onClick={(e) => openSummary(email, e)} className="opacity-0 group-hover:opacity-100 px-2 py-1.5 text-[10px] font-medium text-accent rounded-lg transition-all hover:bg-accent/10" style={{ background: 'rgba(125,211,252,0.1)', border: '1px solid rgba(125,211,252,0.2)' }}>
+                  Résumé
+                </button>
+                <div className="text-right max-w-[100px]">
+                  <p className="text-[10px] text-muted truncate">{email.time}</p>
+                  <p className="text-[10px] text-accent mt-0.5 truncate">{email.sender}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -262,6 +325,7 @@ export default function EmailFilter() {
 
       {emailModalOverlay}
       {replyModalOverlay}
+      {summaryModalOverlay}
     </div>
   )
 }
