@@ -8,6 +8,10 @@ export default function ConnectedServices() {
   const { user } = useAuth()
   const [connectedList, setConnectedList] = useState([])
   const [loading, setLoading] = useState(null)
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false)
+  const [whatsappToken, setWhatsAppToken] = useState('')
+  const [whatsappPhoneId, setWhatsAppPhoneId] = useState('')
+  const [whatsappStatus, setWhatsAppStatus] = useState('')
 
   useEffect(() => {
     fetchServices()
@@ -23,6 +27,10 @@ export default function ConnectedServices() {
   }
 
   const handleConnect = async (serviceName) => {
+    if (serviceName === 'whatsapp') {
+      setShowWhatsAppModal(true)
+      return
+    }
     setLoading(serviceName)
     try {
       const data = await apiFetch(`/api/services/${serviceName}/authorize`)
@@ -35,10 +43,34 @@ export default function ConnectedServices() {
     }
   }
 
+  const handleWhatsAppConnect = async () => {
+    if (!whatsappToken.trim()) return
+    setLoading('whatsapp')
+    setWhatsAppStatus('')
+    try {
+      await apiFetch('/api/services/whatsapp/connect', {
+        method: 'POST',
+        body: JSON.stringify({ accessToken: whatsappToken.trim(), phoneNumberId: whatsappPhoneId.trim() || undefined }),
+      })
+      setConnectedList(prev => [...prev, 'whatsapp'])
+      setShowWhatsAppModal(false)
+      setWhatsAppToken('')
+      setWhatsAppPhoneId('')
+    } catch (err) {
+      setWhatsAppStatus(err.message || 'Erreur de connexion')
+    } finally {
+      setLoading(null)
+    }
+  }
+
   const handleDisconnect = async (serviceName) => {
     if (!window.confirm(`Déconnecter ${serviceName} ?`)) return
     try {
-      await apiFetch(`/api/services/${serviceName}`, { method: 'DELETE' })
+      if (serviceName === 'whatsapp') {
+        await apiFetch('/api/services/whatsapp', { method: 'DELETE' })
+      } else {
+        await apiFetch(`/api/services/${serviceName}`, { method: 'DELETE' })
+      }
       setConnectedList(prev => prev.filter(s => s !== serviceName))
       disconnectService(serviceName)
     } catch (err) {
@@ -48,7 +80,7 @@ export default function ConnectedServices() {
 
   const allServices = [
     { id: 'gmail', name: 'Gmail', icon: '📧', desc: 'Emails, calendrier, contacts' },
-    { id: 'whatsapp', name: 'WhatsApp', icon: '💬', desc: 'Messages WhatsApp Web', external: true, url: 'https://web.whatsapp.com' },
+    { id: 'whatsapp', name: 'WhatsApp', icon: '💬', desc: 'Messages WhatsApp Business API' },
   ]
 
   return (
@@ -58,7 +90,7 @@ export default function ConnectedServices() {
       </div>
       <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
         {allServices.map((service) => {
-          const isConnected = connectedList.includes(service.id) || service.external
+          const isConnected = connectedList.includes(service.id)
           return (
             <div key={service.id} className={`glass p-3 rounded-xl border transition-all duration-200 ${isConnected ? 'border-success/20' : 'hover:border-muted/50'}`} style={{ background: 'var(--color-surface-solid)' }}>
               <div className="flex items-center gap-3 mb-3">
@@ -69,11 +101,7 @@ export default function ConnectedServices() {
                 </div>
               </div>
               <div className="flex gap-2">
-                {service.external ? (
-                  <a href={service.url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 bg-accent/10 border border-accent/20 rounded-xl text-xs text-accent hover:bg-accent/15 transition-all duration-200 text-center">
-                    Ouvrir
-                  </a>
-                ) : isConnected ? (
+                {isConnected ? (
                   <button onClick={() => handleDisconnect(service.id)} className="glass flex-1 px-2 py-2.5 rounded-xl text-xs text-accentSec hover:bg-accentSec/5 transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
                     Déconnecter
                   </button>
@@ -87,6 +115,37 @@ export default function ConnectedServices() {
           )
         })}
       </div>
+
+      {showWhatsAppModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => setShowWhatsAppModal(false)}>
+          <div className="w-full max-w-md rounded-2xl p-5 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
+            <h4 className="text-sm font-medium mb-4">Connecter WhatsApp Business</h4>
+            <p className="text-xs text-muted mb-4 leading-relaxed">
+              Récupère ton token depuis <a href="https://developers.facebook.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent/80">developers.facebook.com</a> → Ton app → WhatsApp → API Setup
+            </p>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-[10px] text-muted mb-1 font-mono">Permanent Access Token</label>
+                <input type="password" placeholder="EAA..." value={whatsappToken} onChange={(e) => setWhatsAppToken(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg text-xs text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
+              </div>
+              <div>
+                <label className="block text-[10px] text-muted mb-1 font-mono">Phone Number ID (optionnel)</label>
+                <input type="text" placeholder="123456789" value={whatsappPhoneId} onChange={(e) => setWhatsAppPhoneId(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg text-xs text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
+              </div>
+              {whatsappStatus && <p className="text-xs text-accentSec">{whatsappStatus}</p>}
+              <div className="flex gap-2 justify-end pt-2">
+                <button onClick={() => setShowWhatsAppModal(false)} className="px-3 py-2 text-xs text-muted rounded-lg hover:text-text transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Annuler</button>
+                <button onClick={handleWhatsAppConnect} disabled={!whatsappToken.trim() || loading === 'whatsapp'}
+                  className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50">
+                  {loading === 'whatsapp' ? 'Connexion...' : 'Connecter'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
