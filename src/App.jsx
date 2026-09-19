@@ -1,14 +1,16 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
 import { AuthProvider } from './context/AuthContext'
 import { DashboardProvider } from './context/DashboardContext'
 import LandingPage from './pages/LandingPage'
-import AuthPage from './pages/AuthPage'
-import ForgotPassword from './pages/ForgotPassword'
-import ResetPassword from './pages/ResetPassword'
-import DashboardPage from './pages/DashboardPage'
-import OAuthCallback from './pages/OAuthCallback'
 import { useAuth } from './hooks/useAuth'
 import { Component } from 'react'
+
+const AuthPage = lazy(() => import('./pages/AuthPage'))
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
+const ResetPassword = lazy(() => import('./pages/ResetPassword'))
+const DashboardPage = lazy(() => import('./pages/DashboardPage'))
+const OAuthCallback = lazy(() => import('./pages/OAuthCallback'))
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -54,15 +56,17 @@ function PublicRoute({ children }) {
 
 function AppRoutes() {
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
-      <Route path="/auth/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
-      <Route path="/auth/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
-      <Route path="/auth/callback/:service" element={<ProtectedRoute><OAuthCallback /></ProtectedRoute>} />
-      <Route path="/dashboard/*" element={<ProtectedRoute><DashboardProvider><ErrorBoundary><DashboardPage /></ErrorBoundary></DashboardProvider></ProtectedRoute>} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <Suspense fallback={<div className="min-h-screen bg-bg flex items-center justify-center"><div className="text-muted text-sm">Chargement...</div></div>}>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
+        <Route path="/auth/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+        <Route path="/auth/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
+        <Route path="/auth/callback/:service" element={<ProtectedRoute><OAuthCallback /></ProtectedRoute>} />
+        <Route path="/dashboard/*" element={<ProtectedRoute><DashboardProvider><ErrorBoundary><DashboardPage /></ErrorBoundary></DashboardProvider></ProtectedRoute>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   )
 }
 

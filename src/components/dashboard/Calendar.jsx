@@ -95,10 +95,10 @@ export default function Calendar() {
         <div className="flex items-center gap-1 sm:gap-2">
           <span className="text-xs sm:text-sm font-display font-medium text-text mr-1 sm:mr-2">{weekLabel}</span>
           <button onClick={goToToday} className="px-1.5 sm:px-2 py-1 text-[10px] sm:text-xs text-accent border border-accent/20 rounded-lg hover:bg-accent/10 transition-all duration-200 font-mono">Aujourd'hui</button>
-          <button onClick={() => navigateWeek(-1)} className="p-1 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors">
+          <button onClick={() => navigateWeek(-1)} className="p-1 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors" aria-label="Semaine précédente">
             <ChevronLeft size={16} />
           </button>
-          <button onClick={() => navigateWeek(1)} className="p-1 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors">
+          <button onClick={() => navigateWeek(1)} className="p-1 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors" aria-label="Semaine suivante">
             <ChevronRight size={16} />
           </button>
         </div>

@@ -84,13 +84,13 @@ export default function TopBar() {
       <div className="flex items-center gap-2 md:gap-3">
         <button onClick={toggleTheme}
           className="p-2.5 rounded-xl text-muted hover:text-text hover:bg-accent/10 hover:text-accent transition-all duration-200"
-          title={isDark ? 'Mode clair' : 'Mode sombre'}>
+          aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}>
           {isDark ? <Sun size={16} /> : <Moon size={16} />}
         </button>
         <button className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl text-accent text-xs font-medium transition-all duration-200" style={{ background: 'rgba(125,211,252,0.1)', border: '1px solid rgba(125,211,252,0.2)' }}>
           <Sparkles size={12} />Filtre intelligent
         </button>
-        <button className="relative p-2.5 rounded-xl text-muted hover:text-text hover:bg-accent/10 transition-all duration-200">
+        <button className="relative p-2.5 rounded-xl text-muted hover:text-text hover:bg-accent/10 transition-all duration-200" aria-label={`Notifications${stats.unreadEmails > 0 ? ` (${stats.unreadEmails} non lus)` : ''}`}>
           <Bell size={16} />
           {stats.unreadEmails > 0 && (
             <span className="absolute top-1 right-1 w-3.5 h-3.5 text-[8px] font-mono font-bold bg-accentSec text-white rounded-full flex items-center justify-center animate-glow-pulse">{stats.unreadEmails}</span>

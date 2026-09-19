@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react'
+import { createContext, useState, useEffect, useMemo } from 'react'
 import { apiFetch } from '../utils/api'
 
 const DashboardContext = createContext(null)
@@ -198,13 +198,13 @@ export function DashboardProvider({ children }) {
     ))
   }
 
-  const value = {
+  const value = useMemo(() => ({
     services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect,
     filterPriority, filterTime, activeSection,
     setFilterPriority, setFilterTime, setActiveSection,
     fetchTasks, fetchEvents, addTask, toggleTask, deleteTask, addEvent, removeEvent,
     connectService, disconnectService, syncService, markEmailRead, fetchConnectedServices, refreshEmails, updateEmailPriority
-  }
+  }), [services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect, filterPriority, filterTime, activeSection])
 
   return (
     <DashboardContext.Provider value={value}>

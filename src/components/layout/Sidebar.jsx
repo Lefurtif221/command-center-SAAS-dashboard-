@@ -41,10 +41,10 @@ export default function Sidebar({ onToggle }) {
             <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
           </div>
         )}
-        <button onClick={() => { setCollapsed(!collapsed); onToggle && onToggle(!collapsed) }} className="p-1.5 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors hidden md:block">
+        <button onClick={() => { setCollapsed(!collapsed); onToggle && onToggle(!collapsed) }} className="p-1.5 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors hidden md:block" aria-label={collapsed ? 'Développer la sidebar' : 'Réduire la sidebar'}>
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
-        <button onClick={() => setMobileOpen(false)} className="p-1.5 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors md:hidden">
+        <button onClick={() => setMobileOpen(false)} className="p-1.5 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors md:hidden" aria-label="Fermer le menu">
           <X size={16} />
         </button>
       </div>
