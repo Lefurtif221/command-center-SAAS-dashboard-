@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { MessageCircle, Send, X, Loader2, Star, Image, Film, Mic, FileText, MapPin } from 'lucide-react'
 import { apiFetch } from '../../utils/api'
@@ -17,8 +17,17 @@ export default function WhatsAppMessages() {
   const [replyBody, setReplyBody] = useState('')
   const [sending, setSending] = useState(false)
   const [sendResult, setSendResult] = useState(null)
+  const refreshRef = useRef(null)
 
-  useEffect(() => { checkStatus(); loadMessages() }, [])
+  useEffect(() => {
+    checkStatus()
+    loadMessages()
+    refreshRef.current = setInterval(() => {
+      checkStatus()
+      loadMessages()
+    }, 5000)
+    return () => { if (refreshRef.current) clearInterval(refreshRef.current) }
+  }, [])
 
   const checkStatus = async () => {
     try {
