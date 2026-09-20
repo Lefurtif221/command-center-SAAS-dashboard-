@@ -126,29 +126,44 @@ export default function ConnectedServices() {
 
       {showWhatsAppModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => { setShowWhatsAppModal(false); if (pollingRef.current) clearInterval(pollingRef.current) }}>
-          <div className="w-full max-w-sm rounded-2xl p-5 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
-            <h4 className="text-sm font-medium mb-3">Connecter WhatsApp</h4>
-            {whatsappQR ? (
+          <div className="w-full max-w-2xl rounded-2xl p-5 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
+            <h4 className="text-sm font-medium mb-4">Connecter WhatsApp</h4>
+            <div className="flex flex-col sm:flex-row gap-5">
               <div className="flex flex-col items-center gap-3">
-                <div className="bg-white p-3 rounded-xl">
-                  <img src={whatsappQR} alt="QR Code WhatsApp" className="w-48 h-48" />
+                {whatsappQR ? (
+                  <>
+                    <div className="bg-white p-3 rounded-xl">
+                      <img src={whatsappQR} alt="QR Code WhatsApp" className="w-44 h-44" />
+                    </div>
+                    {whatsappStatus && <p className="text-xs text-accent text-center">{whatsappStatus}</p>}
+                  </>
+                ) : (
+                  <>
+                    <div className="w-12 h-12 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+                    <p className="text-xs text-muted text-center">{whatsappStatus || 'Connexion en cours...'}</p>
+                  </>
+                )}
+              </div>
+              <div className="flex-1 space-y-3">
+                <div>
+                  <p className="text-[11px] font-medium text-text mb-1.5">Comment scanner :</p>
+                  <ol className="text-[10px] text-muted space-y-1 list-decimal list-inside leading-relaxed">
+                    <li>Ouvre <strong>WhatsApp</strong> sur ton téléphone</li>
+                    <li>Menu ⋮ → <strong>Appareils connectés</strong></li>
+                    <li>Clique <strong>Connecter un appareil</strong></li>
+                    <li>Scan le QR code à gauche</li>
+                  </ol>
                 </div>
-                <p className="text-[11px] text-muted text-center leading-relaxed">
-                  Ouvre <strong>WhatsApp</strong> sur ton téléphone<br/>
-                  → Menu ⋮ → <strong>Appareils connectés</strong><br/>
-                  → <strong>Connecter un appareil</strong><br/>
-                  → Scan le QR code ci-dessus
-                </p>
+                <div className="pt-2 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                  <p className="text-[10px] text-muted leading-relaxed">
+                    <span className="text-success font-medium">✓</span> Lecture seule recommandée<br/>
+                    <span className="text-success font-medium">✓</span> Pas plus de 50 messages/heure<br/>
+                    <span className="text-success font-medium">✓</span> Session stable, pas de reconnexion fréquente<br/>
+                    <span className="text-accentSec font-medium">✗</span> Évite l'envoi massif de messages
+                  </p>
+                </div>
               </div>
-            ) : (
-              <div className="flex flex-col items-center gap-3 py-6">
-                <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
-                <p className="text-xs text-muted">{whatsappStatus || 'Connexion en cours...'}</p>
-              </div>
-            )}
-            {whatsappStatus && whatsappQR && (
-              <p className="text-xs text-accent text-center mt-3">{whatsappStatus}</p>
-            )}
+            </div>
             <div className="flex justify-end pt-4">
               <button onClick={() => { setShowWhatsAppModal(false); if (pollingRef.current) clearInterval(pollingRef.current) }} className="px-3 py-2 text-xs text-muted rounded-lg hover:text-text transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Fermer</button>
             </div>
