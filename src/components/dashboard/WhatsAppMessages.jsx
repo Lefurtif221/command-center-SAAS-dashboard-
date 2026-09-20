@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { MessageCircle, Send, X, Loader2, Star } from 'lucide-react'
+import { MessageCircle, Send, X, Loader2, Star, Image, Film, Mic, FileText, MapPin } from 'lucide-react'
 import { apiFetch } from '../../utils/api'
+
+const typeIcons = { image: Image, video: Film, audio: Mic, document: FileText, location: MapPin }
 
 export default function WhatsAppMessages() {
   const [messages, setMessages] = useState([])
@@ -45,7 +47,7 @@ export default function WhatsAppMessages() {
         method: 'POST',
         body: JSON.stringify({ to: replyTo, message: replyBody.trim() }),
       })
-      setSendResult({ ok: true, text: 'Message envoyé !' })
+      setSendResult({ ok: true, text: 'Envoye !' })
       setReplyBody('')
       setTimeout(() => { setReplyModal(null); setSendResult(null) }, 1500)
       loadMessages()
@@ -67,6 +69,17 @@ export default function WhatsAppMessages() {
     } catch (err) { console.error(err) }
   }
 
+  const formatTime = (ts) => {
+    if (!ts) return ''
+    const d = new Date(ts)
+    if (isNaN(d.getTime())) return ''
+    const now = new Date()
+    const diff = now - d
+    if (diff < 86400000) return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    if (diff < 604800000) return d.toLocaleDateString('fr-FR', { weekday: 'short', hour: '2-digit', minute: '2-digit' })
+    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+  }
+
   const filteredMessages = messages.filter(msg => {
     if (search) {
       const q = search.toLowerCase()
@@ -79,36 +92,27 @@ export default function WhatsAppMessages() {
 
   const groupedByChat = filteredMessages.reduce((acc, msg) => {
     const key = msg.chatId
-    if (!acc[key]) acc[key] = { chatId: key, messages: [], lastMessage: null, priority: msg.priority || 'none' }
+    if (!acc[key]) acc[key] = { chatId: key, messages: [], lastMessage: null, priority: 'none' }
     acc[key].messages.push(msg)
-    acc[key].priority = msg.priority || acc[key].priority
+    if (msg.priority && msg.priority !== 'none') acc[key].priority = msg.priority
     if (!acc[key].lastMessage || new Date(msg.timestamp) > new Date(acc[key].lastMessage.timestamp)) {
       acc[key].lastMessage = msg
     }
     return acc
   }, {})
 
-  let chats = Object.values(groupedByChat).sort((a, b) =>
-    new Date(b.lastMessage.timestamp) - new Date(a.lastMessage.timestamp)
-  )
+  let chats = Object.values(groupedByChat)
+    .filter(c => c.lastMessage)
+    .sort((a, b) => new Date(b.lastMessage.timestamp) - new Date(a.lastMessage.timestamp))
 
   if (priorityFilter === 'important') chats = chats.filter(c => c.priority === 'important')
   else if (priorityFilter === 'normal') chats = chats.filter(c => c.priority !== 'important')
-
-  const formatTime = (ts) => {
-    const d = new Date(ts)
-    const now = new Date()
-    const diff = now - d
-    if (diff < 86400000) return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-    if (diff < 604800000) return d.toLocaleDateString('fr-FR', { weekday: 'short' })
-    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
-  }
 
   if (!connected) {
     return (
       <div className="glass rounded-xl p-6 text-center" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
         <MessageCircle size={24} className="mx-auto mb-2 text-muted" />
-        <p className="text-xs text-muted">Connecte WhatsApp dans "Services connectés" pour voir tes messages</p>
+        <p className="text-xs text-muted">Connecte WhatsApp dans "Services connectes" pour voir tes messages</p>
       </div>
     )
   }
@@ -123,7 +127,7 @@ export default function WhatsAppMessages() {
           {['all', 'received', 'sent'].map(f => (
             <button key={f} onClick={() => setFilter(f)}
               className={`px-2 py-1 rounded-lg text-[10px] font-mono transition-all ${filter === f ? 'bg-accent/20 text-accent' : 'text-muted hover:text-text'}`}>
-              {f === 'all' ? 'Tout' : f === 'received' ? 'Reçus' : 'Envoyés'}
+              {f === 'all' ? 'Tout' : f === 'received' ? 'Recus' : 'Envoyes'}
             </button>
           ))}
         </div>
@@ -134,13 +138,13 @@ export default function WhatsAppMessages() {
         <div className="flex gap-1">
           {[
             { key: 'all', label: 'Tous' },
-            { key: 'important', label: '★ Important' },
+            { key: 'important', label: 'Important' },
             { key: 'normal', label: 'Normal' },
           ].map(f => (
             <button key={f.key} onClick={() => setPriorityFilter(f.key)}
               className={`px-2 py-1.5 rounded-lg text-[10px] font-mono transition-all whitespace-nowrap ${priorityFilter === f.key ? 'bg-accentSec/20 text-accentSec' : 'text-muted hover:text-text'}`}
               style={priorityFilter === f.key ? { border: '1px solid var(--color-accentSec)' } : { border: '1px solid transparent' }}>
-              {f.label}
+              {f.key === 'important' ? '* ' : ''}{f.label}
             </button>
           ))}
         </div>
@@ -152,8 +156,9 @@ export default function WhatsAppMessages() {
           <p className="text-xs text-muted text-center py-8">Aucun message</p>
         ) : chats.map(chat => {
           const lastMsg = chat.lastMessage
-          const preview = lastMsg.body.length > 60 ? lastMsg.body.slice(0, 60) + '...' : lastMsg.body
+          const preview = !lastMsg.body ? '[' + (lastMsg.type || 'message') + ']' : lastMsg.body.length > 50 ? lastMsg.body.slice(0, 50) + '...' : lastMsg.body
           const isImportant = chat.priority === 'important'
+          const Icon = typeIcons[lastMsg.type]
           return (
             <div key={chat.chatId} onClick={() => { setReplyModal(chat); setReplyTo(chat.chatId) }}
               className={`p-2.5 rounded-xl cursor-pointer transition-all duration-200 hover:bg-accent/5 ${isImportant ? 'ring-1 ring-accentSec/30' : ''}`}>
@@ -169,12 +174,15 @@ export default function WhatsAppMessages() {
                     </div>
                     <span className="text-[9px] text-muted font-mono shrink-0 ml-2">{formatTime(lastMsg.timestamp)}</span>
                   </div>
-                  <p className="text-[11px] text-muted truncate mt-0.5">{preview}</p>
+                  <div className="flex items-center gap-1 mt-0.5">
+                    {Icon && <Icon size={10} className="text-muted shrink-0" />}
+                    <p className="text-[11px] text-muted truncate">{preview}</p>
+                  </div>
                   <div className="flex items-center justify-between mt-0.5">
                     <span className="text-[9px] font-mono text-muted">{chat.messages.length} message{chat.messages.length > 1 ? 's' : ''}</span>
                     <button onClick={(e) => handlePriority(chat.chatId, isImportant ? 'none' : 'important', e)}
-                      className="text-[9px] text-muted hover:text-accentSec transition-colors" title={isImportant ? 'Retirer important' : 'Marquer important'}>
-                      {isImportant ? '★ Retirer' : '☆ Important'}
+                      className="text-[9px] text-muted hover:text-accentSec transition-colors">
+                      {isImportant ? '* Retirer' : '* Important'}
                     </button>
                   </div>
                 </div>
@@ -195,7 +203,11 @@ export default function WhatsAppMessages() {
               {replyModal.messages.slice().reverse().map(msg => (
                 <div key={msg.id} className={`flex ${msg.fromMe ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[75%] px-3 py-2 rounded-xl text-xs ${msg.fromMe ? 'bg-accent/15 text-text rounded-br-sm' : 'rounded-bl-sm'}`} style={!msg.fromMe ? { background: 'var(--color-bg)', border: '1px solid var(--color-border)' } : {}}>
-                    <p className="whitespace-pre-wrap break-words">{msg.body}</p>
+                    {msg.body ? (
+                      <p className="whitespace-pre-wrap break-words">{msg.body}</p>
+                    ) : (
+                      <p className="whitespace-pre-wrap break-words italic text-muted">[{msg.type || 'message'}]</p>
+                    )}
                     <p className="text-[9px] text-muted mt-1 text-right">{formatTime(msg.timestamp)}</p>
                   </div>
                 </div>
