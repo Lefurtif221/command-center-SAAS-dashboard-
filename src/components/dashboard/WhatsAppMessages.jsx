@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { MessageCircle, Send, X, Loader2 } from 'lucide-react'
+import { MessageCircle, Send, X, Loader2, Star } from 'lucide-react'
 import { apiFetch } from '../../utils/api'
 
 export default function WhatsAppMessages() {
@@ -8,6 +8,7 @@ export default function WhatsAppMessages() {
   const [loading, setLoading] = useState(false)
   const [connected, setConnected] = useState(false)
   const [filter, setFilter] = useState('all')
+  const [priorityFilter, setPriorityFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [replyModal, setReplyModal] = useState(null)
   const [replyTo, setReplyTo] = useState('')
@@ -53,6 +54,19 @@ export default function WhatsAppMessages() {
     } finally { setSending(false) }
   }
 
+  const handlePriority = async (chatId, priority, e) => {
+    e.stopPropagation()
+    try {
+      await apiFetch('/api/whatsapp/priority', {
+        method: 'POST',
+        body: JSON.stringify({ chatId, priority }),
+      })
+      setMessages(prev => prev.map(m =>
+        m.chatId === chatId ? { ...m, priority } : m
+      ))
+    } catch (err) { console.error(err) }
+  }
+
   const filteredMessages = messages.filter(msg => {
     if (search) {
       const q = search.toLowerCase()
@@ -65,17 +79,21 @@ export default function WhatsAppMessages() {
 
   const groupedByChat = filteredMessages.reduce((acc, msg) => {
     const key = msg.chatId
-    if (!acc[key]) acc[key] = { chatId: key, messages: [], lastMessage: null }
+    if (!acc[key]) acc[key] = { chatId: key, messages: [], lastMessage: null, priority: msg.priority || 'none' }
     acc[key].messages.push(msg)
+    acc[key].priority = msg.priority || acc[key].priority
     if (!acc[key].lastMessage || new Date(msg.timestamp) > new Date(acc[key].lastMessage.timestamp)) {
       acc[key].lastMessage = msg
     }
     return acc
   }, {})
 
-  const chats = Object.values(groupedByChat).sort((a, b) =>
+  let chats = Object.values(groupedByChat).sort((a, b) =>
     new Date(b.lastMessage.timestamp) - new Date(a.lastMessage.timestamp)
   )
+
+  if (priorityFilter === 'important') chats = chats.filter(c => c.priority === 'important')
+  else if (priorityFilter === 'normal') chats = chats.filter(c => c.priority !== 'important')
 
   const formatTime = (ts) => {
     const d = new Date(ts)
@@ -110,9 +128,22 @@ export default function WhatsAppMessages() {
           ))}
         </div>
       </div>
-      <div className="px-4 pt-2">
+      <div className="flex items-center gap-2 px-4 pt-2">
         <input type="text" placeholder="Rechercher..." value={search} onChange={e => setSearch(e.target.value)}
-          className="w-full px-3 py-1.5 rounded-lg text-xs text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
+          className="flex-1 px-3 py-1.5 rounded-lg text-xs text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
+        <div className="flex gap-1">
+          {[
+            { key: 'all', label: 'Tous' },
+            { key: 'important', label: '★ Important' },
+            { key: 'normal', label: 'Normal' },
+          ].map(f => (
+            <button key={f.key} onClick={() => setPriorityFilter(f.key)}
+              className={`px-2 py-1.5 rounded-lg text-[10px] font-mono transition-all whitespace-nowrap ${priorityFilter === f.key ? 'bg-accentSec/20 text-accentSec' : 'text-muted hover:text-text'}`}
+              style={priorityFilter === f.key ? { border: '1px solid var(--color-accentSec)' } : { border: '1px solid transparent' }}>
+              {f.label}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {loading ? (
@@ -122,20 +153,30 @@ export default function WhatsAppMessages() {
         ) : chats.map(chat => {
           const lastMsg = chat.lastMessage
           const preview = lastMsg.body.length > 60 ? lastMsg.body.slice(0, 60) + '...' : lastMsg.body
+          const isImportant = chat.priority === 'important'
           return (
             <div key={chat.chatId} onClick={() => { setReplyModal(chat); setReplyTo(chat.chatId) }}
-              className="p-2.5 rounded-xl cursor-pointer transition-all duration-200 hover:bg-accent/5" style={{ border: '1px solid transparent' }}>
+              className={`p-2.5 rounded-xl cursor-pointer transition-all duration-200 hover:bg-accent/5 ${isImportant ? 'ring-1 ring-accentSec/30' : ''}`}>
               <div className="flex items-start gap-2.5">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-medium shrink-0" style={{ background: lastMsg.fromMe ? 'var(--color-accent/15)' : 'var(--color-accentSec/15)', color: lastMsg.fromMe ? 'var(--color-accent)' : 'var(--color-accentSec)' }}>
                   {lastMsg.fromMe ? 'M' : lastMsg.from.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium truncate">{lastMsg.fromMe ? 'Moi' : lastMsg.from}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-medium truncate">{lastMsg.fromMe ? 'Moi' : lastMsg.from}</span>
+                      {isImportant && <Star size={10} className="text-accentSec fill-accentSec shrink-0" />}
+                    </div>
                     <span className="text-[9px] text-muted font-mono shrink-0 ml-2">{formatTime(lastMsg.timestamp)}</span>
                   </div>
                   <p className="text-[11px] text-muted truncate mt-0.5">{preview}</p>
-                  <span className="text-[9px] font-mono text-muted">{chat.messages.length} message{chat.messages.length > 1 ? 's' : ''}</span>
+                  <div className="flex items-center justify-between mt-0.5">
+                    <span className="text-[9px] font-mono text-muted">{chat.messages.length} message{chat.messages.length > 1 ? 's' : ''}</span>
+                    <button onClick={(e) => handlePriority(chat.chatId, isImportant ? 'none' : 'important', e)}
+                      className="text-[9px] text-muted hover:text-accentSec transition-colors" title={isImportant ? 'Retirer important' : 'Marquer important'}>
+                      {isImportant ? '★ Retirer' : '☆ Important'}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
