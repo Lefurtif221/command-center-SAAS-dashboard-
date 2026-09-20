@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
 import { apiFetch } from '../../utils/api'
 
@@ -7,11 +7,11 @@ export default function ConnectedServices() {
   const [connectedList, setConnectedList] = useState([])
   const [loading, setLoading] = useState(null)
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false)
-  const [whatsappToken, setWhatsAppToken] = useState('')
-  const [whatsappPhoneId, setWhatsAppPhoneId] = useState('')
+  const [whatsappQR, setWhatsAppQR] = useState('')
   const [whatsappStatus, setWhatsAppStatus] = useState('')
+  const pollingRef = useRef(null)
 
-  useEffect(() => { fetchServices() }, [])
+  useEffect(() => { fetchServices(); return () => { if (pollingRef.current) clearInterval(pollingRef.current) } }, [])
 
   const fetchServices = async () => {
     try {
@@ -23,7 +23,27 @@ export default function ConnectedServices() {
   }
 
   const handleConnect = async (serviceName) => {
-    if (serviceName === 'whatsapp') { setShowWhatsAppModal(true); return }
+    if (serviceName === 'whatsapp') {
+      setShowWhatsAppModal(true)
+      setWhatsAppQR('')
+      setWhatsAppStatus('Génération du QR code...')
+      setLoading('whatsapp')
+      try {
+        const data = await apiFetch('/api/whatsapp/connect', { method: 'POST' })
+        if (data.qr) {
+          setWhatsAppQR(data.qr)
+          setWhatsAppStatus('Scan le QR code avec ton téléphone')
+          startPolling()
+        } else if (data.status === 'connected') {
+          setWhatsAppStatus('Connecté !')
+          setConnectedList(prev => [...prev, 'whatsapp'])
+          setTimeout(() => setShowWhatsAppModal(false), 1500)
+        }
+      } catch (err) {
+        setWhatsAppStatus(err.message || 'Erreur de connexion')
+      } finally { setLoading(null) }
+      return
+    }
     setLoading(serviceName)
     try {
       const data = await apiFetch(`/api/services/${serviceName}/authorize`)
@@ -33,26 +53,36 @@ export default function ConnectedServices() {
     }
   }
 
-  const handleWhatsAppConnect = async () => {
-    if (!whatsappToken.trim() || !whatsappPhoneId.trim()) return
-    setLoading('whatsapp'); setWhatsAppStatus('')
-    try {
-      await apiFetch('/api/services/whatsapp/connect', {
-        method: 'POST',
-        body: JSON.stringify({ accessToken: whatsappToken.trim(), phoneNumberId: whatsappPhoneId.trim() }),
-      })
-      setConnectedList(prev => [...prev, 'whatsapp'])
-      setShowWhatsAppModal(false); setWhatsAppToken(''); setWhatsAppPhoneId('')
-    } catch (err) {
-      setWhatsAppStatus(err.message || 'Erreur de connexion')
-    } finally { setLoading(null) }
+  const startPolling = () => {
+    if (pollingRef.current) clearInterval(pollingRef.current)
+    pollingRef.current = setInterval(async () => {
+      try {
+        const data = await apiFetch('/api/whatsapp/status')
+        if (data.status === 'connected') {
+          clearInterval(pollingRef.current)
+          pollingRef.current = null
+          setWhatsAppStatus('Connecté !')
+          setConnectedList(prev => prev.includes('whatsapp') ? prev : [...prev, 'whatsapp'])
+          setTimeout(() => setShowWhatsAppModal(false), 1500)
+        } else if (data.status === 'disconnected') {
+          clearInterval(pollingRef.current)
+          pollingRef.current = null
+          setWhatsAppStatus('Déconnecté')
+        }
+      } catch (err) {
+        console.error('Status poll error:', err)
+      }
+    }, 2000)
   }
 
   const handleDisconnect = async (serviceName) => {
     if (!window.confirm(`Déconnecter ${serviceName} ?`)) return
     try {
-      if (serviceName === 'whatsapp') await apiFetch('/api/services/whatsapp', { method: 'DELETE' })
-      else await apiFetch(`/api/services/${serviceName}`, { method: 'DELETE' })
+      if (serviceName === 'whatsapp') {
+        await apiFetch('/api/whatsapp/disconnect', { method: 'POST' })
+      } else {
+        await apiFetch(`/api/services/${serviceName}`, { method: 'DELETE' })
+      }
       setConnectedList(prev => prev.filter(s => s !== serviceName))
       disconnectService(serviceName)
     } catch (err) { console.error('Disconnect error:', err) }
@@ -60,7 +90,7 @@ export default function ConnectedServices() {
 
   const allServices = [
     { id: 'gmail', name: 'Gmail', icon: '📧', desc: 'Emails, calendrier, contacts' },
-    { id: 'whatsapp', name: 'WhatsApp', icon: '💬', desc: 'Messages WhatsApp Business' },
+    { id: 'whatsapp', name: 'WhatsApp', icon: '💬', desc: 'Messages WhatsApp (comme WhatsApp Web)' },
   ]
 
   return (
@@ -95,34 +125,32 @@ export default function ConnectedServices() {
       </div>
 
       {showWhatsAppModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => setShowWhatsAppModal(false)}>
-          <div className="w-full max-w-md rounded-2xl p-5 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
-            <h4 className="text-sm font-medium mb-2">Connecter WhatsApp Business</h4>
-            <p className="text-[11px] text-muted mb-4 leading-relaxed">
-              1. Va sur <a href="https://developers.facebook.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent/80 underline">developers.facebook.com</a><br/>
-              2. Crée une app → Ajoute le produit WhatsApp<br/>
-              3. Va dans <strong>API Setup</strong> → Génère un token permanent<br/>
-              4. Copie le <strong>Phone Number ID</strong> et le <strong>Token</strong> ci-dessous
-            </p>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-[10px] text-muted mb-1 font-mono">Phone Number ID</label>
-                <input type="text" placeholder="Ex: 1407552145764653" value={whatsappPhoneId} onChange={(e) => setWhatsAppPhoneId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg text-xs text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => { setShowWhatsAppModal(false); if (pollingRef.current) clearInterval(pollingRef.current) }}>
+          <div className="w-full max-w-sm rounded-2xl p-5 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
+            <h4 className="text-sm font-medium mb-3">Connecter WhatsApp</h4>
+            {whatsappQR ? (
+              <div className="flex flex-col items-center gap-3">
+                <div className="bg-white p-3 rounded-xl">
+                  <img src={whatsappQR} alt="QR Code WhatsApp" className="w-48 h-48" />
+                </div>
+                <p className="text-[11px] text-muted text-center leading-relaxed">
+                  Ouvre <strong>WhatsApp</strong> sur ton téléphone<br/>
+                  → Menu ⋮ → <strong>Appareils connectés</strong><br/>
+                  → <strong>Connecter un appareil</strong><br/>
+                  → Scan le QR code ci-dessus
+                </p>
               </div>
-              <div>
-                <label className="block text-[10px] text-muted mb-1 font-mono">Permanent Access Token</label>
-                <input type="password" placeholder="EAA..." value={whatsappToken} onChange={(e) => setWhatsAppToken(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg text-xs text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
+            ) : (
+              <div className="flex flex-col items-center gap-3 py-6">
+                <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+                <p className="text-xs text-muted">{whatsappStatus || 'Connexion en cours...'}</p>
               </div>
-              {whatsappStatus && <p className="text-xs text-accentSec">{whatsappStatus}</p>}
-              <div className="flex gap-2 justify-end pt-2">
-                <button onClick={() => setShowWhatsAppModal(false)} className="px-3 py-2 text-xs text-muted rounded-lg hover:text-text transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Annuler</button>
-                <button onClick={handleWhatsAppConnect} disabled={!whatsappToken.trim() || !whatsappPhoneId.trim() || loading === 'whatsapp'}
-                  className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50">
-                  {loading === 'whatsapp' ? 'Connexion...' : 'Connecter'}
-                </button>
-              </div>
+            )}
+            {whatsappStatus && whatsappQR && (
+              <p className="text-xs text-accent text-center mt-3">{whatsappStatus}</p>
+            )}
+            <div className="flex justify-end pt-4">
+              <button onClick={() => { setShowWhatsAppModal(false); if (pollingRef.current) clearInterval(pollingRef.current) }} className="px-3 py-2 text-xs text-muted rounded-lg hover:text-text transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Fermer</button>
             </div>
           </div>
         </div>
