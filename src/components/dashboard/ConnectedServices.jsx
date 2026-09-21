@@ -7,6 +7,7 @@ export default function ConnectedServices() {
   const [connectedList, setConnectedList] = useState([])
   const [loading, setLoading] = useState(null)
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false)
+  const [showGoogleModal, setShowGoogleModal] = useState(false)
   const [whatsappQR, setWhatsAppQR] = useState('')
   const [whatsappStatus, setWhatsAppStatus] = useState('')
   const pollingRef = useRef(null)
@@ -26,16 +27,16 @@ export default function ConnectedServices() {
     if (serviceName === 'whatsapp') {
       setShowWhatsAppModal(true)
       setWhatsAppQR('')
-      setWhatsAppStatus('Génération du QR code...')
+      setWhatsAppStatus('Generation du QR code...')
       setLoading('whatsapp')
       try {
         const data = await apiFetch('/api/whatsapp/connect', { method: 'POST' })
         if (data.qr) {
           setWhatsAppQR(data.qr)
-          setWhatsAppStatus('Scan le QR code avec ton téléphone')
+          setWhatsAppStatus('Scan le QR code avec ton telephone')
           startPolling()
         } else if (data.status === 'connected') {
-          setWhatsAppStatus('Connecté !')
+          setWhatsAppStatus('Connecte !')
           setConnectedList(prev => [...prev, 'whatsapp'])
           setTimeout(() => setShowWhatsAppModal(false), 1500)
         }
@@ -44,9 +45,24 @@ export default function ConnectedServices() {
       } finally { setLoading(null) }
       return
     }
+    if (serviceName === 'gmail') {
+      setShowGoogleModal(true)
+      return
+    }
     setLoading(serviceName)
     try {
       const data = await apiFetch(`/api/services/${serviceName}/authorize`)
+      if (data.url) window.location.href = data.url
+    } catch (err) {
+      console.error('OAuth error:', err); setLoading(null)
+    }
+  }
+
+  const proceedGoogleConnect = async () => {
+    setShowGoogleModal(false)
+    setLoading('gmail')
+    try {
+      const data = await apiFetch('/api/services/gmail/authorize')
       if (data.url) window.location.href = data.url
     } catch (err) {
       console.error('OAuth error:', err); setLoading(null)
@@ -61,13 +77,13 @@ export default function ConnectedServices() {
         if (data.status === 'connected') {
           clearInterval(pollingRef.current)
           pollingRef.current = null
-          setWhatsAppStatus('Connecté !')
+          setWhatsAppStatus('Connecte !')
           setConnectedList(prev => prev.includes('whatsapp') ? prev : [...prev, 'whatsapp'])
           setTimeout(() => setShowWhatsAppModal(false), 1500)
         } else if (data.status === 'disconnected') {
           clearInterval(pollingRef.current)
           pollingRef.current = null
-          setWhatsAppStatus('Déconnecté')
+          setWhatsAppStatus('Deconnecte')
         }
       } catch (err) {
         console.error('Status poll error:', err)
@@ -76,7 +92,7 @@ export default function ConnectedServices() {
   }
 
   const handleDisconnect = async (serviceName) => {
-    if (!window.confirm(`Déconnecter ${serviceName} ?`)) return
+    if (!window.confirm(`Deconnecter ${serviceName} ?`)) return
     try {
       if (serviceName === 'whatsapp') {
         await apiFetch('/api/whatsapp/disconnect', { method: 'POST' })
@@ -96,7 +112,7 @@ export default function ConnectedServices() {
   return (
     <div className="glass rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex items-center justify-between p-4 border-b border-border/50">
-        <h3 className="text-sm font-display font-medium">Services connectés</h3>
+        <h3 className="text-sm font-display font-medium">Services connectes</h3>
       </div>
       <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
         {allServices.map((service) => {
@@ -112,7 +128,7 @@ export default function ConnectedServices() {
               </div>
               <div className="flex gap-2">
                 {isConnected ? (
-                  <button onClick={() => handleDisconnect(service.id)} className="glass flex-1 px-2 py-2.5 rounded-xl text-xs text-accentSec hover:bg-accentSec/5 transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>Déconnecter</button>
+                  <button onClick={() => handleDisconnect(service.id)} className="glass flex-1 px-2 py-2.5 rounded-xl text-xs text-accentSec hover:bg-accentSec/5 transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>Deconnecter</button>
                 ) : (
                   <button onClick={() => handleConnect(service.id)} disabled={loading === service.id} className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 bg-accent/10 border border-accent/20 rounded-xl text-xs text-accent hover:bg-accent/15 transition-all duration-200 disabled:opacity-50">
                     {loading === service.id ? '...' : 'Connecter'}
@@ -123,6 +139,50 @@ export default function ConnectedServices() {
           )
         })}
       </div>
+
+      {showGoogleModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => setShowGoogleModal(false)}>
+          <div className="w-full max-w-lg rounded-2xl p-5 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-xl">📧</span>
+              <h4 className="text-sm font-medium">Connecter Gmail</h4>
+            </div>
+            <div className="space-y-3 mb-4">
+              <p className="text-[11px] text-muted leading-relaxed">
+                Pour connecter ton compte Gmail, tu vas etre redirige vers <strong>Google</strong> pour autoriser l'acces.
+              </p>
+              <div className="rounded-xl p-3" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                <p className="text-[10px] font-medium text-text mb-2">Ce que l'app pourra faire :</p>
+                <ul className="text-[10px] text-muted space-y-1">
+                  <li className="flex items-start gap-1.5"><span className="text-success mt-0.5">✓</span> Lire tes emails</li>
+                  <li className="flex items-start gap-1.5"><span className="text-success mt-0.5">✓</span> Envoyer des emails</li>
+                  <li className="flex items-start gap-1.5"><span className="text-success mt-0.5">✓</span> Acceder a ton calendrier</li>
+                  <li className="flex items-start gap-1.5"><span className="text-accentSec mt-0.5">✗</span> Supprimer des emails</li>
+                </ul>
+              </div>
+              <div className="rounded-xl p-3" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                <p className="text-[10px] font-medium text-text mb-2">Etapes :</p>
+                <ol className="text-[10px] text-muted space-y-1 list-decimal list-inside leading-relaxed">
+                  <li>Clique <strong>"Continuer"</strong> ci-dessous</li>
+                  <li>Connecte-toi avec ton compte Google</li>
+                  <li>Si un avertissement apparait, clique <strong>"Parametres avances"</strong></li>
+                  <li>Puis clique <strong>"Aller sur Personal Place (non verify)"</strong></li>
+                  <li>Autorise l'acces et c'est fait !</li>
+                </ol>
+              </div>
+              <p className="text-[10px] text-accentSec leading-relaxed">
+                ⚠️ Si Google affiche "App non verifye" : c'est normal en phase de developpement. Clique sur "Parametres avances" puis "Aller sur Personal Place".
+              </p>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setShowGoogleModal(false)} className="px-3 py-2 text-xs text-muted rounded-lg hover:text-text transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Annuler</button>
+              <button onClick={proceedGoogleConnect} className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity">
+                Continuer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showWhatsAppModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => { setShowWhatsAppModal(false); if (pollingRef.current) clearInterval(pollingRef.current) }}>
@@ -148,18 +208,18 @@ export default function ConnectedServices() {
                 <div>
                   <p className="text-[11px] font-medium text-text mb-1.5">Comment scanner :</p>
                   <ol className="text-[10px] text-muted space-y-1 list-decimal list-inside leading-relaxed">
-                    <li>Ouvre <strong>WhatsApp</strong> sur ton téléphone</li>
-                    <li>Menu ⋮ → <strong>Appareils connectés</strong></li>
+                    <li>Ouvre <strong>WhatsApp</strong> sur ton telephone</li>
+                    <li>Menu ⋮ → <strong>Appareils connectes</strong></li>
                     <li>Clique <strong>Connecter un appareil</strong></li>
-                    <li>Scan le QR code à gauche</li>
+                    <li>Scan le QR code a gauche</li>
                   </ol>
                 </div>
                 <div className="pt-2 border-t" style={{ borderColor: 'var(--color-border)' }}>
                   <p className="text-[10px] text-muted leading-relaxed">
-                    <span className="text-success font-medium">✓</span> Lecture seule recommandée<br/>
+                    <span className="text-success font-medium">✓</span> Lecture seule recommandee<br/>
                     <span className="text-success font-medium">✓</span> Pas plus de 50 messages/heure<br/>
-                    <span className="text-success font-medium">✓</span> Session stable, pas de reconnexion fréquente<br/>
-                    <span className="text-accentSec font-medium">✗</span> Évite l'envoi massif de messages
+                    <span className="text-success font-medium">✓</span> Session stable, pas de reconnexion frequente<br/>
+                    <span className="text-accentSec font-medium">✗</span> Evite l'envoi massif de messages
                   </p>
                 </div>
               </div>

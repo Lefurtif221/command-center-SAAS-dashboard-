@@ -10,6 +10,7 @@ import QuickActions from '../components/dashboard/QuickActions'
 import Calendar from '../components/dashboard/Calendar'
 import Tasks from '../components/dashboard/Tasks'
 import Concentration from '../components/dashboard/Concentration'
+import OnboardingTutorial from '../components/dashboard/OnboardingTutorial'
 import { useDashboard } from '../hooks/useDashboard'
 import { useAuth } from '../hooks/useAuth'
 
@@ -28,6 +29,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-bg">
+      <OnboardingTutorial />
       <Sidebar />
 
       <div className="md:ml-56 overflow-x-hidden">
