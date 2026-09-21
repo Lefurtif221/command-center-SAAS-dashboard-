@@ -1,57 +1,89 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { X, Mail, MessageCircle, CheckSquare, Calendar, Zap, ChevronRight, ChevronLeft } from 'lucide-react'
-import { apiFetch } from '../../utils/api'
+import { X, ChevronRight, ChevronLeft } from 'lucide-react'
 
 const steps = [
   {
-    icon: <Zap size={28} className="text-accent" />,
+    target: null,
     title: 'Bienvenue sur Personal Place !',
-    desc: "Ton espace productivite personnel. Voici comment ca marche.",
-    detail: "Personal Place centralise tes emails, messages, taches et calendrier en un seul endroit. Commence par connecter tes services."
+    desc: "Ton espace productivite personnel. Ce guide va te montrer comment utiliser chaque fonctionnalite. Clique 'Suivant' pour commencer.",
+    position: 'center',
   },
   {
-    icon: <Mail size={28} className="text-accent" />,
-    title: '1. Connecte Gmail',
-    desc: 'Pour voir et gerer tes emails directement sur le dashboard.',
-    detail: "Clique sur 'Connecter' dans Services connectes. Tu seras redirige vers Google pour autoriser l'acces. Si Google affiche un avertissement, clique sur 'Parametres avances' puis 'Aller sur Personal Place'."
+    target: '[data-tutorial="sidebar-emails"]',
+    title: 'Tes Emails',
+    desc: "Clique ici pour voir tous tes emails. Le filtre intelligent les classe automatiquement par priorite.",
+    position: 'right',
   },
   {
-    icon: <MessageCircle size={28} className="text-accent" />,
-    title: '2. Connecte WhatsApp',
-    desc: 'Pour voir tes messages WhatsApp comme sur WhatsApp Web.',
-    detail: "Clique sur 'Connecter' puis scan le QR code avec ton telephone (WhatsApp → Menu ⋮ → Appareils connectes → Connecter un appareil)."
+    target: '[data-tutorial="sidebar-messages"]',
+    title: 'Messages WhatsApp',
+    desc: "Ici tu vois tes messages WhatsApp, comme sur WhatsApp Web. Connecte d'abord ton WhatsApp dans les services.",
+    position: 'right',
   },
   {
-    icon: <Mail size={28} className="text-accent" />,
-    title: '3. Emails & Filtre intelligent',
-    desc: 'Tes emails sont automatiquement filtres par priorite.',
-    detail: "La section Emails affiche tes messages avec des filtres : Important, Non important, Tous. Tu peux marquer des expediteurs comme importants et l'IA resume automatiquement les longs emails."
+    target: '[data-tutorial="sidebar-calendar"]',
+    title: 'Calendrier',
+    desc: "Tes evenements Google Calendar s'affichent ici. Sync automatique avec ton compte Google.",
+    position: 'right',
   },
   {
-    icon: <CheckSquare size={28} className="text-accent" />,
-    title: '4. Taches & To-Do',
-    desc: 'Gere tes taches du jour et ta productivite.',
-    detail: "Ajoute des taches, marque-les comme terminees, et garde un oeil sur ton focus du jour dans le tableau de bord."
+    target: '[data-tutorial="sidebar-tasks"]',
+    title: 'Taches',
+    desc: "Gere tes taches du jour. Ajoute, complete, et garde un oeil sur ta productivite.",
+    position: 'right',
   },
   {
-    icon: <Calendar size={28} className="text-accent" />,
-    title: '5. Calendrier',
-    desc: 'Vois tes evenements du jour et de la semaine.',
-    detail: "Le calendrier se sync automatiquement avec ton compte Google. Tu peux voir tes evenements et ajouter des rappels."
+    target: '[data-tutorial="connected-services"]',
+    title: 'Connecte tes services',
+    desc: "Clique 'Connecter' sur Gmail et WhatsApp pour synchroniser tes donnees. C'est ici que tout commence !",
+    position: 'bottom',
+  },
+  {
+    target: '[data-tutorial="theme-toggle"]',
+    title: 'Mode Sombre / Clair',
+    desc: "Bascule entre le mode sombre et clair selon ta preference.",
+    position: 'left',
+  },
+  {
+    target: null,
+    title: "C'est tout !",
+    desc: "Tu es pret. Explore l'app et connecte tes services pour commencer. Tu peux revoir ce tutoriel en cliquant sur ton profil.",
+    position: 'center',
   },
 ]
 
 export default function OnboardingTutorial() {
   const [show, setShow] = useState(false)
   const [step, setStep] = useState(0)
+  const [targetRect, setTargetRect] = useState(null)
+  const tooltipRef = useRef(null)
 
   useEffect(() => {
     const seen = localStorage.getItem('personalplace_onboarding_seen')
     if (!seen) {
-      setTimeout(() => setShow(true), 1000)
+      setTimeout(() => setShow(true), 1500)
     }
   }, [])
+
+  const findTarget = useCallback(() => {
+    const s = steps[step]
+    if (!s.target) { setTargetRect(null); return }
+    const el = document.querySelector(s.target)
+    if (el) {
+      const r = el.getBoundingClientRect()
+      setTargetRect({ top: r.top, left: r.left, width: r.width, height: r.height })
+    } else {
+      setTargetRect(null)
+    }
+  }, [step])
+
+  useEffect(() => {
+    if (!show) return
+    findTarget()
+    window.addEventListener('resize', findTarget)
+    return () => window.removeEventListener('resize', findTarget)
+  }, [show, findTarget])
 
   const handleClose = () => {
     setShow(false)
@@ -70,49 +102,97 @@ export default function OnboardingTutorial() {
   if (!show) return null
 
   const s = steps[step]
+  const isCenter = !s.target || s.position === 'center'
+
+  const getTooltipStyle = () => {
+    if (isCenter) {
+      return { position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 10002 }
+    }
+    const gap = 16
+    let top, left
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+
+    if (s.position === 'right') {
+      top = targetRect ? targetRect.top + targetRect.height / 2 : vh / 2
+      left = targetRect ? targetRect.right + gap : vw / 2
+      if (left + 340 > vw) left = (targetRect ? targetRect.left : vw / 2) - gap - 340
+    } else if (s.position === 'left') {
+      top = targetRect ? targetRect.top + targetRect.height / 2 : vh / 2
+      left = targetRect ? targetRect.left - gap - 340 : vw / 2
+      if (left < gap) left = targetRect ? targetRect.right + gap : vw / 2
+    } else if (s.position === 'bottom') {
+      top = targetRect ? targetRect.bottom + gap : vh / 2
+      left = targetRect ? targetRect.left + targetRect.width / 2 : vw / 2
+      left = Math.min(Math.max(left - 170, gap), vw - 340 - gap)
+      if (top + 200 > vh) top = (targetRect ? targetRect.top : vh / 2) - gap - 200
+    } else {
+      top = targetRect ? targetRect.top - gap - 180 : vh / 2
+      left = targetRect ? targetRect.left + targetRect.width / 2 : vw / 2
+      left = Math.min(Math.max(left - 170, gap), vw - 340 - gap)
+      if (top < gap) top = (targetRect ? targetRect.bottom : vh / 2) + gap
+    }
+
+    return { position: 'fixed', top: `${top}px`, left: `${left}px`, zIndex: 10002, maxWidth: '340px', width: '340px' }
+  }
 
   return createPortal(
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)' }}>
-      <div className="w-full max-w-md rounded-2xl p-6 shadow-2xl relative" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-        <button onClick={handleClose} className="absolute top-3 right-3 p-1 rounded-lg hover:bg-muted/10 text-muted hover:text-text transition-colors">
-          <X size={14} />
-        </button>
+    <>
+      <div className="fixed inset-0 z-[10000]" style={{ background: 'rgba(0,0,0,0.65)' }} onClick={handleClose} />
 
-        <div className="text-center mb-5">
-          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ background: 'var(--color-accent/10)' }}>
-            {s.icon}
-          </div>
-          <h3 className="text-sm font-display font-medium mb-1">{s.title}</h3>
-          <p className="text-[11px] text-muted leading-relaxed">{s.desc}</p>
-        </div>
+      {targetRect && !isCenter && (
+        <div
+          className="fixed z-[10001] rounded-xl transition-all duration-300"
+          style={{
+            top: `${targetRect.top - 4}px`,
+            left: `${targetRect.left - 4}px`,
+            width: `${targetRect.width + 8}px`,
+            height: `${targetRect.height + 8}px`,
+            boxShadow: '0 0 0 9999px rgba(0,0,0,0.65)',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
 
-        <div className="rounded-xl p-3 mb-5" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-          <p className="text-[11px] text-muted leading-relaxed">{s.detail}</p>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="flex gap-1">
-            {steps.map((_, i) => (
-              <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all ${i === step ? 'bg-accent w-4' : 'bg-muted/30'}`} />
-            ))}
-          </div>
-          <div className="flex gap-2">
-            {step > 0 && (
-              <button onClick={handlePrev} className="px-3 py-1.5 text-[11px] text-muted rounded-lg hover:text-text transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-                <ChevronLeft size={12} className="inline mr-1" />Retour
-              </button>
-            )}
-            <button onClick={handleNext} className="px-3 py-1.5 bg-accent text-bg text-[11px] font-medium rounded-lg hover:opacity-90 transition-opacity flex items-center gap-1">
-              {step === steps.length - 1 ? 'Commencer' : 'Suivant'} <ChevronRight size={12} />
+      <div ref={tooltipRef} style={getTooltipStyle()}
+        className="rounded-2xl p-5 shadow-2xl" onClick={e => e.stopPropagation()}
+        key={step}
+      >
+        <div className="rounded-2xl p-5 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[10px] font-mono text-accent">{step + 1} / {steps.length}</span>
+            <button onClick={handleClose} className="p-1 rounded-lg hover:bg-muted/10 text-muted hover:text-text transition-colors">
+              <X size={14} />
             </button>
           </div>
-        </div>
 
-        <button onClick={handleClose} className="w-full mt-3 text-[10px] text-muted hover:text-text text-center transition-colors">
-          Passer le tutoriel
-        </button>
+          <h3 className="text-base sm:text-lg font-display font-medium mb-2">{s.title}</h3>
+          <p className="text-xs sm:text-sm text-muted leading-relaxed mb-4">{s.desc}</p>
+
+          <div className="flex items-center justify-between">
+            <div className="flex gap-1">
+              {steps.map((_, i) => (
+                <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === step ? 'bg-accent w-5' : 'bg-muted/20 w-1.5'}`} />
+              ))}
+            </div>
+            <div className="flex gap-2">
+              {step > 0 && (
+                <button onClick={handlePrev} className="px-3 py-2 text-xs text-muted rounded-lg hover:text-text transition-colors flex items-center gap-1" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                  <ChevronLeft size={12} /> Retour
+                </button>
+              )}
+              <button onClick={handleNext} className="px-4 py-2 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity flex items-center gap-1">
+                {step === steps.length - 1 ? 'Commencer' : 'Suivant'} <ChevronRight size={12} />
+              </button>
+            </div>
+          </div>
+
+          <button onClick={handleClose} className="w-full mt-3 text-[10px] text-muted hover:text-text text-center transition-colors py-1">
+            Passer le tutoriel
+          </button>
+        </div>
       </div>
-    </div>,
+    </>,
     document.body
   )
 }

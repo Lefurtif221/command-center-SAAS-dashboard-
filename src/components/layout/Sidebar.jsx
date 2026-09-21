@@ -56,6 +56,7 @@ export default function Sidebar({ onToggle }) {
             const isActive = activeSection === item.id
             return (
               <button key={item.id} onClick={() => handleNav(item.id)}
+                data-tutorial={`sidebar-${item.id}`}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
                   isActive
                     ? 'bg-accent/10 text-accent shadow-[0_0_12px_-4px_rgba(125,211,252,0.3)]'

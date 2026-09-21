@@ -83,6 +83,7 @@ export default function TopBar() {
       </div>
       <div className="flex items-center gap-2 md:gap-3">
         <button onClick={toggleTheme}
+          data-tutorial="theme-toggle"
           className="p-2.5 rounded-xl text-muted hover:text-text hover:bg-accent/10 hover:text-accent transition-all duration-200"
           aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}>
           {isDark ? <Sun size={16} /> : <Moon size={16} />}
