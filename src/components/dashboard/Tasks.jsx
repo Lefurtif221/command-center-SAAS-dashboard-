@@ -103,7 +103,7 @@ export default function Tasks() {
               <option value="low">Faible</option>
             </select>
             <button onClick={handleAdd} disabled={adding || !newTitle.trim()}
-              className="px-3 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#8dd8fc] transition-all duration-200 disabled:opacity-50 shadow-[0_0_15px_-3px_rgba(125,211,252,0.3)]">
+              className="px-3 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#EF4444] transition-all duration-200 disabled:opacity-50 shadow-[0_0_15px_-3px_rgba(220,38,38,0.3)]">
               {adding ? '...' : '+'}
             </button>
           </div>

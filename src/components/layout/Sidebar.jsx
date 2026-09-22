@@ -35,19 +35,21 @@ export default function Sidebar({ onToggle }) {
       <div className="h-14 md:h-16 flex items-center justify-between px-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
         {!collapsed && (
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'var(--color-accent/10)' }}>
-              <Sparkles size={14} className="text-accent" />
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(220,38,38,0.1)' }}>
+              <Sparkles size={14} style={{ color: '#DC2626' }} />
             </div>
             <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
           </div>
         )}
         <button onClick={() => { setCollapsed(!collapsed); onToggle && onToggle(!collapsed) }}
-          className="p-1.5 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-all duration-200 hidden md:block"
+          className="p-1.5 rounded-lg transition-all duration-200 hidden md:block"
+          style={{ color: 'var(--color-muted)' }}
           aria-label={collapsed ? 'Developper la sidebar' : 'Reduire la sidebar'}>
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
         <button onClick={() => setMobileOpen(false)}
-          className="p-1.5 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-all duration-200 md:hidden"
+          className="p-1.5 rounded-lg transition-all duration-200 md:hidden"
+          style={{ color: 'var(--color-muted)' }}
           aria-label="Fermer le menu">
           <X size={16} />
         </button>
@@ -61,19 +63,17 @@ export default function Sidebar({ onToggle }) {
             return (
               <button key={item.id} onClick={() => handleNav(item.id)}
                 data-tutorial={`sidebar-${item.id}`}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
-                  isActive
-                    ? 'text-accent'
-                    : 'text-muted hover:text-text hover:bg-white/5'
-                }`}
-                style={isActive ? { background: 'var(--color-accent/10)' } : {}}>
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200`}
+                style={isActive
+                  ? { background: 'rgba(220,38,38,0.15)', color: '#DC2626' }
+                  : { color: 'var(--color-muted)' }}>
                 <item.icon size={18} className="shrink-0" />
                 {!collapsed && (
                   <>
                     <span className="flex-1 text-left text-sm font-medium">{item.label}</span>
                     {b > 0 && (
                       <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full"
-                        style={{ background: 'var(--color-accentSec/10)', color: 'var(--color-accentSec)' }}>
+                        style={{ background: 'rgba(220,38,38,0.1)', color: '#DC2626' }}>
                         {b}
                       </span>
                     )}
@@ -86,13 +86,16 @@ export default function Sidebar({ onToggle }) {
       </nav>
       <div className="px-2 pb-4 space-y-0.5">
         <button onClick={() => handleNav('settings')}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${activeSection === 'settings' ? 'text-accent' : 'text-muted hover:text-text hover:bg-white/5'}`}
-          style={activeSection === 'settings' ? { background: 'var(--color-accent/10)' } : {}}>
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200"
+          style={activeSection === 'settings'
+            ? { background: 'rgba(220,38,38,0.15)', color: '#DC2626' }
+            : { color: 'var(--color-muted)' }}>
           <Settings size={18} className="shrink-0" />
           {!collapsed && <span className="text-sm font-medium">Settings</span>}
         </button>
         <button onClick={logout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted hover:text-accentSec hover:bg-accentSec/5 transition-all duration-200">
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-red-500/10"
+          style={{ color: 'var(--color-muted)' }}>
           <LogOut size={18} className="shrink-0" />
           {!collapsed && <span className="text-sm font-medium">Deconnexion</span>}
         </button>
@@ -101,12 +104,12 @@ export default function Sidebar({ onToggle }) {
         <div className="p-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
           <div className="flex items-center gap-3 px-2 py-2">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-display font-semibold shrink-0"
-              style={{ background: 'linear-gradient(135deg, var(--color-accent/20), var(--color-accentSec/20))', color: 'var(--color-accent)', border: '1px solid var(--color-accent/20)' }}>
+              style={{ background: 'rgba(220,38,38,0.15)', color: '#DC2626', border: '1px solid rgba(220,38,38,0.2)' }}>
               {user?.initials || 'U'}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{user?.name || 'Utilisateur'}</p>
-              <p className="text-[10px] text-muted capitalize font-mono">{user?.plan || 'free'} plan</p>
+              <p className="text-[10px] font-mono" style={{ color: 'var(--color-muted)' }}>{user?.plan || 'free'} plan</p>
             </div>
           </div>
         </div>
@@ -117,8 +120,8 @@ export default function Sidebar({ onToggle }) {
   return (
     <>
       <button onClick={() => setMobileOpen(true)}
-        className="fixed top-3 left-3 z-50 p-2.5 rounded-xl text-muted hover:text-text transition-all duration-200 md:hidden hover:scale-105"
-        style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+        className="fixed top-3 left-3 z-50 p-2.5 rounded-xl transition-all duration-200 md:hidden hover:scale-105"
+        style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}>
         <Menu size={20} />
       </button>
 

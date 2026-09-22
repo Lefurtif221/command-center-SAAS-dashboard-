@@ -13,6 +13,7 @@ export default function WhatsAppMessages() {
   const [filter, setFilter] = useState('all')
   const refreshRef = useRef(null)
   const chatEndRef = useRef(null)
+  const chatContainerRef = useRef(null)
 
   useEffect(() => {
     checkStatus()
@@ -21,12 +22,9 @@ export default function WhatsAppMessages() {
     return () => { if (refreshRef.current) clearInterval(refreshRef.current) }
   }, [])
 
-  const chatContainerRef = useRef(null)
-
   useEffect(() => {
     if (activeChat && chatContainerRef.current) {
-      const el = chatContainerRef.current
-      setTimeout(() => { el.scrollTop = el.scrollHeight }, 50)
+      setTimeout(() => { chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight }, 50)
     }
   }, [activeChat])
 
@@ -107,7 +105,7 @@ export default function WhatsAppMessages() {
   const getMsgIcon = (type) => {
     const icons = { image: Image, video: Film, audio: Mic, document: FileText, location: MapPin }
     const I = icons[type]
-    return I ? <I size={10} className="text-muted shrink-0" /> : null
+    return I ? <I size={10} className="shrink-0" style={{ color: 'var(--color-muted)' }} /> : null
   }
 
   const chats = useMemo(() => {
@@ -138,11 +136,11 @@ export default function WhatsAppMessages() {
   if (!connected) {
     return (
       <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-        <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: 'var(--color-accent/10)' }}>
-          <MessageCircle size={28} className="text-accent" />
+        <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(220,38,38,0.1)' }}>
+          <MessageCircle size={28} style={{ color: '#DC2626' }} />
         </div>
         <h3 className="text-sm font-display font-medium mb-2">WhatsApp non connecte</h3>
-        <p className="text-xs text-muted max-w-xs mx-auto">Connecte ton WhatsApp dans "Services connectes" pour voir et envoyer des messages directement depuis l'app.</p>
+        <p className="text-xs max-w-xs mx-auto" style={{ color: 'var(--color-muted)' }}>Connecte ton WhatsApp dans "Services connectes" pour voir et envoyer des messages directement depuis l'app.</p>
       </div>
     )
   }
@@ -157,45 +155,49 @@ export default function WhatsAppMessages() {
           <div className="flex gap-0.5">
             {['all', 'important'].map(f => (
               <button key={f} onClick={() => setFilter(f)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-mono transition-all ${filter === f ? 'bg-accent/20 text-accent' : 'text-muted hover:text-text'}`}>
-                {f === 'all' ? 'Tous' : '★'}
+                className={`px-2 py-1 rounded-lg text-[10px] font-mono transition-all`}
+                style={filter === f
+                  ? { background: 'rgba(220,38,38,0.15)', color: '#DC2626' }
+                  : { color: 'var(--color-muted)' }}>
+                {f === 'all' ? 'Tous' : '\u2605'}
               </button>
             ))}
           </div>
         </div>
         <div className="relative">
-          <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted" />
+          <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-muted)' }} />
           <input type="text" placeholder="Rechercher une conversation..." value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full pl-8 pr-3 py-2 rounded-xl text-xs text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
+            className="w-full pl-8 pr-3 py-2 rounded-xl text-xs focus:outline-none transition-colors"
+            style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
         </div>
       </div>
       <div className="flex-1 overflow-y-auto">
         {chats.length === 0 ? (
-          <p className="text-xs text-muted text-center py-8">Aucune conversation</p>
+          <p className="text-xs text-center py-8" style={{ color: 'var(--color-muted)' }}>Aucune conversation</p>
         ) : chats.map(chat => {
           const last = chat.lastMessage
           const isActive = activeChat?.chatId === chat.chatId
           const isImportant = chat.priority === 'important'
-          const preview = last.fromMe ? 'Toi: ' : ''
           const previewText = last.body || (last.type !== 'text' ? `[${last.type}]` : '')
           return (
             <div key={chat.chatId}
               onClick={() => setActiveChat(chat)}
-              className={`flex items-center gap-3 px-3 py-3 cursor-pointer transition-all duration-150 border-b ${isActive ? 'bg-accent/10' : 'hover:bg-white/5'}`}
-              style={{ borderColor: 'var(--color-border)' }}>
-              <div className="w-11 h-11 rounded-full flex items-center justify-center text-xs font-semibold shrink-0" style={{ background: 'linear-gradient(135deg, var(--color-accent/20), var(--color-accentSec/20))', color: 'var(--color-accent)' }}>
+              className="flex items-center gap-3 px-3 py-3 cursor-pointer transition-all duration-150 border-b"
+              style={{ borderColor: 'var(--color-border)', background: isActive ? 'rgba(220,38,38,0.1)' : 'transparent' }}>
+              <div className="w-11 h-11 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
+                style={{ background: 'rgba(220,38,38,0.15)', color: '#DC2626' }}>
                 {last.fromMe ? 'M' : last.from?.slice(0, 2)?.toUpperCase() || '?'}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium truncate">{last.fromMe ? 'Moi' : last.from}</span>
-                  <span className="text-[10px] text-muted shrink-0 ml-2">{formatDate(last.timestamp)}</span>
+                  <span className="text-[10px] shrink-0 ml-2" style={{ color: 'var(--color-muted)' }}>{formatDate(last.timestamp)}</span>
                 </div>
                 <div className="flex items-center gap-1 mt-0.5">
-                  {last.fromMe && <span className="text-[10px] text-muted">Toi: </span>}
+                  {last.fromMe && <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>Toi: </span>}
                   {getMsgIcon(last.type)}
-                  <p className="text-[11px] text-muted truncate flex-1">{previewText || '...'}</p>
-                  {isImportant && <Star size={9} className="text-accentSec fill-accentSec shrink-0" />}
+                  <p className="text-[11px] truncate flex-1" style={{ color: 'var(--color-muted)' }}>{previewText || '...'}</p>
+                  {isImportant && <Star size={9} style={{ color: '#DC2626', fill: '#DC2626' }} />}
                 </div>
               </div>
             </div>
@@ -208,19 +210,21 @@ export default function WhatsAppMessages() {
   const chatView = activeChat ? (
     <div className="flex flex-col h-full">
       <div className="flex items-center gap-3 px-3 py-2.5 border-b shrink-0" style={{ borderColor: 'var(--color-border)' }}>
-        <button onClick={() => setActiveChat(null)} className="p-1.5 rounded-lg hover:bg-white/5 text-muted md:hidden">
+        <button onClick={() => setActiveChat(null)} className="p-1.5 rounded-lg md:hidden" style={{ color: 'var(--color-muted)' }}>
           <ArrowLeft size={16} />
         </button>
-        <div className="w-9 h-9 rounded-full flex items-center justify-center text-[10px] font-semibold shrink-0" style={{ background: 'linear-gradient(135deg, var(--color-accent/20), var(--color-accentSec/20))', color: 'var(--color-accent)' }}>
+        <div className="w-9 h-9 rounded-full flex items-center justify-center text-[10px] font-semibold shrink-0"
+          style={{ background: 'rgba(220,38,38,0.15)', color: '#DC2626' }}>
           {activeChat.lastMessage.fromMe ? 'M' : activeChat.lastMessage.from?.slice(0, 2)?.toUpperCase() || '?'}
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium truncate">{activeChat.lastMessage.from}</p>
-          <p className="text-[10px] text-muted">{activeChat.messages.length} message{activeChat.messages.length > 1 ? 's' : ''}</p>
+          <p className="text-[10px]" style={{ color: 'var(--color-muted)' }}>{activeChat.messages.length} message{activeChat.messages.length > 1 ? 's' : ''}</p>
         </div>
         <button onClick={(e) => handlePriority(activeChat.chatId, activeChat.priority === 'important' ? 'none' : 'important', e)}
-          className={`p-2 rounded-lg transition-all ${activeChat.priority === 'important' ? 'text-accentSec' : 'text-muted hover:text-accentSec'}`}>
-          <Star size={14} className={activeChat.priority === 'important' ? 'fill-accentSec' : ''} />
+          className="p-2 rounded-lg transition-all"
+          style={{ color: activeChat.priority === 'important' ? '#DC2626' : 'var(--color-muted)' }}>
+          <Star size={14} className={activeChat.priority === 'important' ? 'fill-current' : ''} />
         </button>
       </div>
 
@@ -231,7 +235,8 @@ export default function WhatsAppMessages() {
             <div key={msg.id}>
               {showDate && (
                 <div className="flex justify-center my-3">
-                  <span className="text-[10px] px-3 py-1 rounded-full" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}>
+                  <span className="text-[10px] px-3 py-1 rounded-full"
+                    style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}>
                     {formatDate(msg.timestamp)}
                   </span>
                 </div>
@@ -242,34 +247,34 @@ export default function WhatsAppMessages() {
                   : 'rounded-2xl rounded-bl-md'
                 }`}
                   style={msg.fromMe
-                    ? { background: 'var(--color-accent/20)', color: 'var(--color-text)' }
-                    : { background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }
+                    ? { background: '#DC2626', color: '#FFFFFF' }
+                    : { background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }
                   }>
                   {msg.type === 'image' && (
                     <div className="w-48 h-32 rounded-lg mb-1 flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
-                      <Image size={24} className="text-muted" />
+                      <Image size={24} style={{ color: 'var(--color-muted)' }} />
                     </div>
                   )}
                   {msg.type === 'video' && (
                     <div className="w-48 h-32 rounded-lg mb-1 flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
-                      <Film size={24} className="text-muted" />
+                      <Film size={24} style={{ color: 'var(--color-muted)' }} />
                     </div>
                   )}
                   {msg.type === 'audio' && (
                     <div className="flex items-center gap-2 mb-1 px-2 py-1.5 rounded-lg" style={{ background: 'var(--color-bg)' }}>
-                      <Mic size={12} className="text-accent" />
+                      <Mic size={12} style={{ color: '#DC2626' }} />
                       <div className="flex-1 h-1 rounded-full" style={{ background: 'var(--color-border)' }}>
-                        <div className="h-full w-0 rounded-full bg-accent" />
+                        <div className="h-full w-0 rounded-full" style={{ background: '#DC2626' }} />
                       </div>
-                      <span className="text-[9px] text-muted">0:00</span>
+                      <span className="text-[9px]" style={{ color: 'var(--color-muted)' }}>0:00</span>
                     </div>
                   )}
                   {msg.body ? (
                     <p className="whitespace-pre-wrap break-words leading-relaxed">{msg.body}</p>
                   ) : msg.type !== 'text' ? (
-                    <p className="italic text-muted text-[11px]">[{msg.type}]</p>
+                    <p className="italic text-[11px]" style={{ color: 'var(--color-muted)' }}>[{msg.type}]</p>
                   ) : null}
-                  <div className={`flex items-center justify-end gap-1 mt-0.5 ${msg.fromMe ? '' : ''}`}>
+                  <div className="flex items-center justify-end gap-1 mt-0.5">
                     <span className="text-[9px] opacity-60">{formatTime(msg.timestamp)}</span>
                     {msg.fromMe && (
                       <svg width="12" height="8" viewBox="0 0 16 10" className="opacity-60">
@@ -287,20 +292,23 @@ export default function WhatsAppMessages() {
 
       <div className="px-3 py-2 border-t shrink-0" style={{ borderColor: 'var(--color-border)' }}>
         <div className="flex items-center gap-2">
-          <button className="p-2 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-all">
+          <button className="p-2 rounded-lg transition-all" style={{ color: 'var(--color-muted)' }}>
             <Paperclip size={16} />
           </button>
           <div className="flex-1 relative">
             <input type="text" placeholder="Message..." value={replyBody} onChange={e => setReplyBody(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
-              className="w-full px-4 py-2.5 rounded-xl text-sm text-text placeholder:text-muted focus:outline-none transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
+              className="w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none transition-colors"
+              style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
           </div>
-          <button className="p-2 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-all">
+          <button className="p-2 rounded-lg transition-all" style={{ color: 'var(--color-muted)' }}>
             <Smile size={16} />
           </button>
           <button onClick={handleSend} disabled={!replyBody.trim() || sending}
             className="w-10 h-10 flex items-center justify-center rounded-xl transition-all disabled:opacity-30"
-            style={{ background: replyBody.trim() ? 'var(--color-accent)' : 'var(--color-bg)', color: replyBody.trim() ? 'var(--color-bg)' : 'var(--color-muted)', border: '1px solid var(--color-border)' }}>
+            style={replyBody.trim()
+              ? { background: '#DC2626', color: '#FFFFFF' }
+              : { background: 'var(--color-bg)', color: 'var(--color-muted)', border: '1px solid var(--color-border)' }}>
             {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
           </button>
         </div>
@@ -308,11 +316,11 @@ export default function WhatsAppMessages() {
     </div>
   ) : (
     <div className="flex flex-col items-center justify-center h-full text-center p-6">
-      <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ background: 'var(--color-accent/10)' }}>
-        <MessageCircle size={32} className="text-accent" />
+      <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ background: 'rgba(220,38,38,0.1)' }}>
+        <MessageCircle size={32} style={{ color: '#DC2626' }} />
       </div>
       <h3 className="text-base font-display font-medium mb-1">WhatsApp Web</h3>
-      <p className="text-xs text-muted max-w-xs">Envoie et recois des messages directement depuis ton navigateur. Selectionne une conversation.</p>
+      <p className="text-xs max-w-xs" style={{ color: 'var(--color-muted)' }}>Envoie et recois des messages directement depuis ton navigateur. Selectionne une conversation.</p>
     </div>
   )
 

@@ -40,7 +40,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-4">
             <button onClick={go} className="text-xs font-medium text-muted hover:text-text hidden sm:block transition-colors">{isAuthenticated ? 'Dashboard' : 'Connexion'}</button>
-            <button onClick={go} className="glass rounded-xl text-xs font-medium px-4 py-2.5 transition-all duration-200 flex items-center gap-2 group hover:bg-accent/10 hover:text-accent hover:shadow-[0_0_20px_-5px_rgba(125,211,252,0.3)]">
+            <button onClick={go} className="glass rounded-xl text-xs font-medium px-4 py-2.5 transition-all duration-200 flex items-center gap-2 group hover:bg-accent/10 hover:text-accent hover:shadow-[0_0_20px_-5px_rgba(220,38,38,0.3)]">
               <span>{isAuthenticated ? 'Mon Espace' : 'Commencer gratuitement'}</span>
               <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
             </button>
@@ -63,7 +63,7 @@ export default function LandingPage() {
             Connectez tous vos outils - emails, notes, tâches, messages, investissements - dans un seul tableau de bord intelligent.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button onClick={go} className="w-full sm:w-auto bg-accent text-bg hover:bg-[#8dd8fc] font-semibold text-sm px-6 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_0_30px_-5px_rgba(125,211,252,0.4)] hover:shadow-[0_0_40px_-5px_rgba(125,211,252,0.5)]">
+            <button onClick={go} className="w-full sm:w-auto bg-accent text-bg hover:bg-[#EF4444] font-semibold text-sm px-6 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_0_30px_-5px_rgba(220,38,38,0.4)] hover:shadow-[0_0_40px_-5px_rgba(220,38,38,0.5)]">
                <LayoutDashboard size={18} />
               {isAuthenticated ? 'Accéder au Dashboard' : 'Créer mon espace gratuit'}
             </button>
@@ -247,7 +247,7 @@ export default function LandingPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {pricingPlans.map((plan, i) => (
-            <div key={i} className={`glass rounded-2xl p-6 transition-all duration-300 ${plan.featured ? 'ring-1 ring-accent/30 shadow-[0_0_40px_-10px_rgba(125,211,252,0.15)]' : ''}`}>
+            <div key={i} className={`glass rounded-2xl p-6 transition-all duration-300 ${plan.featured ? 'ring-1 ring-accent/30 shadow-[0_0_40px_-10px_rgba(220,38,38,0.15)]' : ''}`}>
               {plan.featured && <div className="text-xs text-accent bg-accent/10 px-2.5 py-1 rounded-full inline-block mb-4 font-mono">Populaire</div>}
               <h3 className="text-lg font-display font-medium mb-2">{plan.name}</h3>
               <div className="flex items-baseline gap-1 mb-6">
@@ -261,7 +261,7 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <button onClick={go} className={`w-full py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${plan.featured ? 'bg-accent text-bg hover:bg-[#8dd8fc] shadow-[0_0_20px_-5px_rgba(125,211,252,0.3)]' : 'glass hover:bg-accent/5 hover:border-accent/30'}`}>{plan.cta}</button>
+              <button onClick={go} className={`w-full py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${plan.featured ? 'bg-accent text-bg hover:bg-[#EF4444] shadow-[0_0_20px_-5px_rgba(220,38,38,0.3)]' : 'glass hover:bg-accent/5 hover:border-accent/30'}`}>{plan.cta}</button>
             </div>
           ))}
         </div>

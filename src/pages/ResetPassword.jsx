@@ -57,7 +57,7 @@ export default function ResetPassword() {
             <CheckCircle size={40} className="text-success mx-auto mb-3 block" />
             <h3 className="text-sm font-display font-medium mb-2">Mot de passe réinitialisé !</h3>
             <p className="text-xs text-muted mb-4 leading-relaxed">Votre mot de passe a été mis à jour. Vous pouvez maintenant vous connecter.</p>
-            <button onClick={() => navigate('/auth')} className="px-4 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#8dd8fc] transition-all duration-200 shadow-[0_0_20px_-5px_rgba(125,211,252,0.3)]">
+            <button onClick={() => navigate('/auth')} className="px-4 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#EF4444] transition-all duration-200 shadow-[0_0_20px_-5px_rgba(220,38,38,0.3)]">
               Se connecter
             </button>
           </div>
@@ -68,15 +68,15 @@ export default function ResetPassword() {
               <div>
                 <label className="block text-xs text-muted mb-1.5 font-mono">Nouveau mot de passe</label>
                 <input type="password" placeholder="8 caractères minimum" value={password} onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)] transition-all duration-200" required autoFocus />
+                  className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(220,38,38,0.2)] transition-all duration-200" required autoFocus />
               </div>
               <div>
                 <label className="block text-xs text-muted mb-1.5 font-mono">Confirmer</label>
                 <input type="password" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(125,211,252,0.2)] transition-all duration-200" required />
+                  className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(220,38,38,0.2)] transition-all duration-200" required />
               </div>
             </div>
-            <button type="submit" disabled={loading} className="w-full mt-4 bg-accent text-bg hover:bg-[#8dd8fc] font-semibold text-sm py-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 shadow-[0_0_20px_-5px_rgba(125,211,252,0.3)] hover:shadow-[0_0_30px_-5px_rgba(125,211,252,0.4)]">
+            <button type="submit" disabled={loading} className="w-full mt-4 bg-accent text-bg hover:bg-[#EF4444] font-semibold text-sm py-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 shadow-[0_0_20px_-5px_rgba(220,38,38,0.3)] hover:shadow-[0_0_30px_-5px_rgba(220,38,38,0.4)]">
               {loading ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
             </button>
           </form>

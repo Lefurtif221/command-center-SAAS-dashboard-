@@ -221,7 +221,7 @@ export default function EmailFilter() {
         </div>
         <div className="flex flex-wrap gap-2 p-4 flex-shrink-0" style={{ borderTop: '1px solid var(--color-border)' }}>
           <button onClick={() => setShowFullEmail(!showFullEmail)}
-            className="px-3 py-2 text-xs font-medium rounded-lg transition-all" style={{ background: showFullEmail ? 'rgba(125,211,252,0.15)' : 'var(--color-bg)', border: '1px solid var(--color-border)', color: showFullEmail ? 'var(--color-accent)' : 'var(--color-text)' }}>
+            className="px-3 py-2 text-xs font-medium rounded-lg transition-all" style={{ background: showFullEmail ? 'rgba(220,38,38,0.15)' : 'var(--color-bg)', border: '1px solid var(--color-border)', color: showFullEmail ? 'var(--color-accent)' : 'var(--color-text)' }}>
             {showFullEmail ? 'Voir le résumé' : 'Voir le mail complet'}
           </button>
           <button onClick={() => { setSummaryModal(null); setReplyModal(summaryModal); setReplyBody('') }}
@@ -250,7 +250,7 @@ export default function EmailFilter() {
             <option value="week">Cette semaine</option>
             <option value="all">Tout</option>
           </select>
-          <button onClick={() => setShowKeywordForm(!showKeywordForm)} className="px-2 py-2 text-accent rounded-lg text-xs hover:opacity-80 transition-opacity" style={{ background: 'rgba(125,211,252,0.1)', border: '1px solid rgba(125,211,252,0.2)' }}>
+          <button onClick={() => setShowKeywordForm(!showKeywordForm)} className="px-2 py-2 text-accent rounded-lg text-xs hover:opacity-80 transition-opacity" style={{ background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.2)' }}>
             Règles
           </button>
         </div>
@@ -311,7 +311,7 @@ export default function EmailFilter() {
             <p className="text-sm text-muted">Aucun email ne correspond aux filtres</p>
           </div>
         ) : filteredEmails.map((email) => (
-          <div key={email.id} className="p-4 cursor-pointer transition-colors group" style={{ borderBottom: '1px solid var(--color-border)', background: email.unread ? 'rgba(125,211,252,0.05)' : 'transparent' }}
+          <div key={email.id} className="p-4 cursor-pointer transition-colors group" style={{ borderBottom: '1px solid var(--color-border)', background: email.unread ? 'rgba(220,38,38,0.05)' : 'transparent' }}
             onClick={() => openEmailFull(email)}>
             <div className="flex items-start gap-3">
               <div className={`w-1.5 h-1.5 mt-2 rounded-full flex-shrink-0 ${pColors[email.priority] || 'bg-muted'}`} />
@@ -324,7 +324,7 @@ export default function EmailFilter() {
                 <p className="text-xs text-muted truncate mt-0.5">{email.preview}</p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
-                <button onClick={(e) => openSummary(email, e)} className="opacity-0 group-hover:opacity-100 px-2 py-1.5 text-[10px] font-medium text-accent rounded-lg transition-all hover:bg-accent/10" style={{ background: 'rgba(125,211,252,0.1)', border: '1px solid rgba(125,211,252,0.2)' }}>
+                <button onClick={(e) => openSummary(email, e)} className="opacity-0 group-hover:opacity-100 px-2 py-1.5 text-[10px] font-medium text-accent rounded-lg transition-all hover:bg-accent/10" style={{ background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.2)' }}>
                   Résumé
                 </button>
                 <div className="text-right max-w-[100px]">

@@ -5,20 +5,20 @@ export default function QuickActions() {
   const { setActiveSection } = useDashboard()
 
   const actions = [
-    { id: 'emails', label: 'Emails', icon: Mail, section: 'emails', color: 'var(--color-accent)' },
-    { id: 'tasks', label: 'Taches', icon: CheckSquare, section: 'tasks', color: 'var(--color-accentSec)' },
-    { id: 'calendar', label: 'Calendrier', icon: Calendar, section: 'calendar', color: 'var(--color-success)' },
-    { id: 'messages', label: 'Messages', icon: MessageSquare, section: 'messages', color: 'var(--color-warning)' },
+    { id: 'emails', label: 'Emails', icon: Mail, section: 'emails', color: '#DC2626' },
+    { id: 'tasks', label: 'Taches', icon: CheckSquare, section: 'tasks', color: '#7F1D1D' },
+    { id: 'calendar', label: 'Calendrier', icon: Calendar, section: 'calendar', color: '#E5E5E5' },
+    { id: 'messages', label: 'Messages', icon: MessageSquare, section: 'messages', color: '#A3A3A3' },
   ]
 
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex items-center gap-2 p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
-        <Sparkles size={14} className="text-accent" />
+        <Sparkles size={14} style={{ color: '#DC2626' }} />
         <h3 className="text-sm font-display font-medium">Actions rapides</h3>
       </div>
       <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-        {actions.map((a, i) => (
+        {actions.map((a) => (
           <button key={a.id} onClick={() => setActiveSection(a.section)}
             className="group relative flex flex-col items-center gap-2.5 p-5 md:p-6 rounded-xl transition-all duration-300 hover:scale-[1.03] hover:shadow-lg"
             style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
