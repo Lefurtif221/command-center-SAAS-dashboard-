@@ -8,6 +8,7 @@ export default function WhatsAppMessages() {
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(false)
   const [connected, setConnected] = useState(false)
+  const [status, setStatus] = useState('disconnected')
   const [search, setSearch] = useState('')
   const [activeChat, setActiveChat] = useState(null)
   const [replyBody, setReplyBody] = useState('')
@@ -38,7 +39,11 @@ export default function WhatsAppMessages() {
   const checkStatus = async () => {
     try {
       const data = await apiFetch('/api/whatsapp/status')
+      setStatus(data.status || 'disconnected')
       setConnected(data.status === 'connected')
+      if (data.status === 'connected' && data.messageCount === 0) {
+        apiFetch('/api/whatsapp/sync', { method: 'POST' }).catch(() => {})
+      }
     } catch (err) { console.error(err) }
   }
 
@@ -48,6 +53,13 @@ export default function WhatsAppMessages() {
       setMessages(data.messages || [])
       setConnected(true)
     } catch (err) { setConnected(false) }
+  }
+
+  const handleForceSync = async () => {
+    try {
+      await apiFetch('/api/whatsapp/sync', { method: 'POST' })
+      setStatus('syncing')
+    } catch (err) { console.error(err) }
   }
 
   const handleSend = async () => {
@@ -140,14 +152,36 @@ export default function WhatsAppMessages() {
     return messages.filter(m => m.chatId === activeChat.chatId).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
   }, [messages, activeChat])
 
-  if (!connected) {
+  if (status === 'disconnected' || status === 'reconnecting') {
     return (
       <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
         <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
           <MessageCircle size={28} style={{ color: '#2563EB' }} />
         </div>
-        <h3 className="text-sm font-display font-medium mb-2">WhatsApp non connecte</h3>
-        <p className="text-xs max-w-xs mx-auto" style={{ color: 'var(--color-muted)' }}>Connecte ton WhatsApp dans "Services connectes" pour voir et envoyer des messages directement depuis l'app.</p>
+        <h3 className="text-sm font-display font-medium mb-2">
+          {status === 'reconnecting' ? 'Reconnexion...' : 'WhatsApp non connecte'}
+        </h3>
+        <p className="text-xs max-w-xs mx-auto" style={{ color: 'var(--color-muted)' }}>
+          {status === 'reconnecting'
+            ? 'Tentative de reconnexion en cours...'
+            : 'Connecte ton WhatsApp dans "Services connectes" pour voir et envoyer des messages directement depuis l\'app.'}
+        </p>
+      </div>
+    )
+  }
+
+  if (status === 'syncing') {
+    return (
+      <div className="rounded-2xl overflow-hidden flex" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', height: '520px' }}>
+        <div className="w-full md:w-80 md:min-w-[320px] border-r flex flex-col items-center justify-center p-6" style={{ borderColor: 'var(--color-border)' }}>
+          <Loader2 size={24} className="animate-spin mb-3" style={{ color: '#2563EB' }} />
+          <p className="text-sm font-display font-medium">Synchronisation...</p>
+          <p className="text-[11px] mt-1" style={{ color: 'var(--color-muted)' }}>Chargement des conversations WhatsApp</p>
+        </div>
+        <div className="flex-1 hidden md:flex flex-col items-center justify-center">
+          <Loader2 size={24} className="animate-spin mb-3" style={{ color: '#2563EB' }} />
+          <p className="text-xs" style={{ color: 'var(--color-muted)' }}>Ca peut prendre quelques secondes...</p>
+        </div>
       </div>
     )
   }
@@ -180,7 +214,14 @@ export default function WhatsAppMessages() {
       </div>
       <div className="flex-1 overflow-y-auto">
         {chats.length === 0 ? (
-          <p className="text-xs text-center py-8" style={{ color: 'var(--color-muted)' }}>Aucune conversation</p>
+          <div className="flex flex-col items-center justify-center py-8 px-4">
+            <p className="text-xs text-center mb-3" style={{ color: 'var(--color-muted)' }}>Aucune conversation</p>
+            <button onClick={handleForceSync}
+              className="text-[11px] px-3 py-1.5 rounded-lg transition-all"
+              style={{ background: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>
+              Re-sync
+            </button>
+          </div>
         ) : chats.map(chat => {
           const last = chat.lastMessage
           const isActive = activeChat?.chatId === chat.chatId
