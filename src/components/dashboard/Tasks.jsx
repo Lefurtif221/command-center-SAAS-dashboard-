@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
-import { Trash2, CheckSquare, AlertTriangle } from 'lucide-react'
+import { Trash2, CheckSquare, AlertTriangle, Plus } from 'lucide-react'
 
 export default function Tasks() {
   const { tasks, addTask, toggleTask, deleteTask } = useDashboard()
@@ -55,8 +55,7 @@ export default function Tasks() {
   const noDateTasks = tasks.filter(t => !t.completed && !t.due_date)
   const doneTasks = tasks.filter(t => t.completed)
 
-  const priorityColors = { high: 'border-l-accentSec', medium: 'border-l-warning', low: 'border-l-success' }
-  const priorityDots = { high: 'bg-accentSec', medium: 'bg-warning', low: 'bg-success' }
+  const priorityColors = { high: '#1E40AF', medium: '#F59E0B', low: '#10B981' }
 
   const formatDate = (d) => {
     if (!d) return ''
@@ -65,46 +64,54 @@ export default function Tasks() {
   }
 
   const TaskItem = ({ task }) => (
-    <div className={`glass flex items-center gap-3 p-3 rounded-xl border-l-2 hover:bg-accent/5 transition-all duration-200 group ${priorityColors[task.priority]}`} style={{ background: 'var(--color-surface-solid)' }}>
-      <button onClick={() => toggleTask(task.id, task.completed)} className={`w-6 h-6 rounded-lg border flex-shrink-0 flex items-center justify-center transition-all duration-200 ${task.completed ? 'bg-accent border-accent' : 'border-border/50 hover:border-accent/50 hover:bg-accent/5'}`}>
-        {task.completed && <span className="text-bg text-[10px]">✓</span>}
+    <div className="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group hover:translate-x-1"
+      style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderLeft: `3px solid ${priorityColors[task.priority] || '#9CA3AF'}` }}>
+      <button onClick={() => toggleTask(task.id, task.completed)}
+        className="w-6 h-6 rounded-lg border flex-shrink-0 flex items-center justify-center transition-all duration-200 hover:scale-110"
+        style={{ borderColor: task.completed ? '#2563EB' : 'var(--color-border)', background: task.completed ? '#2563EB' : 'transparent' }}>
+        {task.completed && <span className="text-white text-[10px]">✓</span>}
       </button>
       <div className="flex-1 min-w-0">
-        <p className={`text-sm ${task.completed ? 'text-muted line-through' : 'text-text'}`}>{task.title}</p>
-        {task.due_date && <p className="text-[10px] text-muted mt-0.5 font-mono">{formatDate(task.due_date)}</p>}
+        <p className={`text-sm ${task.completed ? 'line-through' : ''}`} style={{ color: task.completed ? 'var(--color-muted)' : 'var(--color-text)' }}>{task.title}</p>
+        {task.due_date && <p className="text-[10px] mt-0.5 font-mono" style={{ color: 'var(--color-muted)' }}>{formatDate(task.due_date)}</p>}
       </div>
-      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${priorityDots[task.priority]}`} />
-      <button onClick={() => deleteTask(task.id)} className="opacity-0 group-hover:opacity-100 text-muted hover:text-accentSec transition-all duration-200">
+      <button onClick={() => deleteTask(task.id)} className="opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110" style={{ color: 'var(--color-muted)' }}>
         <Trash2 size={14} />
       </button>
     </div>
   )
 
   return (
-    <div className="glass rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-      <div className="flex items-center gap-2 p-4 border-b border-border/50">
-        <CheckSquare size={14} className="text-accent" />
-        <h3 className="text-sm font-display font-medium">Tâches</h3>
-        <span className="text-[10px] text-muted ml-auto font-mono">{tasks.filter(t => !t.completed).length} en cours</span>
+    <div className="rounded-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+      <div className="flex items-center gap-2 p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
+        <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
+          <CheckSquare size={14} style={{ color: '#2563EB' }} />
+        </div>
+        <h3 className="text-sm font-display font-medium">Taches</h3>
+        <span className="text-[10px] ml-auto font-mono" style={{ color: 'var(--color-muted)' }}>{tasks.filter(t => !t.completed).length} en cours</span>
       </div>
 
-      <div className="p-4 border-b border-border/50">
+      <div className="p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="flex flex-col sm:flex-row gap-2">
-          <input type="text" placeholder="Nouvelle tâche..." value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
+          <input type="text" placeholder="Nouvelle tache..." value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-            className="glass flex-1 px-3 py-2.5 rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} />
+            className="flex-1 px-3 py-2.5 rounded-xl text-sm focus:outline-none transition-all duration-200"
+            style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
           <div className="flex gap-2">
             <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)}
-              className="glass flex-1 sm:flex-none px-2 py-2.5 rounded-xl text-xs text-text focus:outline-none focus:border-accent/50 transition-all duration-200 font-mono" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} />
+              className="flex-1 sm:flex-none px-2 py-2.5 rounded-xl text-xs font-mono focus:outline-none transition-all duration-200"
+              style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
             <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)}
-              className="glass px-2 py-2.5 rounded-xl text-xs text-text focus:outline-none focus:border-accent/50 cursor-pointer transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+              className="px-2 py-2.5 rounded-xl text-xs focus:outline-none cursor-pointer transition-all duration-200"
+              style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
               <option value="high">Urgent</option>
               <option value="medium">Moyen</option>
               <option value="low">Faible</option>
             </select>
             <button onClick={handleAdd} disabled={adding || !newTitle.trim()}
-              className="px-3 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#2563EB] transition-all duration-200 disabled:opacity-50 shadow-[0_0_15px_-3px_rgba(37,99,235,0.3)]">
-              {adding ? '...' : '+'}
+              className="px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 disabled:opacity-50 hover:scale-105"
+              style={{ background: '#2563EB', color: '#FFF' }}>
+              {adding ? '...' : <Plus size={16} />}
             </button>
           </div>
         </div>
@@ -112,46 +119,46 @@ export default function Tasks() {
 
       <div className="p-4 space-y-4">
         {tasks.length === 0 ? (
-          <p className="text-sm text-muted text-center py-4">Aucune tâche. Ajoute-en une !</p>
+          <p className="text-sm text-center py-4" style={{ color: 'var(--color-muted)' }}>Aucune tache. Ajoute-en une !</p>
         ) : (
           <>
             {lastWarningTasks.length > 0 && (
-              <div className="bg-accentSec/5 border border-accentSec/20 rounded-xl p-3">
+              <div className="rounded-xl p-3" style={{ background: 'rgba(37,99,235,0.05)', border: '1px solid rgba(37,99,235,0.1)' }}>
                 <div className="flex items-center gap-2 mb-2">
-                  <AlertTriangle size={14} className="text-accentSec" />
-                  <p className="text-[10px] text-accentSec font-mono font-medium uppercase tracking-wider">Dernier rappel — supprimées demain ({lastWarningTasks.length})</p>
+                  <AlertTriangle size={14} style={{ color: '#F59E0B' }} />
+                  <p className="text-[10px] font-mono font-medium uppercase tracking-wider" style={{ color: '#F59E0B' }}>Dernier rappel ({lastWarningTasks.length})</p>
                 </div>
-                <p className="text-[10px] text-muted mb-2 font-mono">Ces tâches datent de plus d'une semaine. Elles seront supprimées automatiquement.</p>
+                <p className="text-[10px] mb-2 font-mono" style={{ color: 'var(--color-muted)' }}>Supprimees demain automatiquement.</p>
                 <div className="space-y-1">{lastWarningTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}
             {overdueTasks.length > 0 && (
               <div>
-                <p className="text-[10px] text-accentSec font-mono font-medium uppercase tracking-wider mb-2">En retard ({overdueTasks.length})</p>
+                <p className="text-[10px] font-mono font-medium uppercase tracking-wider mb-2" style={{ color: '#F59E0B' }}>En retard ({overdueTasks.length})</p>
                 <div className="space-y-1">{overdueTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}
             {todayTasks.length > 0 && (
               <div>
-                <p className="text-[10px] text-accent font-mono font-medium uppercase tracking-wider mb-2">Aujourd'hui</p>
+                <p className="text-[10px] font-mono font-medium uppercase tracking-wider mb-2" style={{ color: '#2563EB' }}>Aujourd'hui</p>
                 <div className="space-y-1">{todayTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}
             {upcomingTasks.length > 0 && (
               <div>
-                <p className="text-[10px] text-muted font-mono font-medium uppercase tracking-wider mb-2">À venir</p>
+                <p className="text-[10px] font-mono font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--color-muted)' }}>A venir</p>
                 <div className="space-y-1">{upcomingTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}
             {noDateTasks.length > 0 && (
               <div>
-                <p className="text-[10px] text-muted font-mono font-medium uppercase tracking-wider mb-2">Sans date</p>
+                <p className="text-[10px] font-mono font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--color-muted)' }}>Sans date</p>
                 <div className="space-y-1">{noDateTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}
             {doneTasks.length > 0 && (
               <div>
-                <p className="text-[10px] text-muted font-mono font-medium uppercase tracking-wider mb-2">Terminées ({doneTasks.length})</p>
+                <p className="text-[10px] font-mono font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--color-muted)' }}>Terminees ({doneTasks.length})</p>
                 <div className="space-y-1">{doneTasks.slice(0, 3).map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}

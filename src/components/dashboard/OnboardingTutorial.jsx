@@ -158,36 +158,40 @@ export default function OnboardingTutorial() {
         className="rounded-2xl p-5 shadow-2xl" onClick={e => e.stopPropagation()}
         key={step}
       >
-        <div className="rounded-2xl p-5 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+        <div className="rounded-2xl p-5 shadow-2xl animate-scale-in" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-mono text-accent">{step + 1} / {steps.length}</span>
-            <button onClick={handleClose} className="p-1 rounded-lg hover:bg-muted/10 text-muted hover:text-text transition-colors">
+            <span className="text-[10px] font-mono" style={{ color: '#2563EB' }}>{step + 1} / {steps.length}</span>
+            <button onClick={handleClose} className="p-1 rounded-lg transition-colors hover:scale-110" style={{ color: 'var(--color-muted)' }}>
               <X size={14} />
             </button>
           </div>
 
           <h3 className="text-base sm:text-lg font-display font-medium mb-2">{s.title}</h3>
-          <p className="text-xs sm:text-sm text-muted leading-relaxed mb-4">{s.desc}</p>
+          <p className="text-xs sm:text-sm leading-relaxed mb-4" style={{ color: 'var(--color-muted)' }}>{s.desc}</p>
 
           <div className="flex items-center justify-between">
             <div className="flex gap-1">
               {steps.map((_, i) => (
-                <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === step ? 'bg-accent w-5' : 'bg-muted/20 w-1.5'}`} />
+                <div key={i} className="h-1.5 rounded-full transition-all duration-300"
+                  style={{ background: i === step ? '#2563EB' : 'var(--color-border)', width: i === step ? '20px' : '6px' }} />
               ))}
             </div>
             <div className="flex gap-2">
               {step > 0 && (
-                <button onClick={handlePrev} className="px-3 py-2 text-xs text-muted rounded-lg hover:text-text transition-colors flex items-center gap-1" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                <button onClick={handlePrev} className="px-3 py-2 text-xs rounded-lg transition-colors flex items-center gap-1 hover:scale-105"
+                  style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
                   <ChevronLeft size={12} /> Retour
                 </button>
               )}
-              <button onClick={handleNext} className="px-4 py-2 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity flex items-center gap-1">
+              <button onClick={handleNext} className="px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 flex items-center gap-1 hover:scale-105"
+                style={{ background: '#2563EB', color: '#FFF' }}>
                 {step === steps.length - 1 ? 'Commencer' : 'Suivant'} <ChevronRight size={12} />
               </button>
             </div>
           </div>
 
-          <button onClick={handleClose} className="w-full mt-3 text-[10px] text-muted hover:text-text text-center transition-colors py-1">
+          <button onClick={handleClose} className="w-full mt-3 text-[10px] text-center transition-colors py-1 hover:scale-105"
+            style={{ color: 'var(--color-muted)' }}>
             Passer le tutoriel
           </button>
         </div>

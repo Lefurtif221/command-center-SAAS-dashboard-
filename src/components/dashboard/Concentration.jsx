@@ -137,73 +137,87 @@ export default function Concentration() {
     <div className="space-y-4 md:space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Left: Selector */}
-        <div className="glass rounded-xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+        <div className="rounded-2xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center gap-2 mb-4">
-            <List size={16} className="text-accent" />
-            <h3 className="text-sm font-display font-medium">Sélectionner une cible</h3>
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
+              <List size={14} style={{ color: '#2563EB' }} />
+            </div>
+            <h3 className="text-sm font-display font-medium">Selectionner une cible</h3>
           </div>
 
           <div className="space-y-2 max-h-[400px] overflow-y-auto">
-            <p className="text-[10px] text-muted uppercase tracking-wider font-medium font-mono">Tâches</p>
+            <p className="text-[10px] uppercase tracking-wider font-medium font-mono" style={{ color: 'var(--color-muted)' }}>Taches</p>
             {tasks.filter(t => !t.completed).length === 0 && (
-              <p className="text-xs text-muted py-2">Aucune tâche en cours</p>
+              <p className="text-xs py-2" style={{ color: 'var(--color-muted)' }}>Aucune tache en cours</p>
             )}
             {tasks.filter(t => !t.completed).map(task => (
               <button key={task.id} onClick={() => handleSelect('task', task.id, task.title)}
-                className={`glass w-full text-left p-3 rounded-xl transition-all duration-200 ${selectedType === 'task' && selectedId === task.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(37,99,235,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`} style={{ background: 'var(--color-surface-solid)' }}>
+                className="w-full text-left p-3 rounded-xl transition-all duration-200 hover:translate-x-1"
+                style={{
+                  background: 'var(--color-bg)',
+                  border: selectedType === 'task' && selectedId === task.id ? '1px solid rgba(37,99,235,0.3)' : '1px solid var(--color-border)',
+                  boxShadow: selectedType === 'task' && selectedId === task.id ? '0 0 12px -4px rgba(37,99,235,0.2)' : 'none'
+                }}>
                 <div className="flex items-center gap-2">
-                  <CheckSquare size={14} className="text-warning" />
-                  <span className="text-sm text-text truncate">{task.title}</span>
+                  <CheckSquare size={14} style={{ color: '#F59E0B' }} />
+                  <span className="text-sm truncate">{task.title}</span>
                 </div>
-                {task.due_date && <p className="text-[10px] text-muted mt-1 ml-5 font-mono">Échéance : {task.due_date}</p>}
+                {task.due_date && <p className="text-[10px] mt-1 ml-5 font-mono" style={{ color: 'var(--color-muted)' }}>Echeance : {task.due_date}</p>}
               </button>
             ))}
 
-            <p className="text-[10px] text-muted uppercase tracking-wider font-medium mt-4 font-mono">Événements calendrier</p>
+            <p className="text-[10px] uppercase tracking-wider font-medium mt-4 font-mono" style={{ color: 'var(--color-muted)' }}>Evenements calendrier</p>
             {events.length === 0 && (
-              <p className="text-xs text-muted py-2">Aucun événement</p>
+              <p className="text-xs py-2" style={{ color: 'var(--color-muted)' }}>Aucun evenement</p>
             )}
             {events.map(evt => (
               <button key={evt.id} onClick={() => handleSelect('event', evt.id, evt.title)}
-                className={`glass w-full text-left p-3 rounded-xl transition-all duration-200 ${selectedType === 'event' && selectedId === evt.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(37,99,235,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`} style={{ background: 'var(--color-surface-solid)' }}>
+                className="w-full text-left p-3 rounded-xl transition-all duration-200 hover:translate-x-1"
+                style={{
+                  background: 'var(--color-bg)',
+                  border: selectedType === 'event' && selectedId === evt.id ? '1px solid rgba(37,99,235,0.3)' : '1px solid var(--color-border)',
+                  boxShadow: selectedType === 'event' && selectedId === evt.id ? '0 0 12px -4px rgba(37,99,235,0.2)' : 'none'
+                }}>
                 <div className="flex items-center gap-2">
-                  <CalendarIcon size={14} className="text-accent" />
-                  <span className="text-sm text-text truncate">{evt.title}</span>
+                  <CalendarIcon size={14} style={{ color: '#2563EB' }} />
+                  <span className="text-sm truncate">{evt.title}</span>
                 </div>
-                <p className="text-[10px] text-muted mt-1 ml-5 font-mono">{evt.date} à {String(evt.hour).padStart(2, '0')}:00</p>
+                <p className="text-[10px] mt-1 ml-5 font-mono" style={{ color: 'var(--color-muted)' }}>{evt.date} a {String(evt.hour).padStart(2, '0')}:00</p>
               </button>
             ))}
           </div>
         </div>
 
         {/* Center: Timer */}
-        <div className="glass rounded-xl p-4 md:p-5 flex flex-col items-center justify-center" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+        <div className="rounded-2xl p-4 md:p-5 flex flex-col items-center justify-center" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center gap-2 mb-6 self-start">
-            <Timer size={16} className="text-accent" />
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
+              <Timer size={14} style={{ color: '#2563EB' }} />
+            </div>
             <h3 className="text-sm font-display font-medium">Pomodoro</h3>
           </div>
 
           {selectedTitle ? (
             <>
-              <p className="text-xs text-muted mb-1 font-mono">Cible :</p>
-              <p className="text-sm font-display font-medium text-accent mb-6 text-center">{selectedTitle}</p>
+              <p className="text-[10px] mb-1 font-mono" style={{ color: 'var(--color-muted)' }}>Cible :</p>
+              <p className="text-sm font-display font-medium mb-6 text-center" style={{ color: '#2563EB' }}>{selectedTitle}</p>
             </>
           ) : (
-            <p className="text-xs text-muted mb-6">Choisissez une tâche ou un événement</p>
+            <p className="text-xs mb-6" style={{ color: 'var(--color-muted)' }}>Choisissez une tache ou un evenement</p>
           )}
 
           {/* Circular timer */}
-          <div className="relative w-48 h-48 mb-6">
+          <div className="relative w-40 h-40 sm:w-48 sm:h-48 mb-6">
             <svg className="w-full h-full -rotate-90" viewBox="0 0 200 200">
               <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" strokeWidth="6"
-                className="text-border opacity-20" />
+                style={{ color: 'var(--color-border)', opacity: 0.2 }} />
               <circle cx="100" cy="100" r="90" fill="none" stroke={phaseColor} strokeWidth="6"
                 strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset}
-                className="transition-all duration-1000 drop-shadow-[0_0_8px_rgba(37,99,235,0.4)]" />
+                className="transition-all duration-1000" style={{ filter: `drop-shadow(0 0 8px ${phaseColor}60)` }} />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-mono font-bold text-text">{formatTime(timeLeft)}</span>
-              <span className="text-[10px] text-muted mt-1 uppercase tracking-wider font-mono">{PHASES[phase]}</span>
+              <span className="text-3xl sm:text-4xl font-mono font-bold">{formatTime(timeLeft)}</span>
+              <span className="text-[10px] mt-1 uppercase tracking-wider font-mono" style={{ color: 'var(--color-muted)' }}>{PHASES[phase]}</span>
             </div>
           </div>
 
@@ -211,17 +225,20 @@ export default function Concentration() {
           <div className="flex items-center gap-3 mb-4">
             {!isRunning ? (
               <button onClick={handleStart} disabled={!selectedTitle}
-                className="flex items-center gap-2 px-5 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#2563EB] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_0_20px_-5px_rgba(37,99,235,0.4)]">
-                <Play size={16} /> Démarrer
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105"
+                style={{ background: '#2563EB', color: '#FFF' }}>
+                <Play size={16} /> Demarrer
               </button>
             ) : (
               <button onClick={handlePause}
-                className="flex items-center gap-2 px-5 py-2.5 bg-warning text-bg text-sm font-medium rounded-xl hover:opacity-90 transition-all duration-200">
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 hover:scale-105"
+                style={{ background: '#F59E0B', color: '#FFF' }}>
                 <Pause size={16} /> Pause
               </button>
             )}
             <button onClick={handleReset}
-              className="glass flex items-center gap-2 px-4 py-2.5 text-sm text-muted rounded-xl hover:text-text transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+              className="flex items-center gap-2 px-4 py-2.5 text-sm rounded-xl transition-all duration-200 hover:scale-105"
+              style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
               <RotateCcw size={16} /> Reset
             </button>
           </div>
@@ -229,38 +246,42 @@ export default function Concentration() {
           {/* Sessions */}
           <div className="flex items-center gap-2">
             {Array.from({ length: SESSIONS_BEFORE_LONG_BREAK }).map((_, i) => (
-              <div key={i} className={`w-3 h-3 rounded-full transition-all duration-300 ${i < (sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK) ? 'bg-accent shadow-[0_0_8px_rgba(37,99,235,0.5)]' : 'bg-border/50'}`} />
+              <div key={i} className="w-3 h-3 rounded-full transition-all duration-300"
+                style={{ background: i < (sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK) ? '#2563EB' : 'var(--color-border)', boxShadow: i < (sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK) ? '0 0 8px rgba(37,99,235,0.5)' : 'none' }} />
             ))}
-            <span className="text-[10px] text-muted ml-2 font-mono">{sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK}/{SESSIONS_BEFORE_LONG_BREAK}</span>
+            <span className="text-[10px] ml-2 font-mono" style={{ color: 'var(--color-muted)' }}>{sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK}/{SESSIONS_BEFORE_LONG_BREAK}</span>
           </div>
         </div>
 
         {/* Right: Stats */}
-        <div className="glass rounded-xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+        <div className="rounded-2xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center gap-2 mb-4">
-            <BarChart3 size={16} className="text-accent" />
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
+              <BarChart3 size={14} style={{ color: '#2563EB' }} />
+            </div>
             <h3 className="text-sm font-display font-medium">Aujourd'hui</h3>
           </div>
 
           <div className="space-y-4">
-            <div className="glass rounded-xl p-4" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-              <p className="text-[10px] text-muted uppercase tracking-wider font-mono">Sessions terminées</p>
-              <p className="text-2xl font-display font-bold text-text mt-1">{todaySessions.length}</p>
+            <div className="rounded-xl p-4" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+              <p className="text-[10px] uppercase tracking-wider font-mono" style={{ color: 'var(--color-muted)' }}>Sessions terminees</p>
+              <p className="text-2xl font-display font-bold mt-1">{todaySessions.length}</p>
             </div>
-            <div className="glass rounded-xl p-4" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-              <p className="text-[10px] text-muted uppercase tracking-wider font-mono">Temps total</p>
-              <p className="text-2xl font-display font-bold text-text mt-1">{Math.floor(todayTotal / 60)}min</p>
+            <div className="rounded-xl p-4" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+              <p className="text-[10px] uppercase tracking-wider font-mono" style={{ color: 'var(--color-muted)' }}>Temps total</p>
+              <p className="text-2xl font-display font-bold mt-1">{Math.floor(todayTotal / 60)}min</p>
             </div>
           </div>
 
           {todaySessions.length > 0 && (
             <div className="mt-4">
-              <p className="text-[10px] text-muted uppercase tracking-wider font-medium mb-2 font-mono">Historique</p>
+              <p className="text-[10px] uppercase tracking-wider font-medium mb-2 font-mono" style={{ color: 'var(--color-muted)' }}>Historique</p>
               <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
                 {[...todaySessions].reverse().map((s, i) => (
-                  <div key={i} className="glass flex items-center justify-between p-2 rounded-lg" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-                    <span className="text-xs text-text truncate">{s.title}</span>
-                    <span className="text-[10px] text-muted flex-shrink-0 ml-2 font-mono">{Math.floor(s.duration / 60)}min</span>
+                  <div key={i} className="flex items-center justify-between p-2 rounded-lg transition-all duration-200 hover:translate-x-1"
+                    style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                    <span className="text-xs truncate">{s.title}</span>
+                    <span className="text-[10px] flex-shrink-0 ml-2 font-mono" style={{ color: 'var(--color-muted)' }}>{Math.floor(s.duration / 60)}min</span>
                   </div>
                 ))}
               </div>

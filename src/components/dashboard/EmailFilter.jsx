@@ -24,7 +24,7 @@ export default function EmailFilter() {
   const [summaryFullBody, setSummaryFullBody] = useState('')
   const [summaryLoading, setSummaryLoading] = useState(false)
   const [showFullEmail, setShowFullEmail] = useState(false)
-  const pColors = { high: 'bg-accentSec', low: 'bg-success' }
+  const pColors = { high: '#1E40AF', low: '#10B981' }
   const pLabels = { high: 'Important', low: 'Non important' }
 
   useEffect(() => { fetchRules() }, [])
@@ -115,30 +115,30 @@ export default function EmailFilter() {
 
   const emailModalOverlay = emailModal ? createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={closeEmailModal}>
-      <div className="w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden rounded-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
+      <div className="w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden rounded-2xl animate-scale-in" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between p-4 flex-shrink-0" style={{ borderBottom: '1px solid var(--color-border)' }}>
           <div className="flex-1 min-w-0">
             <h4 className="text-sm font-medium">{emailModal.subject}</h4>
-            <p className="text-[10px] text-muted mt-0.5">De : {emailModal.sender} &lt;{emailModal.senderEmail}&gt;</p>
+            <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-muted)' }}>De : {emailModal.sender} &lt;{emailModal.senderEmail}&gt;</p>
           </div>
-          <button onClick={closeEmailModal} className="text-muted hover:text-text ml-2 flex-shrink-0 transition-colors"><X size={16} /></button>
+          <button onClick={closeEmailModal} className="ml-2 flex-shrink-0 transition-colors p-1 rounded-lg hover:scale-110" style={{ color: 'var(--color-muted)' }}><X size={16} /></button>
         </div>
         <div className="flex-1 overflow-y-auto p-5">
           {emailBodyLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="text-accent animate-spin" size={24} />
+              <Loader2 size={24} className="animate-spin" style={{ color: '#2563EB' }} />
             </div>
           ) : (
-            <div className="text-sm text-text whitespace-pre-wrap leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{stripHtml(emailBody)}</div>
+            <div className="text-sm whitespace-pre-wrap leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{stripHtml(emailBody)}</div>
           )}
         </div>
         <div className="flex flex-wrap gap-2 p-4 flex-shrink-0" style={{ borderTop: '1px solid var(--color-border)' }}>
           <button onClick={() => { setEmailModal(null); setReplyModal(emailModal); setReplyBody('') }}
-            className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity">Répondre</button>
+            className="px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 hover:scale-105" style={{ background: '#2563EB', color: '#FFF' }}>Repondre</button>
           <button onClick={() => markImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
-            className="px-3 py-2 text-xs text-accentSec rounded-lg hover:opacity-80 transition-opacity disabled:opacity-50" style={{ background: 'rgba(244,114,182,0.1)', border: '1px solid rgba(244,114,182,0.2)' }}>Important</button>
+            className="px-3 py-2 text-xs rounded-lg transition-all duration-200 hover:scale-105 disabled:opacity-50" style={{ background: 'rgba(30,64,175,0.1)', border: '1px solid rgba(30,64,175,0.2)', color: '#1E40AF' }}>Important</button>
           <button onClick={() => markNotImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
-            className="px-3 py-2 text-xs text-muted rounded-lg hover:text-text transition-colors disabled:opacity-50" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Non important</button>
+            className="px-3 py-2 text-xs rounded-lg transition-colors disabled:opacity-50" style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Non important</button>
         </div>
       </div>
     </div>,
@@ -146,29 +146,29 @@ export default function EmailFilter() {
   ) : null
 
   const replyModalOverlay = replyModal ? createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => { setReplyModal(null); setSendResult(null) }}>
-      <div className="rounded-2xl p-5 w-full max-w-lg mx-4 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => { setReplyModal(null); setSendResult(null) }}>
+      <div className="rounded-2xl p-5 w-full max-w-lg shadow-2xl animate-scale-in" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
-          <h4 className="text-sm font-medium">Répondre</h4>
-          <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="text-muted hover:text-text transition-colors"><X size={16} /></button>
+          <h4 className="text-sm font-medium">Repondre</h4>
+          <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="transition-colors p-1 rounded-lg hover:scale-110" style={{ color: 'var(--color-muted)' }}><X size={16} /></button>
         </div>
         <div className="space-y-3">
-          <div className="text-xs"><span className="text-muted">À : </span><span className="text-text">{replyModal.senderEmail}</span></div>
-          <div className="text-xs"><span className="text-muted">Sujet : </span><span className="text-text">Re: {replyModal.subject.replace(/^Re:\s*/i, '')}</span></div>
+          <div className="text-xs"><span style={{ color: 'var(--color-muted)' }}>A : </span><span>{replyModal.senderEmail}</span></div>
+          <div className="text-xs"><span style={{ color: 'var(--color-muted)' }}>Sujet : </span><span>Re: {replyModal.subject.replace(/^Re:\s*/i, '')}</span></div>
           {sendResult ? (
-            <div className={`p-3 rounded-lg text-sm ${sendResult.success ? 'bg-success/10 text-success' : 'bg-accentSec/10 text-accentSec'}`}>
-              {sendResult.success ? 'Email envoyé avec succès !' : sendResult.error}
+            <div className="p-3 rounded-lg text-sm" style={{ background: sendResult.success ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)', color: sendResult.success ? '#10B981' : '#F59E0B' }}>
+              {sendResult.success ? 'Email envoye avec succes !' : sendResult.error}
             </div>
           ) : (
-            <textarea placeholder="Votre réponse..." value={replyBody} onChange={(e) => setReplyBody(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors h-32 resize-none" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} autoFocus />
+            <textarea placeholder="Votre reponse..." value={replyBody} onChange={(e) => setReplyBody(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg text-sm placeholder:text-muted focus:outline-none h-32 resize-none transition-all duration-200" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} autoFocus />
           )}
           <div className="flex gap-2 justify-end">
             {sendResult ? (
-              <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:opacity-90 transition-opacity">Fermer</button>
+              <button onClick={() => { setReplyModal(null); setSendResult(null) }} className="px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-105" style={{ background: '#2563EB', color: '#FFF' }}>Fermer</button>
             ) : (
               <>
-                <button onClick={() => setReplyModal(null)} className="px-3 py-2 text-sm text-muted rounded-lg hover:text-text transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Annuler</button>
+                <button onClick={() => setReplyModal(null)} className="px-3 py-2 text-sm rounded-lg transition-colors" style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Annuler</button>
                 <button onClick={async () => {
                   if (!replyBody.trim()) return; setSending(true)
                   try {
@@ -178,7 +178,8 @@ export default function EmailFilter() {
                     })
                     setSendResult(data.success ? { success: true } : { success: false, error: data.error })
                   } catch (err) { setSendResult({ success: false, error: err.message }) } finally { setSending(false) }
-                }} disabled={sending || !replyBody.trim()} className="px-3 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50">
+                }} disabled={sending || !replyBody.trim()} className="px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 disabled:opacity-50 hover:scale-105"
+                  style={{ background: '#2563EB', color: '#FFF' }}>
                   {sending ? 'Envoi...' : 'Envoyer'}
                 </button>
               </>
@@ -192,40 +193,41 @@ export default function EmailFilter() {
 
   const summaryModalOverlay = summaryModal ? createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => setSummaryModal(null)}>
-      <div className="w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden rounded-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
+      <div className="w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden rounded-2xl animate-scale-in" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between p-4 flex-shrink-0" style={{ borderBottom: '1px solid var(--color-border)' }}>
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <FileText size={16} className="text-accent flex-shrink-0" />
+            <FileText size={16} className="flex-shrink-0" style={{ color: '#2563EB' }} />
             <div className="min-w-0">
               <h4 className="text-sm font-medium truncate">{summaryModal.subject}</h4>
-              <p className="text-[10px] text-muted mt-0.5">De : {summaryModal.sender}</p>
+              <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-muted)' }}>De : {summaryModal.sender}</p>
             </div>
           </div>
-          <button onClick={() => setSummaryModal(null)} className="text-muted hover:text-text ml-2 flex-shrink-0 transition-colors"><X size={16} /></button>
+          <button onClick={() => setSummaryModal(null)} className="ml-2 flex-shrink-0 transition-colors p-1 rounded-lg hover:scale-110" style={{ color: 'var(--color-muted)' }}><X size={16} /></button>
         </div>
         <div className="flex-1 overflow-y-auto p-5">
           {summaryLoading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="text-accent animate-spin" size={24} />
+              <Loader2 size={24} className="animate-spin" style={{ color: '#2563EB' }} />
             </div>
           ) : showFullEmail ? (
-            <div className="text-sm text-text whitespace-pre-wrap leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{stripHtml(summaryFullBody)}</div>
+            <div className="text-sm whitespace-pre-wrap leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{stripHtml(summaryFullBody)}</div>
           ) : (
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-accent/10 text-accent">Résumé IA</span>
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>Resume IA</span>
               </div>
-              <div className="text-sm text-text whitespace-pre-wrap leading-relaxed">{summaryText}</div>
+              <div className="text-sm whitespace-pre-wrap leading-relaxed">{summaryText}</div>
             </div>
           )}
         </div>
         <div className="flex flex-wrap gap-2 p-4 flex-shrink-0" style={{ borderTop: '1px solid var(--color-border)' }}>
           <button onClick={() => setShowFullEmail(!showFullEmail)}
-            className="px-3 py-2 text-xs font-medium rounded-lg transition-all" style={{ background: showFullEmail ? 'rgba(37,99,235,0.15)' : 'var(--color-bg)', border: '1px solid var(--color-border)', color: showFullEmail ? 'var(--color-accent)' : 'var(--color-text)' }}>
-            {showFullEmail ? 'Voir le résumé' : 'Voir le mail complet'}
+            className="px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 hover:scale-105"
+            style={{ background: showFullEmail ? 'rgba(37,99,235,0.15)' : 'var(--color-bg)', border: '1px solid var(--color-border)', color: showFullEmail ? '#2563EB' : 'var(--color-text)' }}>
+            {showFullEmail ? 'Voir le resume' : 'Voir le mail complet'}
           </button>
           <button onClick={() => { setSummaryModal(null); setReplyModal(summaryModal); setReplyBody('') }}
-            className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity">Répondre</button>
+            className="px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 hover:scale-105" style={{ background: '#2563EB', color: '#FFF' }}>Repondre</button>
         </div>
       </div>
     </div>,
@@ -233,53 +235,55 @@ export default function EmailFilter() {
   ) : null
 
   return (
-    <div style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', borderRadius: '12px' }}>
+    <div className="rounded-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
         <div className="flex items-center gap-2">
-          <Sparkles className="text-accent" size={14} />
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
+            <Sparkles size={14} style={{ color: '#2563EB' }} />
+          </div>
           <h3 className="text-sm font-medium">Filtre intelligent des emails</h3>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} className="px-2 py-2 rounded-lg text-xs text-text focus:outline-none focus:border-accent cursor-pointer" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+          <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} className="px-2 py-2 rounded-lg text-xs focus:outline-none cursor-pointer transition-all duration-200" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
             <option value="all">Tous</option>
             <option value="high">Importants</option>
             <option value="low">Non importants</option>
           </select>
-          <select value={filterTime} onChange={(e) => setFilterTime(e.target.value)} className="px-2 py-2 rounded-lg text-xs text-text focus:outline-none focus:border-accent cursor-pointer" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+          <select value={filterTime} onChange={(e) => setFilterTime(e.target.value)} className="px-2 py-2 rounded-lg text-xs focus:outline-none cursor-pointer transition-all duration-200" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
             <option value="today">Aujourd'hui</option>
             <option value="week">Cette semaine</option>
             <option value="all">Tout</option>
           </select>
-          <button onClick={() => setShowKeywordForm(!showKeywordForm)} className="px-2 py-2 text-accent rounded-lg text-xs hover:opacity-80 transition-opacity" style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)' }}>
-            Règles
+          <button onClick={() => setShowKeywordForm(!showKeywordForm)} className="px-2 py-2 rounded-lg text-xs transition-all duration-200 hover:scale-105" style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', color: '#2563EB' }}>
+            Regles
           </button>
         </div>
       </div>
 
       {showKeywordForm && (
         <div className="p-4" style={{ borderBottom: '1px solid var(--color-border)', background: 'var(--color-bg)' }}>
-          <p className="text-xs text-muted mb-2">Ajouter un mot-clé (ex: linkedin, promo, facture...)</p>
+          <p className="text-xs mb-2" style={{ color: 'var(--color-muted)' }}>Ajouter un mot-cle (ex: linkedin, promo, facture...)</p>
           <div className="flex gap-2 mb-3">
-            <input type="text" placeholder="Mot-clé..." value={keywordInput} onChange={(e) => setKeywordInput(e.target.value)}
+            <input type="text" placeholder="Mot-cle..." value={keywordInput} onChange={(e) => setKeywordInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addKeywordRule()}
-              className="flex-1 px-3 py-2 rounded-lg text-xs text-text placeholder:text-muted focus:outline-none focus:border-accent transition-colors" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
-            <select value={keywordPriority} onChange={(e) => setKeywordPriority(e.target.value)} className="px-2 py-2 rounded-lg text-xs text-text focus:outline-none focus:border-accent cursor-pointer" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+              className="flex-1 px-3 py-2 rounded-lg text-xs focus:outline-none transition-all duration-200" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
+            <select value={keywordPriority} onChange={(e) => setKeywordPriority(e.target.value)} className="px-2 py-2 rounded-lg text-xs focus:outline-none cursor-pointer transition-all duration-200" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
               <option value="high">Important</option>
               <option value="low">Non important</option>
             </select>
-            <button onClick={addKeywordRule} disabled={!keywordInput.trim()} className="px-3 py-2 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50">+</button>
+            <button onClick={addKeywordRule} disabled={!keywordInput.trim()} className="px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 disabled:opacity-50 hover:scale-105" style={{ background: '#2563EB', color: '#FFF' }}>+</button>
           </div>
           {rules.length > 0 && (
             <div className="space-y-1">
               {rules.map((rule) => (
-                <div key={rule.id} className="flex items-center justify-between px-2 py-1.5 rounded-lg text-xs" style={{ background: 'var(--color-bg)' }}>
-                  <span className="text-text">
-                    {rule.keyword ? <><span className="text-accent">Mot-clé:</span> {rule.keyword}</> : <><span className="text-accent">Expéditeur:</span> {rule.sender}</>}
-                    <span className={`ml-2 px-1.5 py-0.5 rounded text-[10px] ${rule.priority === 'high' ? 'bg-accentSec/10 text-accentSec' : 'bg-success/10 text-success'}`}>
+                <div key={rule.id} className="flex items-center justify-between px-2 py-1.5 rounded-lg text-xs" style={{ background: 'var(--color-surface-solid)' }}>
+                  <span>
+                    {rule.keyword ? <><span style={{ color: '#2563EB' }}>Mot-cle:</span> {rule.keyword}</> : <><span style={{ color: '#2563EB' }}>Expediteur:</span> {rule.sender}</>}
+                    <span className="ml-2 px-1.5 py-0.5 rounded text-[10px]" style={{ background: rule.priority === 'high' ? 'rgba(30,64,175,0.1)' : 'rgba(16,185,129,0.1)', color: rule.priority === 'high' ? '#1E40AF' : '#10B981' }}>
                       {rule.priority === 'high' ? 'Important' : 'Non important'}
                     </span>
                   </span>
-                  <button onClick={() => deleteRule(rule.id)} className="text-muted hover:text-accentSec transition-colors">
+                  <button onClick={() => deleteRule(rule.id)} className="transition-colors hover:scale-110" style={{ color: 'var(--color-muted)' }}>
                     <X size={12} />
                   </button>
                 </div>
@@ -290,7 +294,7 @@ export default function EmailFilter() {
       )}
 
       {emailError && (
-        <div className="px-4 py-3 text-accentSec text-xs flex items-center justify-between gap-3 flex-wrap" style={{ background: 'rgba(244,114,182,0.1)', borderBottom: '1px solid rgba(244,114,182,0.2)' }}>
+        <div className="px-4 py-3 text-xs flex items-center justify-between gap-3 flex-wrap" style={{ background: 'rgba(245,158,11,0.1)', borderBottom: '1px solid rgba(245,158,11,0.2)', color: '#F59E0B' }}>
           <span>{emailError}</span>
           {gmailReconnect && (
             <button onClick={() => {
@@ -298,7 +302,8 @@ export default function EmailFilter() {
               const token = localStorage.getItem('command_center_token')
               fetch(`${API_URL}/api/services/gmail/authorize`, { headers: { Authorization: `Bearer ${token}` } })
                 .then(r => r.json()).then(d => { if (d.url) window.location.href = d.url })
-            }} className="px-3 py-1.5 bg-accent text-bg text-xs font-medium rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap">
+            }} className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 hover:scale-105 whitespace-nowrap"
+              style={{ background: '#2563EB', color: '#FFF' }}>
               Reconnecter Gmail
             </button>
           )}
@@ -307,29 +312,29 @@ export default function EmailFilter() {
       <div>
         {filteredEmails.length === 0 ? (
           <div className="p-8 text-center">
-            <Inbox className="text-muted mx-auto mb-2" size={32} />
-            <p className="text-sm text-muted">Aucun email ne correspond aux filtres</p>
+            <Inbox className="mx-auto mb-2" size={32} style={{ color: 'var(--color-muted)' }} />
+            <p className="text-sm" style={{ color: 'var(--color-muted)' }}>Aucun email ne correspond aux filtres</p>
           </div>
         ) : filteredEmails.map((email) => (
-          <div key={email.id} className="p-4 cursor-pointer transition-colors group" style={{ borderBottom: '1px solid var(--color-border)', background: email.unread ? 'rgba(37,99,235,0.05)' : 'transparent' }}
+          <div key={email.id} className="p-4 cursor-pointer transition-all duration-200 group hover:translate-x-1" style={{ borderBottom: '1px solid var(--color-border)', background: email.unread ? 'rgba(37,99,235,0.05)' : 'transparent' }}
             onClick={() => openEmailFull(email)}>
             <div className="flex items-start gap-3">
-              <div className={`w-1.5 h-1.5 mt-2 rounded-full flex-shrink-0 ${pColors[email.priority] || 'bg-muted'}`} />
+              <div className="w-1.5 h-1.5 mt-2 rounded-full flex-shrink-0" style={{ background: pColors[email.priority] || 'var(--color-muted)' }} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  {email.unread && <span className="w-1.5 h-1.5 bg-accent rounded-full" />}
-                  <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${email.priority === 'high' ? 'bg-accentSec/10 text-accentSec' : 'bg-success/10 text-success'}`}>{pLabels[email.priority] || email.priority}</span>
+                  {email.unread && <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#2563EB' }} />}
+                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ background: email.priority === 'high' ? 'rgba(30,64,175,0.1)' : 'rgba(16,185,129,0.1)', color: email.priority === 'high' ? '#1E40AF' : '#10B981' }}>{pLabels[email.priority] || email.priority}</span>
                 </div>
-                <p className={`text-sm ${email.unread ? 'font-medium text-text' : 'text-muted'}`}>{email.subject}</p>
-                <p className="text-xs text-muted truncate mt-0.5">{email.preview}</p>
+                <p className={`text-sm ${email.unread ? 'font-medium' : ''}`} style={{ color: email.unread ? 'var(--color-text)' : 'var(--color-muted)' }}>{email.subject}</p>
+                <p className="text-xs truncate mt-0.5" style={{ color: 'var(--color-muted)' }}>{email.preview}</p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
-                <button onClick={(e) => openSummary(email, e)} className="opacity-0 group-hover:opacity-100 px-2 py-1.5 text-[10px] font-medium text-accent rounded-lg transition-all hover:bg-accent/10" style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)' }}>
-                  Résumé
+                <button onClick={(e) => openSummary(email, e)} className="opacity-0 group-hover:opacity-100 px-2 py-1.5 text-[10px] font-medium rounded-lg transition-all duration-200 hover:scale-105" style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', color: '#2563EB' }}>
+                  Resume
                 </button>
                 <div className="text-right max-w-[100px]">
-                  <p className="text-[10px] text-muted truncate">{email.time}</p>
-                  <p className="text-[10px] text-accent mt-0.5 truncate">{email.sender}</p>
+                  <p className="text-[10px] truncate" style={{ color: 'var(--color-muted)' }}>{email.time}</p>
+                  <p className="text-[10px] mt-0.5 truncate" style={{ color: '#2563EB' }}>{email.sender}</p>
                 </div>
               </div>
             </div>

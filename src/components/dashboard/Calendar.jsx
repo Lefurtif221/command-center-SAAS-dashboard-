@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, X, Plus } from 'lucide-react'
 
 const DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
-const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
+const MONTHS = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre']
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i)
 
@@ -34,18 +34,19 @@ export default function Calendar() {
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [newEvent, setNewEvent] = useState({ title: '', color: 'accent' })
+  const [mobileDay, setMobileDay] = useState(0)
 
   const weekDates = useMemo(() => getWeekDates(currentDate), [currentDate])
   const today = new Date()
 
   const colors = {
-    accent: 'bg-accent text-bg',
-    success: 'bg-success text-bg',
-    warning: 'bg-warning text-bg',
-    accentSec: 'bg-accentSec text-bg',
-    purple: 'bg-purple-500 text-white',
+    accent: { bg: '#2563EB', text: '#FFFFFF' },
+    success: { bg: '#10B981', text: '#FFFFFF' },
+    warning: { bg: '#F59E0B', text: '#FFFFFF' },
+    accentSec: { bg: '#1E40AF', text: '#FFFFFF' },
+    purple: { bg: '#8B5CF6', text: '#FFFFFF' },
   }
-  const colorLabels = { accent: 'Bleu', success: 'Vert', warning: 'Orange', accentSec: 'Rouge', purple: 'Violet' }
+  const colorLabels = { accent: 'Bleu', success: 'Vert', warning: 'Orange', accentSec: 'Bleu fonce', purple: 'Violet' }
 
   const handleAddEvent = async () => {
     if (!selectedSlot || !newEvent.title.trim()) return
@@ -62,7 +63,7 @@ export default function Calendar() {
     if (hour === 8) {
       const dayTasks = tasks.filter(t => t.due_date === dateStr && !t.completed)
       if (dayTasks.length > 0) {
-        return { type: 'task', id: 'tasks-' + dateStr, title: `${dayTasks.length} tâche${dayTasks.length > 1 ? 's' : ''}`, color: 'warning', date: dateStr, hour: 8 }
+        return { type: 'task', id: 'tasks-' + dateStr, title: `${dayTasks.length} tache${dayTasks.length > 1 ? 's' : ''}`, color: 'warning', date: dateStr, hour: 8 }
       }
     }
     return null
@@ -85,36 +86,48 @@ export default function Calendar() {
 
   const weekLabel = `${MONTHS[weekDates[0].getMonth()]} ${weekDates[0].getFullYear()}`
 
+  const getDayEvents = (dateStr) => {
+    const dayEvents = []
+    for (let h = 0; h < 24; h++) {
+      const ev = getEventAt(dateStr, h)
+      if (ev) dayEvents.push({ hour: h, ...ev })
+    }
+    return dayEvents
+  }
+
   return (
-    <div className="glass rounded-xl overflow-hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-      <div className="flex items-center justify-between p-4 border-b border-border/50">
+    <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+      <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="flex items-center gap-3">
-          <CalendarIcon size={16} className="text-accent" />
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
+            <CalendarIcon size={14} style={{ color: '#2563EB' }} />
+          </div>
           <h3 className="text-sm font-display font-medium">Calendrier</h3>
         </div>
         <div className="flex items-center gap-1 sm:gap-2">
-          <span className="text-xs sm:text-sm font-display font-medium text-text mr-1 sm:mr-2">{weekLabel}</span>
-          <button onClick={goToToday} className="px-1.5 sm:px-2 py-1 text-[10px] sm:text-xs text-accent border border-accent/20 rounded-lg hover:bg-accent/10 transition-all duration-200 font-mono">Aujourd'hui</button>
-          <button onClick={() => navigateWeek(-1)} className="p-1 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors" aria-label="Semaine précédente">
+          <span className="text-xs sm:text-sm font-display font-medium mr-1 sm:mr-2">{weekLabel}</span>
+          <button onClick={goToToday} className="px-1.5 sm:px-2 py-1 text-[10px] sm:text-xs font-mono rounded-lg transition-all duration-200" style={{ color: '#2563EB', border: '1px solid rgba(37,99,235,0.2)' }}>Auj.</button>
+          <button onClick={() => navigateWeek(-1)} className="p-1 rounded-lg transition-colors" style={{ color: 'var(--color-muted)' }}>
             <ChevronLeft size={16} />
           </button>
-          <button onClick={() => navigateWeek(1)} className="p-1 rounded-lg text-muted hover:text-text hover:bg-white/5 transition-colors" aria-label="Semaine suivante">
+          <button onClick={() => navigateWeek(1)} className="p-1 rounded-lg transition-colors" style={{ color: 'var(--color-muted)' }}>
             <ChevronRight size={16} />
           </button>
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      {/* Desktop: full week grid */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full min-w-[700px]">
           <thead>
             <tr>
-              <th className="w-14 p-2 border-b border-r border-border/50"></th>
+              <th className="w-14 p-2 border-b border-r" style={{ borderColor: 'var(--color-border)' }}></th>
               {weekDates.map((d, i) => {
                 const isToday = isSameDay(d, today)
                 return (
-                  <th key={i} className={`p-2 border-b border-r border-border/50 text-center ${isToday ? 'bg-accent/5' : ''}`}>
-                    <div className="text-[10px] text-muted uppercase font-mono">{DAYS[i]}</div>
-                    <div className={`text-sm font-display font-medium mt-0.5 ${isToday ? 'text-accent' : 'text-text'}`}>{d.getDate()}</div>
+                  <th key={i} className="p-2 border-b border-r" style={{ borderColor: 'var(--color-border)', background: isToday ? 'rgba(37,99,235,0.05)' : 'transparent' }}>
+                    <div className="text-[10px] uppercase font-mono" style={{ color: 'var(--color-muted)' }}>{DAYS[i]}</div>
+                    <div className={`text-sm font-display font-medium mt-0.5`} style={{ color: isToday ? '#2563EB' : 'var(--color-text)' }}>{d.getDate()}</div>
                   </th>
                 )
               })}
@@ -123,21 +136,24 @@ export default function Calendar() {
           <tbody>
             {HOURS.map(hour => (
               <tr key={hour}>
-                <td className="p-2 border-b border-r border-border/50 text-right">
-                  <span className="text-[10px] text-muted font-mono">{String(hour).padStart(2, '0')}:00</span>
+                <td className="p-2 border-b border-r text-right" style={{ borderColor: 'var(--color-border)' }}>
+                  <span className="text-[10px] font-mono" style={{ color: 'var(--color-muted)' }}>{String(hour).padStart(2, '0')}:00</span>
                 </td>
                 {weekDates.map((d, di) => {
                   const dateStr = formatDate(d)
                   const event = getEventAt(dateStr, hour)
                   const isToday = isSameDay(d, today)
+                  const c = event ? colors[event.color] : null
                   return (
                     <td key={di} onClick={() => !event && handleSlotClick(dateStr, hour)}
-                      className={`border-b border-r border-border/50 h-10 relative ${isToday ? 'bg-accent/5' : 'hover:bg-white/[0.02]'} ${event ? '' : 'cursor-pointer'}`}>
+                      className="border-b border-r h-10 relative transition-colors"
+                      style={{ borderColor: 'var(--color-border)', background: isToday ? 'rgba(37,99,235,0.05)' : 'transparent', cursor: event ? 'default' : 'pointer' }}>
                       {event && (
-                        <div className={`absolute inset-0.5 rounded-lg flex items-center justify-between px-1.5 ${colors[event.color]}`}>
+                        <div className="absolute inset-0.5 rounded-lg flex items-center justify-between px-1.5 transition-all duration-200 hover:scale-[1.02]"
+                          style={{ background: c?.bg || '#2563EB', color: c?.text || '#FFF' }}>
                           <span className="text-[10px] font-medium truncate">{event.title}</span>
                           {event.type === 'event' && (
-                            <button onClick={(e) => { e.stopPropagation(); removeEvent(event.id) }} className="text-[10px] opacity-70 hover:opacity-100 ml-1 flex-shrink-0">✕</button>
+                            <button onClick={(e) => { e.stopPropagation(); removeEvent(event.id) }} className="text-[10px] opacity-70 hover:opacity-100 ml-1 flex-shrink-0">x</button>
                           )}
                         </div>
                       )}
@@ -150,30 +166,86 @@ export default function Calendar() {
         </table>
       </div>
 
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setModalOpen(false)}>
-          <div className="glass rounded-2xl p-5 w-full max-w-sm mx-4 shadow-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-sm font-display font-medium">Nouvel événement</h4>
-              <button onClick={() => setModalOpen(false)} className="text-muted hover:text-text transition-colors"><X size={16} /></button>
+      {/* Mobile: day cards */}
+      <div className="md:hidden">
+        <div className="flex overflow-x-auto border-b" style={{ borderColor: 'var(--color-border)' }}>
+          {weekDates.map((d, i) => {
+            const isToday = isSameDay(d, today)
+            const isSelected = mobileDay === i
+            return (
+              <button key={i} onClick={() => setMobileDay(i)}
+                className="flex-1 min-w-[60px] py-3 flex flex-col items-center gap-1 transition-all duration-200"
+                style={{ borderBottom: isSelected ? '2px solid #2563EB' : '2px solid transparent', background: isToday ? 'rgba(37,99,235,0.05)' : 'transparent' }}>
+                <span className="text-[10px] uppercase font-mono" style={{ color: 'var(--color-muted)' }}>{DAYS[i]}</span>
+                <span className="text-sm font-display font-medium" style={{ color: isToday ? '#2563EB' : isSelected ? 'var(--color-text)' : 'var(--color-muted)' }}>{d.getDate()}</span>
+              </button>
+            )
+          })}
+        </div>
+        <div className="p-3 space-y-1 max-h-[500px] overflow-y-auto">
+          {getDayEvents(formatDate(weekDates[mobileDay])).length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-xs" style={{ color: 'var(--color-muted)' }}>Aucun evenement</p>
+              <button onClick={() => { setSelectedSlot({ date: formatDate(weekDates[mobileDay]), hour: 9 }); setModalOpen(true) }}
+                className="mt-3 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200"
+                style={{ background: 'rgba(37,99,235,0.1)', color: '#2563EB', border: '1px solid rgba(37,99,235,0.2)' }}>
+                <Plus size={12} className="inline mr-1" /> Ajouter
+              </button>
             </div>
-            <p className="text-xs text-muted mb-4 font-mono">{selectedSlot && `${new Date(selectedSlot.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} à ${String(selectedSlot.hour).padStart(2, '0')}:00`}</p>
+          ) : (
+            <>
+              {getDayEvents(formatDate(weekDates[mobileDay])).map((ev, i) => {
+                const c = colors[ev.color] || colors.accent
+                return (
+                  <div key={i} className="flex items-center gap-3 p-3 rounded-xl transition-all duration-200"
+                    style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                    <div className="w-1 h-10 rounded-full" style={{ background: c.bg }} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium">{ev.title}</p>
+                      <p className="text-[10px] font-mono" style={{ color: 'var(--color-muted)' }}>{String(ev.hour).padStart(2, '0')}:00</p>
+                    </div>
+                    {ev.type === 'event' && (
+                      <button onClick={() => removeEvent(ev.id)} className="text-[10px] px-2 py-1 rounded-lg transition-colors"
+                        style={{ color: 'var(--color-muted)' }}>x</button>
+                    )}
+                  </div>
+                )
+              })}
+              <button onClick={() => { setSelectedSlot({ date: formatDate(weekDates[mobileDay]), hour: new Date().getHours() }); setModalOpen(true) }}
+                className="w-full py-3 rounded-xl text-xs font-medium transition-all duration-200"
+                style={{ background: 'rgba(37,99,235,0.1)', color: '#2563EB', border: '1px solid rgba(37,99,235,0.2)' }}>
+                <Plus size={12} className="inline mr-1" /> Ajouter un evenement
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={() => setModalOpen(false)}>
+          <div className="rounded-2xl p-5 w-full max-w-sm shadow-2xl animate-scale-in" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-sm font-display font-medium">Nouvel evenement</h4>
+              <button onClick={() => setModalOpen(false)} className="p-1 rounded-lg transition-colors" style={{ color: 'var(--color-muted)' }}><X size={16} /></button>
+            </div>
+            <p className="text-xs mb-4 font-mono" style={{ color: 'var(--color-muted)' }}>{selectedSlot && `${new Date(selectedSlot.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} a ${String(selectedSlot.hour).padStart(2, '0')}:00`}</p>
             <div className="space-y-3">
-              <input type="text" placeholder="Titre de l'événement" value={newEvent.title} onChange={e => setNewEvent({ ...newEvent, title: e.target.value })}
-                className="glass w-full px-3 py-2.5 rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} autoFocus
+              <input type="text" placeholder="Titre de l'evenement" value={newEvent.title} onChange={e => setNewEvent({ ...newEvent, title: e.target.value })}
+                className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none transition-all duration-200" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} autoFocus
                 onKeyDown={e => e.key === 'Enter' && handleAddEvent()} />
               <div>
-                <label className="block text-xs text-muted mb-1.5 font-mono">Couleur</label>
+                <label className="block text-xs mb-1.5 font-mono" style={{ color: 'var(--color-muted)' }}>Couleur</label>
                 <div className="flex gap-2">
                   {Object.entries(colorLabels).map(([key, label]) => (
                     <button key={key} onClick={() => setNewEvent({ ...newEvent, color: key })}
-                      className={`w-7 h-7 rounded-lg ${colors[key]} ${newEvent.color === key ? 'ring-2 ring-offset-2 ring-offset-surface ring-accent' : 'opacity-50 hover:opacity-80'} transition-all duration-200`} title={label} />
+                      className="w-7 h-7 rounded-lg transition-all duration-200 hover:scale-110"
+                      style={{ background: colors[key].bg, opacity: newEvent.color === key ? 1 : 0.4, outline: newEvent.color === key ? '2px solid var(--color-text)' : 'none', outlineOffset: '2px' }} title={label} />
                   ))}
                 </div>
               </div>
               <div className="flex gap-2 pt-2">
-                <button onClick={handleAddEvent} disabled={!newEvent.title.trim()} className="flex-1 px-3 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#2563EB] transition-all duration-200 disabled:opacity-50 shadow-[0_0_15px_-3px_rgba(37,99,235,0.3)]">Ajouter</button>
-                <button onClick={() => setModalOpen(false)} className="glass px-3 py-2.5 text-sm text-muted rounded-xl hover:text-text transition-all duration-200" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>Annuler</button>
+                <button onClick={handleAddEvent} disabled={!newEvent.title.trim()} className="flex-1 px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 disabled:opacity-50" style={{ background: '#2563EB', color: '#FFF' }}>Ajouter</button>
+                <button onClick={() => setModalOpen(false)} className="px-3 py-2.5 text-sm rounded-xl transition-all duration-200" style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Annuler</button>
               </div>
             </div>
           </div>
