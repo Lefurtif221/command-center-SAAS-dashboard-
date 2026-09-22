@@ -155,7 +155,7 @@ export function DashboardProvider({ children }) {
     unreadEmails: emails.filter(e => e.priority === 'high').length,
     pendingTasks: tasks.filter(t => !t.completed).length,
     activity: events.filter(e => e.date === todayStr).length,
-    totalTasks: tasks.length,
+    totalTasks: tasks.filter(t => !t.completed).length,
   }
 
   const connectService = async (serviceName) => {

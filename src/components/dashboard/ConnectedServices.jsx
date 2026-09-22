@@ -236,7 +236,14 @@ export default function ConnectedServices() {
                 </div>
               </div>
             </div>
-            <div className="flex justify-end pt-4">
+            <div className="flex justify-end gap-2 pt-4">
+              {whatsappStatus && whatsappStatus !== 'Scan le QR code avec ton telephone' && whatsappStatus !== 'Connexion en cours...' && whatsappStatus !== 'Generation du QR code...' && (
+                <button onClick={() => { setWhatsAppQR(null); setWhatsAppStatus(''); handleConnect('whatsapp') }}
+                  className="px-3 py-2 text-xs font-medium rounded-lg transition-all hover:scale-105"
+                  style={{ background: '#2563EB', color: '#FFF' }}>
+                  Reessayer
+                </button>
+              )}
               <button onClick={() => { setShowWhatsAppModal(false); if (pollingRef.current) clearInterval(pollingRef.current) }} className="px-3 py-2 text-xs rounded-lg transition-colors" style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Fermer</button>
             </div>
           </div>
