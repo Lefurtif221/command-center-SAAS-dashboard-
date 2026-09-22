@@ -1,11 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#D97706;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:1" />
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="50%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#A78BFA"/>
     </linearGradient>
   </defs>
-  <rect width="100" height="100" rx="20" fill="#0A0A0F"/>
-  <path d="M50 20 L65 45 L50 40 L35 45 Z" fill="url(#grad)"/>
-  <path d="M35 45 L50 40 L65 45 L50 80 Z" fill="url(#grad)" opacity="0.8"/>
+  <rect width="64" height="64" rx="14" fill="url(#g1)"/>
+  <path d="M20 14h14c8 0 14 6 14 14s-6 14-14 14H20V14zm8 8v20h6c4 0 8-3 8-10s-4-10-8-10h-6z" fill="white"/>
+  <rect x="20" y="14" width="14" height="8" rx="2" fill="url(#g2)" opacity="0.8"/>
 </svg>

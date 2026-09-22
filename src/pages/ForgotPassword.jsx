@@ -33,9 +33,7 @@ export default function ForgotPassword() {
         </button>
 
         <div className="flex items-center gap-2.5 mb-8">
-          <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
-            <Sparkles size={14} className="text-accent" />
-          </div>
+          <img src="/logo.png" alt="Personal Place" className="w-7 h-7 rounded-lg" />
           <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
         </div>
 

@@ -46,9 +46,7 @@ export default function AuthPage() {
             <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" /><span>Retour</span>
           </button>
           <div className="flex items-center gap-2.5 mb-12">
-            <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-              <Sparkles size={16} className="text-accent" />
-            </div>
+            <img src="/logo.png" alt="Personal Place" className="w-8 h-8 rounded-lg" />
             <span className="font-display font-semibold tracking-tight text-lg">Personal Place</span>
           </div>
           <h1 className="text-4xl font-display font-semibold tracking-tighter-custom mb-6 leading-[1.05]">

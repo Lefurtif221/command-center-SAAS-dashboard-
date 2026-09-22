@@ -28,9 +28,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 w-full z-50 glass-strong border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
-              <Sparkles size={14} className="text-accent" />
-            </div>
+            <img src="/logo.png" alt="Personal Place" className="w-7 h-7 rounded-lg" />
             <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted">
@@ -271,9 +269,7 @@ export default function LandingPage() {
       <footer className="border-t border-border/50 bg-bg py-12">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded-md bg-accent/10 flex items-center justify-center">
-               <Sparkles size={12} className="text-muted" />
-            </div>
+            <img src="/logo.png" alt="Personal Place" className="w-6 h-6 rounded-md" />
             <span className="text-sm font-display font-medium text-muted">Personal Place</span>
           </div>
           <div className="flex gap-6 text-xs text-muted">

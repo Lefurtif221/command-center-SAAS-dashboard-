@@ -41,9 +41,7 @@ export default function Sidebar({ onToggle }) {
       <div className="h-14 md:h-16 flex items-center justify-between px-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
         {!collapsed && (
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
-              <Sparkles size={14} style={{ color: '#2563EB' }} />
-            </div>
+            <img src="/logo.png" alt="Personal Place" className="w-8 h-8 rounded-xl" />
             <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
           </div>
         )}
