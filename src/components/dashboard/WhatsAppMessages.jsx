@@ -136,8 +136,8 @@ export default function WhatsAppMessages() {
   if (!connected) {
     return (
       <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-        <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(220,38,38,0.1)' }}>
-          <MessageCircle size={28} style={{ color: '#DC2626' }} />
+        <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
+          <MessageCircle size={28} style={{ color: '#2563EB' }} />
         </div>
         <h3 className="text-sm font-display font-medium mb-2">WhatsApp non connecte</h3>
         <p className="text-xs max-w-xs mx-auto" style={{ color: 'var(--color-muted)' }}>Connecte ton WhatsApp dans "Services connectes" pour voir et envoyer des messages directement depuis l'app.</p>
@@ -157,7 +157,7 @@ export default function WhatsAppMessages() {
               <button key={f} onClick={() => setFilter(f)}
                 className={`px-2 py-1 rounded-lg text-[10px] font-mono transition-all`}
                 style={filter === f
-                  ? { background: 'rgba(220,38,38,0.15)', color: '#DC2626' }
+                  ? { background: 'rgba(37,99,235,0.15)', color: '#2563EB' }
                   : { color: 'var(--color-muted)' }}>
                 {f === 'all' ? 'Tous' : '\u2605'}
               </button>
@@ -183,9 +183,9 @@ export default function WhatsAppMessages() {
             <div key={chat.chatId}
               onClick={() => setActiveChat(chat)}
               className="flex items-center gap-3 px-3 py-3 cursor-pointer transition-all duration-150 border-b"
-              style={{ borderColor: 'var(--color-border)', background: isActive ? 'rgba(220,38,38,0.1)' : 'transparent' }}>
+              style={{ borderColor: 'var(--color-border)', background: isActive ? 'rgba(37,99,235,0.1)' : 'transparent' }}>
               <div className="w-11 h-11 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
-                style={{ background: 'rgba(220,38,38,0.15)', color: '#DC2626' }}>
+                style={{ background: 'rgba(37,99,235,0.15)', color: '#2563EB' }}>
                 {last.fromMe ? 'M' : last.from?.slice(0, 2)?.toUpperCase() || '?'}
               </div>
               <div className="flex-1 min-w-0">
@@ -197,7 +197,7 @@ export default function WhatsAppMessages() {
                   {last.fromMe && <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>Toi: </span>}
                   {getMsgIcon(last.type)}
                   <p className="text-[11px] truncate flex-1" style={{ color: 'var(--color-muted)' }}>{previewText || '...'}</p>
-                  {isImportant && <Star size={9} style={{ color: '#DC2626', fill: '#DC2626' }} />}
+                  {isImportant && <Star size={9} style={{ color: '#2563EB', fill: '#2563EB' }} />}
                 </div>
               </div>
             </div>
@@ -214,7 +214,7 @@ export default function WhatsAppMessages() {
           <ArrowLeft size={16} />
         </button>
         <div className="w-9 h-9 rounded-full flex items-center justify-center text-[10px] font-semibold shrink-0"
-          style={{ background: 'rgba(220,38,38,0.15)', color: '#DC2626' }}>
+          style={{ background: 'rgba(37,99,235,0.15)', color: '#2563EB' }}>
           {activeChat.lastMessage.fromMe ? 'M' : activeChat.lastMessage.from?.slice(0, 2)?.toUpperCase() || '?'}
         </div>
         <div className="flex-1 min-w-0">
@@ -223,7 +223,7 @@ export default function WhatsAppMessages() {
         </div>
         <button onClick={(e) => handlePriority(activeChat.chatId, activeChat.priority === 'important' ? 'none' : 'important', e)}
           className="p-2 rounded-lg transition-all"
-          style={{ color: activeChat.priority === 'important' ? '#DC2626' : 'var(--color-muted)' }}>
+          style={{ color: activeChat.priority === 'important' ? '#2563EB' : 'var(--color-muted)' }}>
           <Star size={14} className={activeChat.priority === 'important' ? 'fill-current' : ''} />
         </button>
       </div>
@@ -247,7 +247,7 @@ export default function WhatsAppMessages() {
                   : 'rounded-2xl rounded-bl-md'
                 }`}
                   style={msg.fromMe
-                    ? { background: '#DC2626', color: '#FFFFFF' }
+                    ? { background: '#2563EB', color: '#FFFFFF' }
                     : { background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }
                   }>
                   {msg.type === 'image' && (
@@ -262,9 +262,9 @@ export default function WhatsAppMessages() {
                   )}
                   {msg.type === 'audio' && (
                     <div className="flex items-center gap-2 mb-1 px-2 py-1.5 rounded-lg" style={{ background: 'var(--color-bg)' }}>
-                      <Mic size={12} style={{ color: '#DC2626' }} />
+                      <Mic size={12} style={{ color: '#2563EB' }} />
                       <div className="flex-1 h-1 rounded-full" style={{ background: 'var(--color-border)' }}>
-                        <div className="h-full w-0 rounded-full" style={{ background: '#DC2626' }} />
+                        <div className="h-full w-0 rounded-full" style={{ background: '#2563EB' }} />
                       </div>
                       <span className="text-[9px]" style={{ color: 'var(--color-muted)' }}>0:00</span>
                     </div>
@@ -307,7 +307,7 @@ export default function WhatsAppMessages() {
           <button onClick={handleSend} disabled={!replyBody.trim() || sending}
             className="w-10 h-10 flex items-center justify-center rounded-xl transition-all disabled:opacity-30"
             style={replyBody.trim()
-              ? { background: '#DC2626', color: '#FFFFFF' }
+              ? { background: '#2563EB', color: '#FFFFFF' }
               : { background: 'var(--color-bg)', color: 'var(--color-muted)', border: '1px solid var(--color-border)' }}>
             {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
           </button>
@@ -316,8 +316,8 @@ export default function WhatsAppMessages() {
     </div>
   ) : (
     <div className="flex flex-col items-center justify-center h-full text-center p-6">
-      <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ background: 'rgba(220,38,38,0.1)' }}>
-        <MessageCircle size={32} style={{ color: '#DC2626' }} />
+      <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ background: 'rgba(37,99,235,0.1)' }}>
+        <MessageCircle size={32} style={{ color: '#2563EB' }} />
       </div>
       <h3 className="text-base font-display font-medium mb-1">WhatsApp Web</h3>
       <p className="text-xs max-w-xs" style={{ color: 'var(--color-muted)' }}>Envoie et recois des messages directement depuis ton navigateur. Selectionne une conversation.</p>

@@ -5,8 +5,8 @@ export default function QuickActions() {
   const { setActiveSection } = useDashboard()
 
   const actions = [
-    { id: 'emails', label: 'Emails', icon: Mail, section: 'emails', color: '#DC2626' },
-    { id: 'tasks', label: 'Taches', icon: CheckSquare, section: 'tasks', color: '#7F1D1D' },
+    { id: 'emails', label: 'Emails', icon: Mail, section: 'emails', color: '#2563EB' },
+    { id: 'tasks', label: 'Taches', icon: CheckSquare, section: 'tasks', color: '#1E40AF' },
     { id: 'calendar', label: 'Calendrier', icon: Calendar, section: 'calendar', color: '#E5E5E5' },
     { id: 'messages', label: 'Messages', icon: MessageSquare, section: 'messages', color: '#A3A3A3' },
   ]
@@ -14,7 +14,7 @@ export default function QuickActions() {
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex items-center gap-2 p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
-        <Sparkles size={14} style={{ color: '#DC2626' }} />
+        <Sparkles size={14} style={{ color: '#2563EB' }} />
         <h3 className="text-sm font-display font-medium">Actions rapides</h3>
       </div>
       <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-3">

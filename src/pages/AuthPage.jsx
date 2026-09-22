@@ -85,8 +85,8 @@ export default function AuthPage() {
             <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
           </div>
           <div className="flex gap-1 p-1 glass rounded-xl mb-8">
-            <button onClick={() => { setActiveTab('login'); setError('') }} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'login' ? 'bg-accent/10 text-accent shadow-[0_0_12px_-4px_rgba(220,38,38,0.3)]' : 'text-muted hover:text-text hover:bg-white/5'}`}>Connexion</button>
-            <button onClick={() => { setActiveTab('signup'); setError('') }} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'signup' ? 'bg-accent/10 text-accent shadow-[0_0_12px_-4px_rgba(220,38,38,0.3)]' : 'text-muted hover:text-text hover:bg-white/5'}`}>Inscription</button>
+            <button onClick={() => { setActiveTab('login'); setError('') }} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'login' ? 'bg-accent/10 text-accent shadow-[0_0_12px_-4px_rgba(37,99,235,0.3)]' : 'text-muted hover:text-text hover:bg-white/5'}`}>Connexion</button>
+            <button onClick={() => { setActiveTab('signup'); setError('') }} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'signup' ? 'bg-accent/10 text-accent shadow-[0_0_12px_-4px_rgba(37,99,235,0.3)]' : 'text-muted hover:text-text hover:bg-white/5'}`}>Inscription</button>
           </div>
           {error && <div className="mb-6 p-3 bg-accentSec/10 border border-accentSec/20 rounded-xl text-accentSec text-sm">{error}</div>}
 
@@ -94,12 +94,12 @@ export default function AuthPage() {
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
                 <label className="block text-xs text-muted mb-1.5 font-mono">Email</label>
-                <input type="email" placeholder="votre@email.com" value={loginForm.email} onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })} className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(220,38,38,0.2)] transition-all duration-200" required />
+                <input type="email" placeholder="votre@email.com" value={loginForm.email} onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })} className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(37,99,235,0.2)] transition-all duration-200" required />
               </div>
               <div>
                 <label className="block text-xs text-muted mb-1.5 font-mono">Mot de passe</label>
                 <div className="relative">
-                  <input type={showLoginPassword ? 'text' : 'password'} placeholder="••••••••" value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} className="w-full px-3 py-2.5 pr-10 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(220,38,38,0.2)] transition-all duration-200" required />
+                  <input type={showLoginPassword ? 'text' : 'password'} placeholder="••••••••" value={loginForm.password} onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })} className="w-full px-3 py-2.5 pr-10 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(37,99,235,0.2)] transition-all duration-200" required />
                   <button type="button" onClick={() => setShowLoginPassword(!showLoginPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-text transition-colors">
                     {showLoginPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -109,22 +109,22 @@ export default function AuthPage() {
                 <label className="flex items-center gap-2 text-muted"><input type="checkbox" defaultChecked /> Se souvenir de moi</label>
                 <a href="#" onClick={(e) => { e.preventDefault(); navigate('/auth/forgot-password') }} className="text-accent hover:text-accent/80 transition-colors">Mot de passe oublié ?</a>
               </div>
-              <button type="submit" disabled={loading} className="w-full bg-accent text-bg hover:bg-[#EF4444] font-semibold text-sm py-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 shadow-[0_0_20px_-5px_rgba(220,38,38,0.3)] hover:shadow-[0_0_30px_-5px_rgba(220,38,38,0.4)]">{loading ? 'Connexion...' : 'Se connecter'}</button>
+              <button type="submit" disabled={loading} className="w-full bg-accent text-bg hover:bg-[#2563EB] font-semibold text-sm py-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 shadow-[0_0_20px_-5px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_-5px_rgba(37,99,235,0.4)]">{loading ? 'Connexion...' : 'Se connecter'}</button>
             </form>
           ) : (
             <form onSubmit={handleSignup} className="space-y-4">
               <div>
                 <label className="block text-xs text-muted mb-1.5 font-mono">Nom complet</label>
-                <input type="text" placeholder="Mouhamadou Touré" value={signupForm.name} onChange={(e) => setSignupForm({ ...signupForm, name: e.target.value })} className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(220,38,38,0.2)] transition-all duration-200" required />
+                <input type="text" placeholder="Mouhamadou Touré" value={signupForm.name} onChange={(e) => setSignupForm({ ...signupForm, name: e.target.value })} className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(37,99,235,0.2)] transition-all duration-200" required />
               </div>
               <div>
                 <label className="block text-xs text-muted mb-1.5 font-mono">Email</label>
-                <input type="email" placeholder="votre@email.com" value={signupForm.email} onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })} className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(220,38,38,0.2)] transition-all duration-200" required />
+                <input type="email" placeholder="votre@email.com" value={signupForm.email} onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })} className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(37,99,235,0.2)] transition-all duration-200" required />
               </div>
               <div>
                 <label className="block text-xs text-muted mb-1.5 font-mono">Mot de passe</label>
                 <div className="relative">
-                  <input type={showSignupPassword ? 'text' : 'password'} placeholder="8 caractères minimum" value={signupForm.password} onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })} className="w-full px-3 py-2.5 pr-10 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(220,38,38,0.2)] transition-all duration-200" required />
+                  <input type={showSignupPassword ? 'text' : 'password'} placeholder="8 caractères minimum" value={signupForm.password} onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })} className="w-full px-3 py-2.5 pr-10 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(37,99,235,0.2)] transition-all duration-200" required />
                   <button type="button" onClick={() => setShowSignupPassword(!showSignupPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-text transition-colors">
                     {showSignupPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -133,7 +133,7 @@ export default function AuthPage() {
               <div>
                 <label className="block text-xs text-muted mb-1.5 font-mono">Confirmer</label>
                 <div className="relative">
-                  <input type={showConfirmPassword ? 'text' : 'password'} placeholder="••••••••" value={signupForm.confirmPassword} onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })} className="w-full px-3 py-2.5 pr-10 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(220,38,38,0.2)] transition-all duration-200" required />
+                  <input type={showConfirmPassword ? 'text' : 'password'} placeholder="••••••••" value={signupForm.confirmPassword} onChange={(e) => setSignupForm({ ...signupForm, confirmPassword: e.target.value })} className="w-full px-3 py-2.5 pr-10 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(37,99,235,0.2)] transition-all duration-200" required />
                   <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-text transition-colors">
                     {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -143,7 +143,7 @@ export default function AuthPage() {
                 <input type="checkbox" required className="mt-0.5" />
                 <span className="text-muted">J'accepte les <a href="#" className="text-accent hover:text-accent/80">conditions</a></span>
               </div>
-              <button type="submit" disabled={loading} className="w-full bg-accent text-bg hover:bg-[#EF4444] font-semibold text-sm py-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 shadow-[0_0_20px_-5px_rgba(220,38,38,0.3)] hover:shadow-[0_0_30px_-5px_rgba(220,38,38,0.4)]">{loading ? 'Création...' : 'Créer mon compte'}</button>
+              <button type="submit" disabled={loading} className="w-full bg-accent text-bg hover:bg-[#2563EB] font-semibold text-sm py-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 shadow-[0_0_20px_-5px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_-5px_rgba(37,99,235,0.4)]">{loading ? 'Création...' : 'Créer mon compte'}</button>
             </form>
           )}
           <p className="mt-6 text-center text-xs text-muted">

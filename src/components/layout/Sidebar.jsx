@@ -35,8 +35,8 @@ export default function Sidebar({ onToggle }) {
       <div className="h-14 md:h-16 flex items-center justify-between px-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
         {!collapsed && (
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(220,38,38,0.1)' }}>
-              <Sparkles size={14} style={{ color: '#DC2626' }} />
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
+              <Sparkles size={14} style={{ color: '#2563EB' }} />
             </div>
             <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
           </div>
@@ -65,7 +65,7 @@ export default function Sidebar({ onToggle }) {
                 data-tutorial={`sidebar-${item.id}`}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200`}
                 style={isActive
-                  ? { background: 'rgba(220,38,38,0.15)', color: '#DC2626' }
+                  ? { background: 'rgba(37,99,235,0.15)', color: '#2563EB' }
                   : { color: 'var(--color-muted)' }}>
                 <item.icon size={18} className="shrink-0" />
                 {!collapsed && (
@@ -73,7 +73,7 @@ export default function Sidebar({ onToggle }) {
                     <span className="flex-1 text-left text-sm font-medium">{item.label}</span>
                     {b > 0 && (
                       <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full"
-                        style={{ background: 'rgba(220,38,38,0.1)', color: '#DC2626' }}>
+                        style={{ background: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>
                         {b}
                       </span>
                     )}
@@ -88,7 +88,7 @@ export default function Sidebar({ onToggle }) {
         <button onClick={() => handleNav('settings')}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200"
           style={activeSection === 'settings'
-            ? { background: 'rgba(220,38,38,0.15)', color: '#DC2626' }
+            ? { background: 'rgba(37,99,235,0.15)', color: '#2563EB' }
             : { color: 'var(--color-muted)' }}>
           <Settings size={18} className="shrink-0" />
           {!collapsed && <span className="text-sm font-medium">Settings</span>}
@@ -104,7 +104,7 @@ export default function Sidebar({ onToggle }) {
         <div className="p-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
           <div className="flex items-center gap-3 px-2 py-2">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-display font-semibold shrink-0"
-              style={{ background: 'rgba(220,38,38,0.15)', color: '#DC2626', border: '1px solid rgba(220,38,38,0.2)' }}>
+              style={{ background: 'rgba(37,99,235,0.15)', color: '#2563EB', border: '1px solid rgba(37,99,235,0.2)' }}>
               {user?.initials || 'U'}
             </div>
             <div className="flex-1 min-w-0">

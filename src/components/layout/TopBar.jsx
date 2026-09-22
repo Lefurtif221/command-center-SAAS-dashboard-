@@ -28,7 +28,7 @@ export default function TopBar() {
     const found = []
     emails.forEach(e => {
       if (e.subject?.toLowerCase().includes(q) || e.sender?.toLowerCase().includes(q) || e.preview?.toLowerCase().includes(q)) {
-        found.push({ type: 'email', icon: Mail, label: e.subject, sub: e.sender, section: 'emails', color: '#DC2626' })
+        found.push({ type: 'email', icon: Mail, label: e.subject, sub: e.sender, section: 'emails', color: '#2563EB' })
       }
     })
     tasks.forEach(t => {
@@ -90,7 +90,7 @@ export default function TopBar() {
           {isDark ? <Sun size={16} /> : <Moon size={16} />}
         </button>
         <button className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 hover:scale-105"
-          style={{ background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.2)', color: '#DC2626' }}>
+          style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', color: '#2563EB' }}>
           <Sparkles size={12} />Filtre intelligent
         </button>
         <button className="relative p-2 md:p-2.5 rounded-xl transition-all duration-200 hover:scale-105"
@@ -99,7 +99,7 @@ export default function TopBar() {
           <Bell size={16} />
           {stats.unreadEmails > 0 && (
             <span className="absolute top-0.5 right-0.5 md:top-1 md:right-1 w-4 h-4 text-[8px] font-mono font-bold text-white rounded-full flex items-center justify-center animate-glow-pulse"
-              style={{ background: '#DC2626' }}>{stats.unreadEmails}</span>
+              style={{ background: '#2563EB' }}>{stats.unreadEmails}</span>
           )}
         </button>
       </div>

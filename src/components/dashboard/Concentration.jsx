@@ -130,7 +130,7 @@ export default function Concentration() {
   const circumference = 2 * Math.PI * 90
   const strokeDashoffset = circumference - (progress / 100) * circumference
 
-  const phaseColor = phase === 'work' ? '#DC2626' : phase === 'break' ? '#E5E5E5' : '#7F1D1D'
+  const phaseColor = phase === 'work' ? '#2563EB' : phase === 'break' ? '#E5E5E5' : '#1E40AF'
   const todayTotal = todaySessions.reduce((acc, s) => acc + (s.duration || 0), 0)
 
   return (
@@ -150,7 +150,7 @@ export default function Concentration() {
             )}
             {tasks.filter(t => !t.completed).map(task => (
               <button key={task.id} onClick={() => handleSelect('task', task.id, task.title)}
-                className={`glass w-full text-left p-3 rounded-xl transition-all duration-200 ${selectedType === 'task' && selectedId === task.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(220,38,38,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`} style={{ background: 'var(--color-surface-solid)' }}>
+                className={`glass w-full text-left p-3 rounded-xl transition-all duration-200 ${selectedType === 'task' && selectedId === task.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(37,99,235,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`} style={{ background: 'var(--color-surface-solid)' }}>
                 <div className="flex items-center gap-2">
                   <CheckSquare size={14} className="text-warning" />
                   <span className="text-sm text-text truncate">{task.title}</span>
@@ -165,7 +165,7 @@ export default function Concentration() {
             )}
             {events.map(evt => (
               <button key={evt.id} onClick={() => handleSelect('event', evt.id, evt.title)}
-                className={`glass w-full text-left p-3 rounded-xl transition-all duration-200 ${selectedType === 'event' && selectedId === evt.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(220,38,38,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`} style={{ background: 'var(--color-surface-solid)' }}>
+                className={`glass w-full text-left p-3 rounded-xl transition-all duration-200 ${selectedType === 'event' && selectedId === evt.id ? 'border border-accent/30 bg-accent/5 shadow-[0_0_12px_-4px_rgba(37,99,235,0.2)]' : 'hover:bg-accent/5 hover:border-accent/20'}`} style={{ background: 'var(--color-surface-solid)' }}>
                 <div className="flex items-center gap-2">
                   <CalendarIcon size={14} className="text-accent" />
                   <span className="text-sm text-text truncate">{evt.title}</span>
@@ -199,7 +199,7 @@ export default function Concentration() {
                 className="text-border opacity-20" />
               <circle cx="100" cy="100" r="90" fill="none" stroke={phaseColor} strokeWidth="6"
                 strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset}
-                className="transition-all duration-1000 drop-shadow-[0_0_8px_rgba(220,38,38,0.4)]" />
+                className="transition-all duration-1000 drop-shadow-[0_0_8px_rgba(37,99,235,0.4)]" />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-3xl font-mono font-bold text-text">{formatTime(timeLeft)}</span>
@@ -211,7 +211,7 @@ export default function Concentration() {
           <div className="flex items-center gap-3 mb-4">
             {!isRunning ? (
               <button onClick={handleStart} disabled={!selectedTitle}
-                className="flex items-center gap-2 px-5 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#EF4444] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_0_20px_-5px_rgba(220,38,38,0.4)]">
+                className="flex items-center gap-2 px-5 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#2563EB] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-[0_0_20px_-5px_rgba(37,99,235,0.4)]">
                 <Play size={16} /> Démarrer
               </button>
             ) : (
@@ -229,7 +229,7 @@ export default function Concentration() {
           {/* Sessions */}
           <div className="flex items-center gap-2">
             {Array.from({ length: SESSIONS_BEFORE_LONG_BREAK }).map((_, i) => (
-              <div key={i} className={`w-3 h-3 rounded-full transition-all duration-300 ${i < (sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK) ? 'bg-accent shadow-[0_0_8px_rgba(220,38,38,0.5)]' : 'bg-border/50'}`} />
+              <div key={i} className={`w-3 h-3 rounded-full transition-all duration-300 ${i < (sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK) ? 'bg-accent shadow-[0_0_8px_rgba(37,99,235,0.5)]' : 'bg-border/50'}`} />
             ))}
             <span className="text-[10px] text-muted ml-2 font-mono">{sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK}/{SESSIONS_BEFORE_LONG_BREAK}</span>
           </div>

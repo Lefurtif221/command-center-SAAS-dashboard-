@@ -47,7 +47,7 @@ export default function ForgotPassword() {
             <MailCheck size={40} className="text-success mx-auto mb-3 block" />
             <h3 className="text-sm font-display font-medium mb-2">Email envoyé !</h3>
             <p className="text-xs text-muted mb-4 leading-relaxed">Vérifiez votre boîte de réception et cliquez sur le lien pour réinitialiser votre mot de passe.</p>
-            <button onClick={() => navigate('/auth')} className="px-4 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#EF4444] transition-all duration-200 shadow-[0_0_20px_-5px_rgba(220,38,38,0.3)]">
+            <button onClick={() => navigate('/auth')} className="px-4 py-2.5 bg-accent text-bg text-sm font-medium rounded-xl hover:bg-[#2563EB] transition-all duration-200 shadow-[0_0_20px_-5px_rgba(37,99,235,0.3)]">
               Retour à la connexion
             </button>
           </div>
@@ -57,9 +57,9 @@ export default function ForgotPassword() {
             <div className="mb-4">
               <label className="block text-xs text-muted mb-1.5 font-mono">Email</label>
               <input type="email" placeholder="votre@email.com" value={email} onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(220,38,38,0.2)] transition-all duration-200" required autoFocus />
+                className="w-full px-3 py-2.5 glass rounded-xl text-sm text-text placeholder:text-muted focus:outline-none focus:border-accent/50 focus:shadow-[0_0_12px_-4px_rgba(37,99,235,0.2)] transition-all duration-200" required autoFocus />
             </div>
-            <button type="submit" disabled={loading} className="w-full bg-accent text-bg hover:bg-[#EF4444] font-semibold text-sm py-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 shadow-[0_0_20px_-5px_rgba(220,38,38,0.3)] hover:shadow-[0_0_30px_-5px_rgba(220,38,38,0.4)]">
+            <button type="submit" disabled={loading} className="w-full bg-accent text-bg hover:bg-[#2563EB] font-semibold text-sm py-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 shadow-[0_0_20px_-5px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_-5px_rgba(37,99,235,0.4)]">
               {loading ? 'Envoi en cours...' : 'Envoyer le lien'}
             </button>
           </form>
