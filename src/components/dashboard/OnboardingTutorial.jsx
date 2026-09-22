@@ -2,7 +2,40 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { X, ChevronRight, ChevronLeft } from 'lucide-react'
 
-const steps = [
+const mobileSteps = [
+  {
+    target: null,
+    title: 'Bienvenue sur Personal Place !',
+    desc: "Ton espace productivite personnel. Sur mobile, utilise le menu en haut a gauche pour naviguer. Clique 'Suivant' pour commencer.",
+    position: 'center',
+  },
+  {
+    target: '[data-tutorial="connected-services"]',
+    title: 'Connecte tes services',
+    desc: "Clique 'Connecter' sur Gmail et WhatsApp pour synchroniser tes donnees. C'est ici que tout commence !",
+    position: 'bottom',
+  },
+  {
+    target: '[data-tutorial="theme-toggle"]',
+    title: 'Mode Sombre / Clair',
+    desc: "Bascule entre le mode sombre et clair selon ta preference.",
+    position: 'left',
+  },
+  {
+    target: null,
+    title: 'Navigation mobile',
+    desc: "Utilise le menu hamburger (≡) en haut a gauche pour acceder a tes Emails, Messages, Calendrier, Taches et Concentration.",
+    position: 'center',
+  },
+  {
+    target: null,
+    title: "C'est tout !",
+    desc: "Tu es pret. Explore l'app et connecte tes services pour commencer. Tu peux revoir ce tutoriel en cliquant sur ton profil.",
+    position: 'center',
+  },
+]
+
+const desktopSteps = [
   {
     target: null,
     title: 'Bienvenue sur Personal Place !',
@@ -57,7 +90,17 @@ export default function OnboardingTutorial() {
   const [show, setShow] = useState(false)
   const [step, setStep] = useState(0)
   const [targetRect, setTargetRect] = useState(null)
+  const [isMobile, setIsMobile] = useState(false)
   const tooltipRef = useRef(null)
+
+  const steps = isMobile ? mobileSteps : desktopSteps
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   useEffect(() => {
     const seen = localStorage.getItem('personalplace_onboarding_seen')
@@ -72,11 +115,15 @@ export default function OnboardingTutorial() {
     const el = document.querySelector(s.target)
     if (el) {
       const r = el.getBoundingClientRect()
-      setTargetRect({ top: r.top, left: r.left, width: r.width, height: r.height })
+      if (r.width === 0 && r.height === 0) {
+        setTargetRect(null)
+      } else {
+        setTargetRect({ top: r.top, left: r.left, width: r.width, height: r.height })
+      }
     } else {
       setTargetRect(null)
     }
-  }, [step])
+  }, [step, steps])
 
   useEffect(() => {
     if (!show) return
@@ -105,7 +152,7 @@ export default function OnboardingTutorial() {
   const isCenter = !s.target || s.position === 'center'
 
   const getTooltipStyle = () => {
-    if (isCenter) {
+    if (isCenter || !targetRect) {
       return { position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 10002 }
     }
     const gap = 16
