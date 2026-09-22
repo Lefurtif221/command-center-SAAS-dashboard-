@@ -166,17 +166,25 @@ export default function ConnectedServices() {
               </div>
               <div className="rounded-xl p-3" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
                 <p className="text-[10px] font-medium mb-2">Etapes :</p>
-                <ol className="text-[10px] space-y-1 list-decimal list-inside leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+                <ol className="text-[10px] space-y-2 list-decimal list-inside leading-relaxed" style={{ color: 'var(--color-muted)' }}>
                   <li>Clique <strong>"Continuer"</strong> ci-dessous</li>
                   <li>Connecte-toi avec ton compte Google</li>
-                  <li>Si un avertissement apparait, clique <strong>"Parametres avances"</strong></li>
-                  <li>Puis clique <strong>"Aller sur Personal Place (non verify)"</strong></li>
-                  <li>Autorise l'acces et c'est fait !</li>
+                  <li>Google affichera un ecran <strong>"App non verifye"</strong> — c'est normal</li>
+                  <li>Clique sur le lien <strong style={{ color: '#2563EB' }}>"Parametres avances"</strong> (en bas a gauche de l'ecran)</li>
+                  <li>Puis clique sur <strong style={{ color: '#2563EB' }}>"Aller sur Personal Place (non verify)"</strong></li>
+                  <li>Clique sur <strong>"Autoriser"</strong> pour donner acces</li>
+                  <li>Tu es redirige vers l'app — c'est fait !</li>
                 </ol>
               </div>
-              <p className="text-[10px] leading-relaxed" style={{ color: '#F59E0B' }}>
-                Si Google affiche "App non verifye" : c'est normal en phase de developpement. Clique sur "Parametres avances" puis "Aller sur Personal Place".
-              </p>
+              <div className="rounded-xl p-3 flex items-start gap-2" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+                <span className="text-sm mt-0.5">⚠️</span>
+                <div>
+                  <p className="text-[10px] font-medium mb-1" style={{ color: '#F59E0B' }}>Pourquoi cet avertissement ?</p>
+                  <p className="text-[10px] leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+                    Notre app n'est pas encore verifye par Google. C'est temporaire — en attendant, tu dois passer par "Parametres avances" pour autoriser l'acces. Tes donnees sont securisees.
+                  </p>
+                </div>
+              </div>
             </div>
             <div className="flex gap-2 justify-end">
               <button onClick={() => setShowGoogleModal(false)} className="px-3 py-2 text-xs rounded-lg transition-colors" style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Annuler</button>
