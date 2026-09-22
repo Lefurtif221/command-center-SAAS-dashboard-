@@ -10,6 +10,34 @@ const mobileSteps = [
     position: 'center',
   },
   {
+    target: '[data-tutorial="sidebar-emails"]',
+    title: 'Tes Emails',
+    desc: "Clique ici pour voir tous tes emails. Le filtre intelligent les classe automatiquement par priorite.",
+    position: 'right',
+    openSidebar: true,
+  },
+  {
+    target: '[data-tutorial="sidebar-messages"]',
+    title: 'Messages WhatsApp',
+    desc: "Ici tu vois tes messages WhatsApp, comme sur WhatsApp Web. Connecte d'abord ton WhatsApp dans les services.",
+    position: 'right',
+    openSidebar: true,
+  },
+  {
+    target: '[data-tutorial="sidebar-calendar"]',
+    title: 'Calendrier',
+    desc: "Tes evenements Google Calendar s'affichent ici. Sync automatique avec ton compte Google.",
+    position: 'right',
+    openSidebar: true,
+  },
+  {
+    target: '[data-tutorial="sidebar-tasks"]',
+    title: 'Taches',
+    desc: "Gere tes taches du jour. Ajoute, complete, et garde un oeil sur ta productivite.",
+    position: 'right',
+    openSidebar: true,
+  },
+  {
     target: '[data-tutorial="connected-services"]',
     title: 'Connecte tes services',
     desc: "Clique 'Connecter' sur Gmail et WhatsApp pour synchroniser tes donnees. C'est ici que tout commence !",
@@ -20,12 +48,6 @@ const mobileSteps = [
     title: 'Mode Sombre / Clair',
     desc: "Bascule entre le mode sombre et clair selon ta preference.",
     position: 'left',
-  },
-  {
-    target: null,
-    title: 'Navigation mobile',
-    desc: "Utilise le menu hamburger (≡) en haut a gauche pour acceder a tes Emails, Messages, Calendrier, Taches et Concentration.",
-    position: 'center',
   },
   {
     target: null,
@@ -112,6 +134,25 @@ export default function OnboardingTutorial() {
   const findTarget = useCallback(() => {
     const s = steps[step]
     if (!s.target) { setTargetRect(null); return }
+
+    if (s.openSidebar && isMobile) {
+      window.dispatchEvent(new Event('tutorial:open-sidebar'))
+      setTimeout(() => {
+        const el = document.querySelector(s.target)
+        if (el) {
+          const r = el.getBoundingClientRect()
+          if (r.width === 0 && r.height === 0) {
+            setTargetRect(null)
+          } else {
+            setTargetRect({ top: r.top, left: r.left, width: r.width, height: r.height })
+          }
+        } else {
+          setTargetRect(null)
+        }
+      }, 400)
+      return
+    }
+
     const el = document.querySelector(s.target)
     if (el) {
       const r = el.getBoundingClientRect()
@@ -123,7 +164,7 @@ export default function OnboardingTutorial() {
     } else {
       setTargetRect(null)
     }
-  }, [step, steps])
+  }, [step, steps, isMobile])
 
   useEffect(() => {
     if (!show) return

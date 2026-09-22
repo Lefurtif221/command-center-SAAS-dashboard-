@@ -30,6 +30,12 @@ export default function Sidebar({ onToggle }) {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  useEffect(() => {
+    const handler = () => setMobileOpen(true)
+    window.addEventListener('tutorial:open-sidebar', handler)
+    return () => window.removeEventListener('tutorial:open-sidebar', handler)
+  }, [])
+
   const sidebarContent = (
     <>
       <div className="h-14 md:h-16 flex items-center justify-between px-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
