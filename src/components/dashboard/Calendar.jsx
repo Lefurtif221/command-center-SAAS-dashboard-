@@ -35,6 +35,7 @@ export default function Calendar() {
   const [modalOpen, setModalOpen] = useState(false)
   const [newEvent, setNewEvent] = useState({ title: '', color: 'accent' })
   const [mobileDay, setMobileDay] = useState(0)
+  const [expandedEvents, setExpandedEvents] = useState({})
 
   const weekDates = useMemo(() => getWeekDates(currentDate), [currentDate])
   const today = new Date()
@@ -85,6 +86,11 @@ export default function Calendar() {
   }
 
   const weekLabel = `${MONTHS[weekDates[0].getMonth()]} ${weekDates[0].getFullYear()}`
+
+  const toggleExpand = (id, e) => {
+    e.stopPropagation()
+    setExpandedEvents(prev => ({ ...prev, [id]: !prev[id] }))
+  }
 
   const getDayEvents = (dateStr) => {
     const dayEvents = []
@@ -151,7 +157,11 @@ export default function Calendar() {
                       {event && (
                         <div className="absolute inset-0.5 rounded-lg flex items-center justify-between px-1.5 transition-all duration-200 hover:scale-[1.02]"
                           style={{ background: c?.bg || '#2563EB', color: c?.text || '#FFF' }}>
-                          <span className="text-[10px] font-medium truncate">{event.title}</span>
+                          <span className={`text-[10px] font-medium ${expandedEvents[event.id] ? 'whitespace-normal break-words' : 'truncate'}`}
+                            onClick={(e) => toggleExpand(event.id, e)}
+                            style={{ cursor: event.title.length > 15 ? 'pointer' : 'default' }}>
+                            {event.title}
+                          </span>
                           {event.type === 'event' && (
                             <button onClick={(e) => { e.stopPropagation(); removeEvent(event.id) }} className="text-[10px] opacity-70 hover:opacity-100 ml-1 flex-shrink-0">x</button>
                           )}
@@ -201,7 +211,10 @@ export default function Calendar() {
                     style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
                     <div className="w-1 h-10 rounded-full" style={{ background: c.bg }} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{ev.title}</p>
+                      <p className={`text-sm font-medium ${expandedEvents[ev.id + '-' + i] ? 'whitespace-normal break-words' : 'truncate cursor-pointer'}`}
+                        onClick={() => setExpandedEvents(prev => ({ ...prev, [ev.id + '-' + i]: !prev[ev.id + '-' + i] }))}>
+                        {ev.title}
+                      </p>
                       <p className="text-[10px] font-mono" style={{ color: 'var(--color-muted)' }}>{String(ev.hour).padStart(2, '0')}:00</p>
                     </div>
                     {ev.type === 'event' && (
