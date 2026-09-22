@@ -5,23 +5,26 @@ export default function QuickActions() {
   const { setActiveSection } = useDashboard()
 
   const actions = [
-    { id: 'emails', label: 'Voir les emails', icon: Mail, section: 'emails' },
-    { id: 'tasks', label: 'Nouvelle tâche', icon: CheckSquare, section: 'tasks' },
-    { id: 'calendar', label: 'Calendrier', icon: Calendar, section: 'calendar' },
-    { id: 'messages', label: 'Messages', icon: MessageSquare, section: 'messages' },
+    { id: 'emails', label: 'Emails', icon: Mail, section: 'emails', color: 'var(--color-accent)' },
+    { id: 'tasks', label: 'Taches', icon: CheckSquare, section: 'tasks', color: 'var(--color-accentSec)' },
+    { id: 'calendar', label: 'Calendrier', icon: Calendar, section: 'calendar', color: 'var(--color-success)' },
+    { id: 'messages', label: 'Messages', icon: MessageSquare, section: 'messages', color: 'var(--color-warning)' },
   ]
 
   return (
-    <div className="glass rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-      <div className="flex items-center gap-2 p-4 border-b border-border/50">
+    <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+      <div className="flex items-center gap-2 p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <Sparkles size={14} className="text-accent" />
         <h3 className="text-sm font-display font-medium">Actions rapides</h3>
       </div>
       <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-        {actions.map((a) => (
+        {actions.map((a, i) => (
           <button key={a.id} onClick={() => setActiveSection(a.section)}
-            className="glass flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-accent/5 hover:border-accent/30 transition-all duration-200 group gradient-border" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-            <a.icon size={20} className="text-muted group-hover:text-accent transition-colors" />
+            className="group relative flex flex-col items-center gap-2.5 p-5 md:p-6 rounded-xl transition-all duration-300 hover:scale-[1.03] hover:shadow-lg"
+            style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110" style={{ background: `${a.color}15` }}>
+              <a.icon size={18} style={{ color: a.color }} className="transition-transform duration-300 group-hover:scale-110" />
+            </div>
             <span className="text-xs font-medium">{a.label}</span>
           </button>
         ))}

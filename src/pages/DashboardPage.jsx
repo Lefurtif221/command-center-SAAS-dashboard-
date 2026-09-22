@@ -28,74 +28,82 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen" style={{ background: 'var(--color-bg)' }}>
       <OnboardingTutorial />
       <Sidebar />
 
-      <div className="md:ml-56 overflow-x-hidden">
+      <div className="md:ml-56 overflow-x-hidden min-h-screen">
         <TopBar />
 
-        <main className="p-4 md:p-6">
+        <main className="p-3 md:p-6 max-w-[1400px] mx-auto">
           {activeSection === 'dashboard' && (
-            <div className="space-y-4 md:space-y-6 animate-fade-in">
+            <div className="space-y-4 md:space-y-6 page-enter">
               <StatsGrid />
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-                <div className="lg:col-span-2">
+                <div className="lg:col-span-2 space-y-4 md:space-y-6">
                   <ConnectedServices />
+                  <EmailFilter />
                 </div>
-                <TodayFocus />
+                <div className="space-y-4 md:space-y-6">
+                  <TodayFocus />
+                  <QuickActions />
+                </div>
               </div>
-              <EmailFilter />
               <WhatsAppMessages />
-              <QuickActions />
             </div>
           )}
 
           {activeSection === 'emails' && (
-            <div>
+            <div className="page-enter">
               <EmailFilter />
             </div>
           )}
 
           {activeSection === 'messages' && (
-            <div className="animate-fade-in">
+            <div className="page-enter">
               <WhatsAppMessages />
             </div>
           )}
 
           {activeSection === 'calendar' && (
-            <div className="animate-fade-in">
+            <div className="page-enter">
               <Calendar />
             </div>
           )}
 
           {activeSection === 'tasks' && (
-            <div className="animate-fade-in">
+            <div className="page-enter">
               <Tasks />
             </div>
           )}
 
           {activeSection === 'concentration' && (
-            <div className="animate-fade-in">
+            <div className="page-enter">
               <Concentration />
             </div>
           )}
 
           {activeSection === 'settings' && (
-            <div className="animate-fade-in">
-              <div className="bg-surface border border-border rounded-lg p-4 md:p-6 max-w-2xl">
-                <h3 className="text-sm font-medium mb-6">Paramètres</h3>
-                <div className="space-y-4 md:space-y-6">
+            <div className="page-enter max-w-xl">
+              <div className="rounded-2xl p-5 md:p-6" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+                <h3 className="text-base font-display font-medium mb-6">Parametres</h3>
+                <div className="space-y-5">
                   <div>
-                    <label className="block text-xs text-muted mb-1.5">Nom</label>
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 bg-bg border border-border rounded-lg text-sm text-text focus:outline-none focus:border-accent transition-colors" />
+                    <label className="block text-xs text-muted mb-1.5 font-mono">Nom</label>
+                    <input type="text" value={name} onChange={(e) => setName(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-accent transition-all duration-200"
+                      style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
                   </div>
                   <div>
-                    <label className="block text-xs text-muted mb-1.5">Email</label>
-                    <input type="email" value={user?.email || ''} disabled className="w-full px-3 py-2 bg-bg/50 border border-border rounded-lg text-sm text-muted cursor-not-allowed" />
-                    <p className="text-[10px] text-muted mt-1">L'email ne peut pas être modifié</p>
+                    <label className="block text-xs text-muted mb-1.5 font-mono">Email</label>
+                    <input type="email" value={user?.email || ''} disabled
+                      className="w-full px-4 py-2.5 rounded-xl text-sm cursor-not-allowed opacity-60"
+                      style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
+                    <p className="text-[10px] text-muted mt-1">L'email ne peut pas etre modifie</p>
                   </div>
-                  <button onClick={handleSave} disabled={saving || !name.trim()} className="px-4 py-2 bg-accent text-bg text-sm font-medium rounded-lg hover:bg-[#33c2ff] transition-colors disabled:opacity-50">
+                  <button onClick={handleSave} disabled={saving || !name.trim()}
+                    className="px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 hover:opacity-90 disabled:opacity-50"
+                    style={{ background: 'var(--color-accent)', color: 'var(--color-bg)' }}>
                     {saving ? 'Enregistrement...' : 'Sauvegarder'}
                   </button>
                 </div>

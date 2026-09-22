@@ -21,9 +21,15 @@ export default function WhatsAppMessages() {
     return () => { if (refreshRef.current) clearInterval(refreshRef.current) }
   }, [])
 
+  const chatContainerRef = useRef(null)
+
   useEffect(() => {
-    if (activeChat) {
-      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (activeChat && chatContainerRef.current) {
+      const el = chatContainerRef.current
+      const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 150
+      if (isNearBottom) {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      }
     }
   }, [activeChat, messages])
 
@@ -221,7 +227,7 @@ export default function WhatsAppMessages() {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3 space-y-1" style={{ background: 'var(--color-bg)' }}>
+      <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-3 space-y-1" style={{ background: 'var(--color-bg)' }}>
         {activeMessages.map((msg, i) => {
           const showDate = i === 0 || formatDate(activeMessages[i - 1]?.timestamp) !== formatDate(msg.timestamp)
           return (
@@ -279,7 +285,7 @@ export default function WhatsAppMessages() {
             </div>
           )
         })}
-        <div ref={chatEndRef} />
+        <div ref={chatEndRef} className="h-px" />
       </div>
 
       <div className="px-3 py-2 border-t shrink-0" style={{ borderColor: 'var(--color-border)' }}>
