@@ -1,12 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
-import { List, CheckSquare, Calendar as CalendarIcon, Timer, Play, Pause, RotateCcw, BarChart3 } from 'lucide-react'
+import { List, CheckSquare, Calendar as CalendarIcon, Timer, Play, Pause, RotateCcw, BarChart3, Settings, ChevronDown, ChevronUp } from 'lucide-react'
 
-const WORK_DURATION = 25 * 60
-const BREAK_DURATION = 5 * 60
-const LONG_BREAK_DURATION = 15 * 60
-const SESSIONS_BEFORE_LONG_BREAK = 4
-
+const DEFAULTS = { work: 25, break: 5, longBreak: 15, sessions: 4 }
 const PHASES = { work: 'Travail', break: 'Pause', longBreak: 'Pause longue' }
 
 function formatTime(seconds) {
@@ -40,8 +36,14 @@ export default function Concentration() {
   const [selectedId, setSelectedId] = useState('')
   const [selectedTitle, setSelectedTitle] = useState('')
 
+  const [settings, setSettings] = useState(() => {
+    try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem('pomodoro_settings') || '{}') } }
+    catch { return { ...DEFAULTS } }
+  })
+  const [showSettings, setShowSettings] = useState(false)
+
   const [phase, setPhase] = useState('work')
-  const [timeLeft, setTimeLeft] = useState(WORK_DURATION)
+  const [timeLeft, setTimeLeft] = useState(settings.work * 60)
   const [isRunning, setIsRunning] = useState(false)
   const [sessionsCompleted, setSessionsCompleted] = useState(0)
   const [todaySessions, setTodaySessions] = useState([])
@@ -49,6 +51,14 @@ export default function Concentration() {
   const intervalRef = useRef(null)
   const phaseRef = useRef(phase)
   phaseRef.current = phase
+  const settingsRef = useRef(settings)
+  settingsRef.current = settings
+
+  useEffect(() => { localStorage.setItem('pomodoro_settings', JSON.stringify(settings)) }, [settings])
+
+  const workSec = settings.work * 60
+  const breakSec = settings.break * 60
+  const longBreakSec = settings.longBreak * 60
 
   useEffect(() => { loadTodaySessions() }, [])
 
@@ -70,26 +80,31 @@ export default function Concentration() {
   }
 
   const getDuration = useCallback(() => {
-    if (phaseRef.current === 'work') return WORK_DURATION
-    if (phaseRef.current === 'longBreak') return LONG_BREAK_DURATION
-    return BREAK_DURATION
-  }, [])
+    if (phaseRef.current === 'work') return workSec
+    if (phaseRef.current === 'longBreak') return longBreakSec
+    return breakSec
+  }, [workSec, breakSec, longBreakSec])
 
   const advancePhase = useCallback(() => {
+    const s = settingsRef.current
+    const wSec = s.work * 60
+    const bSec = s.break * 60
+    const lbSec = s.longBreak * 60
+
     if (phaseRef.current === 'work') {
       const newCount = sessionsCompleted + 1
       setSessionsCompleted(newCount)
-      saveSession(selectedTitle, WORK_DURATION)
-      if (newCount % SESSIONS_BEFORE_LONG_BREAK === 0) {
+      saveSession(selectedTitle, wSec)
+      if (newCount % s.sessions === 0) {
         setPhase('longBreak')
-        setTimeLeft(LONG_BREAK_DURATION)
+        setTimeLeft(lbSec)
       } else {
         setPhase('break')
-        setTimeLeft(BREAK_DURATION)
+        setTimeLeft(bSec)
       }
     } else {
       setPhase('work')
-      setTimeLeft(WORK_DURATION)
+      setTimeLeft(wSec)
     }
     playNotification()
   }, [sessionsCompleted, selectedTitle])
@@ -122,16 +137,28 @@ export default function Concentration() {
   const handleReset = () => {
     setIsRunning(false)
     setPhase('work')
-    setTimeLeft(WORK_DURATION)
+    setTimeLeft(workSec)
   }
 
-  const totalDuration = phase === 'work' ? WORK_DURATION : phase === 'longBreak' ? LONG_BREAK_DURATION : BREAK_DURATION
+  const totalDuration = phase === 'work' ? workSec : phase === 'longBreak' ? longBreakSec : breakSec
   const progress = ((totalDuration - timeLeft) / totalDuration) * 100
   const circumference = 2 * Math.PI * 90
   const strokeDashoffset = circumference - (progress / 100) * circumference
 
   const phaseColor = phase === 'work' ? '#2563EB' : phase === 'break' ? '#E5E5E5' : '#1E40AF'
   const todayTotal = todaySessions.reduce((acc, s) => acc + (s.duration || 0), 0)
+
+  const updateSetting = (key, val) => {
+    const n = Math.max(1, Math.min(120, parseInt(val) || 1))
+    setSettings(prev => ({ ...prev, [key]: n }))
+  }
+
+  const presets = [
+    { label: 'Classique', work: 25, break: 5, longBreak: 15, sessions: 4 },
+    { label: 'Court', work: 15, break: 3, longBreak: 10, sessions: 4 },
+    { label: 'Long', work: 50, break: 10, longBreak: 20, sessions: 3 },
+    { label: 'Etudiant', work: 45, break: 10, longBreak: 15, sessions: 3 },
+  ]
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -190,12 +217,53 @@ export default function Concentration() {
 
         {/* Center: Timer */}
         <div className="rounded-2xl p-4 md:p-5 flex flex-col items-center justify-center" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-          <div className="flex items-center gap-2 mb-6 self-start">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
-              <Timer size={14} style={{ color: '#2563EB' }} />
+          <div className="flex items-center justify-between w-full mb-6">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
+                <Timer size={14} style={{ color: '#2563EB' }} />
+              </div>
+              <h3 className="text-sm font-display font-medium">Pomodoro</h3>
             </div>
-            <h3 className="text-sm font-display font-medium">Pomodoro</h3>
+            <button onClick={() => setShowSettings(!showSettings)}
+              className="p-2 rounded-lg transition-all duration-200 hover:scale-110"
+              style={{ color: showSettings ? '#2563EB' : 'var(--color-muted)' }}>
+              <Settings size={16} />
+            </button>
           </div>
+
+          {/* Settings panel */}
+          {showSettings && (
+            <div className="w-full mb-6 p-4 rounded-xl animate-scale-in" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+              <div className="flex gap-2 mb-3 flex-wrap">
+                {presets.map(p => (
+                  <button key={p.label} onClick={() => setSettings({ work: p.work, break: p.break, longBreak: p.longBreak, sessions: p.sessions })}
+                    className="px-2 py-1 rounded-lg text-[10px] font-mono transition-all duration-200 hover:scale-105"
+                    style={{ background: settings.work === p.work ? 'rgba(37,99,235,0.15)' : 'var(--color-surface-solid)', color: settings.work === p.work ? '#2563EB' : 'var(--color-muted)', border: '1px solid var(--color-border)' }}>
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { key: 'work', label: 'Travail (min)', icon: '.Focus' },
+                  { key: 'break', label: 'Pause (min)', icon: '.Coffee' },
+                  { key: 'longBreak', label: 'Pause longue (min)', icon: '.Relax' },
+                  { key: 'sessions', label: 'Sessions avant pause longue', icon: '.Loop' },
+                ].map(item => (
+                  <div key={item.key}>
+                    <label className="text-[10px] font-mono mb-1 block" style={{ color: 'var(--color-muted)' }}>{item.label}</label>
+                    <input type="number" value={settings[item.key]} onChange={(e) => updateSetting(item.key, e.target.value)}
+                      className="w-full px-2 py-1.5 rounded-lg text-sm font-mono focus:outline-none transition-all duration-200"
+                      style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}
+                      min="1" max="120" />
+                  </div>
+                ))}
+              </div>
+              <p className="text-[10px] mt-2 font-mono" style={{ color: 'var(--color-muted)' }}>
+                Total cycle : {settings.work * settings.sessions + settings.break * (settings.sessions - 1) + settings.longBreak} min
+              </p>
+            </div>
+          )}
 
           {selectedTitle ? (
             <>
@@ -245,11 +313,11 @@ export default function Concentration() {
 
           {/* Sessions */}
           <div className="flex items-center gap-2">
-            {Array.from({ length: SESSIONS_BEFORE_LONG_BREAK }).map((_, i) => (
+            {Array.from({ length: settings.sessions }).map((_, i) => (
               <div key={i} className="w-3 h-3 rounded-full transition-all duration-300"
-                style={{ background: i < (sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK) ? '#2563EB' : 'var(--color-border)', boxShadow: i < (sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK) ? '0 0 8px rgba(37,99,235,0.5)' : 'none' }} />
+                style={{ background: i < (sessionsCompleted % settings.sessions) ? '#2563EB' : 'var(--color-border)', boxShadow: i < (sessionsCompleted % settings.sessions) ? '0 0 8px rgba(37,99,235,0.5)' : 'none' }} />
             ))}
-            <span className="text-[10px] ml-2 font-mono" style={{ color: 'var(--color-muted)' }}>{sessionsCompleted % SESSIONS_BEFORE_LONG_BREAK}/{SESSIONS_BEFORE_LONG_BREAK}</span>
+            <span className="text-[10px] ml-2 font-mono" style={{ color: 'var(--color-muted)' }}>{sessionsCompleted % settings.sessions}/{settings.sessions}</span>
           </div>
         </div>
 
