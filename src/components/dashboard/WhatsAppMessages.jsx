@@ -26,12 +26,9 @@ export default function WhatsAppMessages() {
   useEffect(() => {
     if (activeChat && chatContainerRef.current) {
       const el = chatContainerRef.current
-      const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 150
-      if (isNearBottom) {
-        chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-      }
+      setTimeout(() => { el.scrollTop = el.scrollHeight }, 50)
     }
-  }, [activeChat, messages])
+  }, [activeChat])
 
   const checkStatus = async () => {
     try {
