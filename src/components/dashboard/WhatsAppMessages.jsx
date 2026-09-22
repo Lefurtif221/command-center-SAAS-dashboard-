@@ -1,6 +1,8 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { MessageCircle, Send, ArrowLeft, Star, Image, Film, Mic, FileText, MapPin, Loader2, Search, Paperclip, Smile } from 'lucide-react'
 import { apiFetch } from '../../utils/api'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 export default function WhatsAppMessages() {
   const [messages, setMessages] = useState([])
@@ -11,9 +13,14 @@ export default function WhatsAppMessages() {
   const [replyBody, setReplyBody] = useState('')
   const [sending, setSending] = useState(false)
   const [filter, setFilter] = useState('all')
+  const [mediaCache, setMediaCache] = useState({})
   const refreshRef = useRef(null)
   const chatEndRef = useRef(null)
   const chatContainerRef = useRef(null)
+
+  const getMediaUrl = useCallback((messageId) => {
+    return `${API_URL}/api/whatsapp/media/${messageId}?token=${localStorage.getItem('command_center_token') || ''}`
+  }, [])
 
   useEffect(() => {
     checkStatus()
@@ -250,23 +257,71 @@ export default function WhatsAppMessages() {
                     ? { background: '#2563EB', color: '#FFFFFF' }
                     : { background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }
                   }>
-                  {msg.type === 'image' && (
-                    <div className="w-48 h-32 rounded-lg mb-1 flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
+                  {msg.type === 'image' && msg.hasMedia && (
+                    <div className="mb-1 rounded-lg overflow-hidden">
+                      <img
+                        src={getMediaUrl(msg.id)}
+                        alt="Image WhatsApp"
+                        className="w-56 h-auto max-h-64 object-cover rounded-lg"
+                        loading="lazy"
+                        onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex' }}
+                      />
+                      <div className="w-56 h-32 rounded-lg hidden items-center justify-center" style={{ background: 'var(--color-bg)' }}>
+                        <Image size={24} style={{ color: 'var(--color-muted)' }} />
+                      </div>
+                    </div>
+                  )}
+                  {msg.type === 'image' && !msg.hasMedia && (
+                    <div className="w-56 h-32 rounded-lg mb-1 flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
                       <Image size={24} style={{ color: 'var(--color-muted)' }} />
                     </div>
                   )}
-                  {msg.type === 'video' && (
-                    <div className="w-48 h-32 rounded-lg mb-1 flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
+                  {msg.type === 'video' && msg.hasMedia && (
+                    <div className="mb-1 rounded-lg overflow-hidden">
+                      <video
+                        src={getMediaUrl(msg.id)}
+                        controls
+                        className="w-56 max-h-64 rounded-lg"
+                        preload="metadata"
+                      />
+                    </div>
+                  )}
+                  {msg.type === 'video' && !msg.hasMedia && (
+                    <div className="w-56 h-32 rounded-lg mb-1 flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
                       <Film size={24} style={{ color: 'var(--color-muted)' }} />
                     </div>
                   )}
-                  {msg.type === 'audio' && (
+                  {msg.type === 'sticker' && msg.hasMedia && (
+                    <div className="mb-1">
+                      <img
+                        src={getMediaUrl(msg.id)}
+                        alt="Sticker"
+                        className="w-32 h-32 object-contain"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+                  {msg.type === 'audio' && msg.hasMedia && (
+                    <div className="mb-1">
+                      <audio src={getMediaUrl(msg.id)} controls className="w-56 h-10" preload="metadata" />
+                    </div>
+                  )}
+                  {msg.type === 'audio' && !msg.hasMedia && (
                     <div className="flex items-center gap-2 mb-1 px-2 py-1.5 rounded-lg" style={{ background: 'var(--color-bg)' }}>
                       <Mic size={12} style={{ color: '#2563EB' }} />
                       <div className="flex-1 h-1 rounded-full" style={{ background: 'var(--color-border)' }}>
                         <div className="h-full w-0 rounded-full" style={{ background: '#2563EB' }} />
                       </div>
                       <span className="text-[9px]" style={{ color: 'var(--color-muted)' }}>0:00</span>
+                    </div>
+                  )}
+                  {msg.type === 'document' && msg.hasMedia && (
+                    <div className="flex items-center gap-2 mb-1 px-3 py-2 rounded-lg" style={{ background: 'var(--color-bg)' }}>
+                      <FileText size={16} style={{ color: '#2563EB' }} />
+                      <a href={getMediaUrl(msg.id)} target="_blank" rel="noopener noreferrer"
+                        className="text-xs underline" style={{ color: '#2563EB' }}>
+                        {msg.body || 'Document'}
+                      </a>
                     </div>
                   )}
                   {msg.body ? (
