@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
 import { apiFetch } from '../../utils/api'
 import { Timer, Layers, CheckSquare, Flame, RefreshCw, Lock } from 'lucide-react'
+import UpgradeButton from './UpgradeButton'
 
 const kpis = [
   { key: 'focusMinutes', label: 'Minutes de focus', icon: Timer, accent: '#2563EB', suffix: 'min' },
@@ -19,7 +20,6 @@ export default function StatsHistory() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [proNotice, setProNotice] = useState(false)
 
   const load = async () => {
     setLoading(true)
@@ -61,21 +61,13 @@ export default function StatsHistory() {
       </div>
 
       {plan === 'free' && (
-        <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-xs"
+        <div className="flex flex-wrap items-center gap-3 px-3.5 py-3 rounded-lg text-xs"
           style={{ background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.25)', color: '#2563EB' }}>
           <Lock size={14} className="shrink-0" />
-          <span>Formule gratuite : 7 derniers jours d'historique. L'offre Pro garde 365 jours.</span>
-          <button onClick={() => setProNotice(true)}
-            className="ml-auto px-3 py-1.5 rounded-lg text-[11px] font-medium shrink-0"
-            style={{ background: '#2563EB', color: '#FFF' }}>
-            Passer en Pro
-          </button>
-        </div>
-      )}
-      {proNotice && (
-        <div className="px-3.5 py-2.5 rounded-lg text-xs"
-          style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.25)', color: '#F59E0B' }}>
-          Le paiement en ligne arrive bientot. En attendant, toutes les fonctions Pro sont actives sur ton compte.
+          <span className="flex-1 min-w-[200px]">
+            Formule gratuite : 7 derniers jours d'historique. Pro garde 365 jours — 2 000 FCFA / 31 jours.
+          </span>
+          <UpgradeButton size="sm" />
         </div>
       )}
 

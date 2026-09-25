@@ -35,10 +35,21 @@ export function DashboardProvider({ children }) {
   }, [activeSection])
 
   useEffect(() => {
-    fetchConnectedServices()
-    fetchTasks()
-    fetchEvents()
-    fetchTeams()
+    // Retour du guichet CinetPay : on attend la confirmation puis on recharge le plan
+    const payTx = new URLSearchParams(window.location.search).get('pay_tx')
+    const boot = async () => {
+      if (payTx) {
+        try {
+          await apiFetch(`/api/pay/status?transaction_id=${encodeURIComponent(payTx)}`)
+        } catch (err) { handleFetchError(err) }
+        window.history.replaceState({}, '', window.location.pathname)
+      }
+      fetchConnectedServices()
+      fetchTasks()
+      fetchEvents()
+      fetchTeams()
+    }
+    boot()
     const interval = setInterval(() => {
       if (localStorage.getItem('command_center_token')) {
         fetchGmailEmails()
@@ -47,7 +58,7 @@ export function DashboardProvider({ children }) {
       }
     }, 30000)
     return () => clearInterval(interval)
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchTeams = async () => {
     try {

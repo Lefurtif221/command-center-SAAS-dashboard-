@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
 import { apiFetch } from '../../utils/api'
 import { Users, Plus, Mail, Copy, Trash2, ShieldCheck, UserPlus, X, Check, Link2 } from 'lucide-react'
+import UpgradeButton from './UpgradeButton'
 
 const roleLabels = { owner: 'Proprietaire', admin: 'Admin', member: 'Membre' }
 
@@ -152,6 +153,12 @@ export default function Team() {
           <p className="mt-2 text-[10px] leading-relaxed" style={{ color: '#F59E0B' }}>
             Quota gratuit atteint ({planLimits.teams} equipe). Passe en Pro pour en creer davantage.
           </p>
+        )}
+        {plan !== 'pro' && (
+          <div className="mt-3 flex items-center gap-3">
+            <UpgradeButton size="sm" />
+            <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>2 000 FCFA / 31 jours</span>
+          </div>
         )}
       </div>
 
