@@ -199,7 +199,7 @@ export default function DashboardPage() {
                         <span style={{ color: 'var(--color-muted)' }} className="text-xs"> / 31 jours</span>
                       </p>
                       <p className="text-[11px] mb-3" style={{ color: 'var(--color-muted)' }}>
-                        Paiement Mobile Money securise via CinetPay. Annulable a tout moment.
+                        Paiement securise. Annulable a tout moment.
                       </p>
                       <UpgradeButton />
                     </div>

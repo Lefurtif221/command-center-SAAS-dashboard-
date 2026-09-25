@@ -19,7 +19,7 @@ export default function UpgradeButton({ label = 'Passer en Pro', size = 'md' }) 
       if (err.status === 503 || err.apiCode === 'PAY_NOT_CONFIGURED') {
         setError('Le paiement en ligne arrive bientot.')
       } else if (err.apiCode === 'PAY_INIT_FAILED') {
-        setError("Le guichet CinetPay n'a pas repondu. Reessaie dans un instant.")
+        setError('Le service de paiement n a pas repondu. Reessaie dans un instant.')
       } else {
         setError(err.message || 'Une erreur est survenue')
       }

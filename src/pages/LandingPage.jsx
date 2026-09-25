@@ -165,7 +165,7 @@ export default function LandingPage() {
             </div>
           </div>
           <p className="mt-6 text-xs text-center" style={{ color: 'var(--color-muted)' }}>
-            Paiement Mobile Money securise via CinetPay. Tu peux upgrader depuis Settings a tout moment.
+            Paiement securise. Tu peux upgrader depuis Settings a tout moment.
           </p>
         </div>
       </section>
