@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { WifiOff } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { WifiOff, Check } from 'lucide-react'
 import Sidebar from '../components/layout/Sidebar'
 import TopBar from '../components/layout/TopBar'
 import StatsGrid from '../components/dashboard/StatsGrid'
@@ -14,14 +14,26 @@ import Team from '../components/dashboard/Team'
 import StatsHistory from '../components/dashboard/StatsHistory'
 import Concentration from '../components/dashboard/Concentration'
 import OnboardingTutorial from '../components/dashboard/OnboardingTutorial'
+import UpgradeButton from '../components/dashboard/UpgradeButton'
 import { useDashboard } from '../hooks/useDashboard'
 import { useAuth } from '../hooks/useAuth'
+import { apiFetch } from '../utils/api'
 
 export default function DashboardPage() {
-  const { activeSection, apiError } = useDashboard()
+  const { activeSection, apiError, plan, planLimits } = useDashboard()
   const { user, updateProfile } = useAuth()
   const [name, setName] = useState(user?.name || '')
   const [saving, setSaving] = useState(false)
+  const [subscription, setSubscription] = useState(undefined)
+
+  useEffect(() => {
+    if (activeSection !== 'settings') return
+    let alive = true
+    apiFetch('/api/pay/subscription')
+      .then((data) => { if (alive) setSubscription(data) })
+      .catch(() => { if (alive) setSubscription(null) })
+    return () => { alive = false }
+  }, [activeSection])
 
   const handleSave = async () => {
     if (!name.trim()) return
@@ -130,6 +142,69 @@ export default function DashboardPage() {
                     {saving ? 'Enregistrement...' : 'Sauvegarder'}
                   </button>
                 </div>
+              </div>
+
+              <div className="rounded-2xl p-5 md:p-6" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="text-base font-display font-medium">Abonnement</h3>
+                  <span className="text-[10px] px-2 py-0.5 rounded font-medium" style={plan === 'pro'
+                    ? { background: 'rgba(16,185,129,0.12)', color: '#10B981' }
+                    : { background: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>
+                    {plan === 'pro' ? 'Pro' : 'Gratuit'}
+                  </span>
+                </div>
+
+                {plan === 'pro' ? (
+                  <div className="space-y-3">
+                    <p className="text-sm" style={{ color: 'var(--color-text)' }}>
+                      Formule Pro active
+                      {subscription?.subscription?.expires_at && (
+                        <span style={{ color: 'var(--color-muted)' }}>
+                          {' '}jusqu'au {new Date(subscription.subscription.expires_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </span>
+                      )}
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {[
+                        `${planLimits ? planLimits.teams : 20} equipes`,
+                        `${planLimits ? planLimits.teamMembers : 50} membres par equipe`,
+                        '1 compte Gmail connecte',
+                        'Statistiques sur 365 jours',
+                      ].map((item) => (
+                        <div key={item} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-muted)' }}>
+                          <Check size={13} style={{ color: '#10B981' }} className="shrink-0" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {[
+                        `${planLimits ? planLimits.teams : 1} equipe${(planLimits ? planLimits.teams : 1) > 1 ? 's' : ''} max`,
+                        `${planLimits ? planLimits.teamMembers : 3} membres par equipe`,
+                        '1 compte Gmail connecte',
+                        `Statistiques sur ${planLimits ? planLimits.focusDays : 7} jours`,
+                      ].map((item) => (
+                        <div key={item} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-muted)' }}>
+                          <Check size={13} style={{ color: '#2563EB' }} className="shrink-0" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="pt-3" style={{ borderTop: '1px solid var(--color-border)' }}>
+                      <p className="text-sm mb-1" style={{ color: 'var(--color-text)' }}>
+                        Formule Pro <span className="font-medium">2000 FCFA</span>
+                        <span style={{ color: 'var(--color-muted)' }} className="text-xs"> / 31 jours</span>
+                      </p>
+                      <p className="text-[11px] mb-3" style={{ color: 'var(--color-muted)' }}>
+                        Paiement Mobile Money securise via CinetPay. Annulable a tout moment.
+                      </p>
+                      <UpgradeButton />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}

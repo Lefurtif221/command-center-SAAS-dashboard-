@@ -28,6 +28,7 @@ export default function LandingPage() {
           <div className="hidden md:flex items-center gap-8 text-sm text-muted">
             <a href="#features" className="hover:text-text transition-colors">Fonctionnalites</a>
             <a href="#how" className="hover:text-text transition-colors">Comment ca marche</a>
+            <a href="#pricing" className="hover:text-text transition-colors">Tarifs</a>
           </div>
           <div className="flex items-center gap-3">
             <button onClick={go} className="text-xs font-medium text-muted hover:text-text hidden sm:block transition-colors">{isAuthenticated ? 'Dashboard' : 'Connexion'}</button>
@@ -42,7 +43,7 @@ export default function LandingPage() {
       <header className="pt-28 pb-16 md:pt-36 md:pb-24 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="max-w-2xl">
-            <p className="text-xs font-medium mb-4" style={{ color: '#2563EB' }}>Gratuit pendant la beta</p>
+            <p className="text-xs font-medium mb-4" style={{ color: '#2563EB' }}>Gratuit pour demarrer</p>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold tracking-tighter-custom mb-5 leading-[1.05]">
               Tes emails, messages,<br />taches et calendrier<br />
               <span style={{ color: '#2563EB' }}>au meme endroit.</span>
@@ -111,40 +112,61 @@ export default function LandingPage() {
       <section id="pricing" className="py-16 px-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-4xl mx-auto">
           <div className="mb-10">
-            <h2 className="text-2xl md:text-3xl font-display font-semibold tracking-tight mb-3">Gratuit pour le moment</h2>
-            <p className="text-muted">L app est en beta. Toutes les fonctionnalites sont ouvertes a tous.</p>
+            <h2 className="text-2xl md:text-3xl font-display font-semibold tracking-tight mb-3">Deux formules</h2>
+            <p className="text-muted">Commence gratuitement, passe en Pro quand tu as besoin de plus d espace.</p>
           </div>
-          <div className="p-6 rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-            <div className="flex items-start justify-between flex-wrap gap-4 mb-6">
-              <div>
-                <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ background: 'rgba(16,185,129,0.1)', color: '#10B981' }}>Beta ouverte</span>
-                <div className="mt-3">
-                  <span className="text-4xl font-display font-semibold tracking-tight">0€</span>
-                  <span className="text-sm ml-1" style={{ color: 'var(--color-muted)' }}>/ pour l instant</span>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-6 rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+              <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ background: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>Gratuit</span>
+              <div className="mt-3 mb-5">
+                <span className="text-4xl font-display font-semibold tracking-tight">0 FCFA</span>
+                <span className="text-sm ml-1" style={{ color: 'var(--color-muted)' }}>/ pour toujours</span>
               </div>
-              <button onClick={go} className="text-sm font-medium px-5 py-2.5 rounded-lg transition-colors" style={{ background: '#2563EB', color: '#FFF' }}>
+              <div className="space-y-2.5">
+                {[
+                  '1 equipe, 3 membres max',
+                  '1 compte Gmail connecte',
+                  'Statistiques sur 7 jours',
+                  'Calendrier, taches, Pomodoro, notes',
+                ].map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-muted)' }}>
+                    <Check size={14} style={{ color: '#10B981' }} className="shrink-0" />
+                    {f}
+                  </div>
+                ))}
+              </div>
+              <button onClick={go} className="w-full mt-6 text-sm font-medium px-5 py-2.5 rounded-lg transition-colors" style={{ border: '1px solid var(--color-border)', color: 'var(--color-text)' }}>
                 Commencer
               </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[
-                'Gmail connecte en 1 clic',
-                'Filtrage par priorite',
-                'WhatsApp integre',
-                'Calendrier + taches',
-                'Pomodoro configurable',
-                'Notes rapides',
-                'Mode sombre / clair',
-                'Mobile responsive',
-              ].map((f, i) => (
-                <div key={i} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-muted)' }}>
-                  <Check size={14} style={{ color: '#10B981' }} className="shrink-0" />
-                  {f}
-                </div>
-              ))}
+
+            <div className="p-6 rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid rgba(37,99,235,0.45)' }}>
+              <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ background: '#2563EB', color: '#FFF' }}>Pro</span>
+              <div className="mt-3 mb-5">
+                <span className="text-4xl font-display font-semibold tracking-tight">2000 FCFA</span>
+                <span className="text-sm ml-1" style={{ color: 'var(--color-muted)' }}>/ 31 jours</span>
+              </div>
+              <div className="space-y-2.5">
+                {[
+                  'Jusqu a 20 equipes',
+                  'Jusqu a 50 membres par equipe',
+                  'Statistiques sur 365 jours',
+                  'Toutes les fonctions de la formule gratuite',
+                ].map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-muted)' }}>
+                    <Check size={14} style={{ color: '#10B981' }} className="shrink-0" />
+                    {f}
+                  </div>
+                ))}
+              </div>
+              <button onClick={go} className="w-full mt-6 text-sm font-medium px-5 py-2.5 rounded-lg transition-colors" style={{ background: '#2563EB', color: '#FFF' }}>
+                Passer en Pro
+              </button>
             </div>
           </div>
+          <p className="mt-6 text-xs text-center" style={{ color: 'var(--color-muted)' }}>
+            Paiement Mobile Money securise via CinetPay. Tu peux upgrader depuis Settings a tout moment.
+          </p>
         </div>
       </section>
 
