@@ -1,20 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { Sparkles, ArrowRight, ShieldCheck, LayoutDashboard, Play, Mail, MessageSquare, Calendar, CheckSquare, TrendingUp, LayoutGrid, Settings, Check, FileText, CheckCircle } from 'lucide-react'
+import { ArrowRight, Mail, MessageSquare, Calendar, CheckSquare, Timer, FileText, Check } from 'lucide-react'
 
 const features = [
-  { icon: Mail, title: 'Emails intelligents', desc: 'Filtre automatique des emails importants. Zéro distraction, tout le signal.' },
-  { icon: FileText, title: 'Notes & Documents', desc: 'Sync avec Notion, Google Docs, Evernote. Vos idées toujours accessibles.' },
-  { icon: MessageSquare, title: 'Messages unifiés', desc: 'WhatsApp, Slack, Discord - tous vos messages au même endroit.' },
-  { icon: Calendar, title: 'Calendrier sync', desc: 'Google Calendar, Outlook - vue unifiée de vos événements.' },
-  { icon: CheckSquare, title: 'Tâches & Projets', desc: "Trello, Asana, Todoist - suivez tout sans changer d'outil." },
-  { icon: TrendingUp, title: 'Investissements', desc: 'Suivez votre portfolio, actions, crypto et métaux en temps réel.' }
-]
-
-const pricingPlans = [
-  { name: 'Gratuit', price: '0€', period: 'pour toujours', features: ['3 services connectés', 'Filtrage email de base', '1 tableau de bord', 'Support communautaire'], cta: 'Commencer', featured: false },
-  { name: 'Pro', price: '9€', period: 'par mois', features: ['Services illimités', 'Filtrage IA avancé', 'Tableaux de bord multiples', 'Support prioritaire', 'API accès'], cta: 'Essayer 14 jours', featured: true },
-  { name: 'Équipe', price: '29€', period: 'par mois', features: ['Tout dans Pro', '5 membres d\'équipe', 'Espaces partagés', 'Admin & permissions', 'Support dédié'], cta: 'Contacter', featured: false }
+  { icon: Mail, title: 'Emails filtres', desc: 'Gmail connecte en un clic. Les emails importants remontent en haut, le reste attend.' },
+  { icon: MessageSquare, title: 'WhatsApp integre', desc: 'Tes conversations directement dans l app, comme WhatsApp Web mais au meme endroit que tout le reste.' },
+  { icon: Calendar, title: 'Calendrier', desc: 'Tes evenements de la semaine en un coup d oeil. Ajoute un evenement en un clic.' },
+  { icon: CheckSquare, title: 'Taches', desc: 'Ajoute, complete, priorise. Le focus du jour te montre ce qui compte maintenant.' },
+  { icon: Timer, title: 'Pomodoro', desc: 'Timer configurable avec presets. 25/5/15 pour le classique, 45/10/15 pour les longues sessions.' },
+  { icon: FileText, title: 'Notes rapides', desc: 'Une idee, un truc a retenir. Note le sans quitter le dashboard.' },
 ]
 
 export default function LandingPage() {
@@ -23,261 +17,150 @@ export default function LandingPage() {
   const go = () => navigate(isAuthenticated ? '/dashboard' : '/auth')
 
   return (
-    <div className="min-h-screen bg-bg noise">
+    <div className="min-h-screen bg-bg">
       {/* Nav */}
-      <nav className="fixed top-0 w-full z-50 glass-strong border-b border-border/50">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+      <nav className="fixed top-0 w-full z-50 border-b" style={{ background: 'rgba(17,17,17,0.85)', backdropFilter: 'blur(16px)', borderColor: 'var(--color-border)' }}>
+        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img src="/logo.png" alt="Personal Place" className="w-7 h-7 rounded-lg" />
             <span className="font-display font-semibold tracking-tight text-sm">Personal Place</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted">
-            <a href="#features" className="hover:text-text transition-colors">Fonctionnalités</a>
-            <a href="#pricing" className="hover:text-text transition-colors">Tarifs</a>
-            <a href="#about" className="hover:text-text transition-colors">À propos</a>
+            <a href="#features" className="hover:text-text transition-colors">Fonctionnalites</a>
+            <a href="#how" className="hover:text-text transition-colors">Comment ca marche</a>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <button onClick={go} className="text-xs font-medium text-muted hover:text-text hidden sm:block transition-colors">{isAuthenticated ? 'Dashboard' : 'Connexion'}</button>
-            <button onClick={go} className="glass rounded-xl text-xs font-medium px-4 py-2.5 transition-all duration-200 flex items-center gap-2 group hover:bg-accent/10 hover:text-accent hover:shadow-[0_0_20px_-5px_rgba(37,99,235,0.3)]">
-              <span>{isAuthenticated ? 'Mon Espace' : 'Commencer gratuitement'}</span>
-              <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+            <button onClick={go} className="text-xs font-medium px-4 py-2 rounded-lg transition-colors" style={{ background: '#2563EB', color: '#FFF' }}>
+              {isAuthenticated ? 'Mon espace' : 'Commencer'}
             </button>
           </div>
         </div>
       </nav>
 
       {/* Hero */}
-      <header className="relative pt-32 pb-20 md:pt-40 md:pb-32 px-6 hero-glow overflow-hidden">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-accent text-xs font-medium mb-6">
-            <ShieldCheck size={12} />
-            Privé & Sécurisé
+      <header className="pt-28 pb-16 md:pt-36 md:pb-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-2xl">
+            <p className="text-xs font-medium mb-4" style={{ color: '#2563EB' }}>Gratuit pendant la beta</p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold tracking-tighter-custom mb-5 leading-[1.05]">
+              Tes emails, messages,<br />taches et calendrier<br />
+              <span style={{ color: '#2563EB' }}>au meme endroit.</span>
+            </h1>
+            <p className="text-muted text-base md:text-lg max-w-xl mb-8 leading-relaxed">
+              Personal Place connecte Gmail et WhatsApp dans un seul dashboard. Filtrage intelligent, timer Pomodoro, focus du jour. Pas de bruit, juste l essentiel.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button onClick={go} className="w-full sm:w-auto text-sm font-medium px-6 py-3 rounded-lg transition-colors flex items-center justify-center gap-2" style={{ background: '#2563EB', color: '#FFF' }}>
+                {isAuthenticated ? 'Acceder au dashboard' : 'Creer mon espace gratuit'}
+                <ArrowRight size={16} />
+              </button>
+              <button onClick={() => navigate(isAuthenticated ? '/dashboard' : '/auth')} className="w-full sm:w-auto text-sm font-medium px-6 py-3 rounded-lg transition-colors" style={{ border: '1px solid var(--color-border)', color: 'var(--color-text)' }}>
+                {isAuthenticated ? 'Voir le dashboard' : 'Se connecter'}
+              </button>
+            </div>
+            <p className="mt-6 text-xs" style={{ color: 'var(--color-muted)' }}>Pas de carte bancaire. Setup en 2 minutes.</p>
           </div>
-          <h1 className="text-4xl md:text-6xl font-display font-semibold tracking-tighter-custom mb-6 leading-[1.05]">
-            Votre productivité,<br />
-            <span className="gradient-text">unifiée et intelligente.</span>
-          </h1>
-          <p className="text-muted text-lg md:text-xl font-light max-w-2xl mx-auto mb-10 leading-relaxed">
-            Connectez tous vos outils - emails, notes, tâches, messages, investissements - dans un seul tableau de bord intelligent.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button onClick={go} className="w-full sm:w-auto bg-accent text-bg hover:bg-[#2563EB] font-semibold text-sm px-6 py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_0_30px_-5px_rgba(37,99,235,0.4)] hover:shadow-[0_0_40px_-5px_rgba(37,99,235,0.5)]">
-               <LayoutDashboard size={18} />
-              {isAuthenticated ? 'Accéder au Dashboard' : 'Créer mon espace gratuit'}
-            </button>
-            <button className="w-full sm:w-auto glass rounded-xl text-text font-medium text-sm px-6 py-3 transition-all duration-200 flex items-center justify-center gap-2 hover:bg-accent/5 hover:border-accent/30">
-               <Play size={18} />
-              Voir la démo
-            </button>
-          </div>
-          <p className="mt-8 text-xs text-muted/60">Pas de carte de crédit requise • Configuration en 2 minutes</p>
         </div>
       </header>
 
-      {/* Dashboard Preview */}
-      <section className="px-4 md:px-6 pb-24 -mt-10">
-        <div className="max-w-6xl mx-auto glass-strong noise rounded-2xl overflow-hidden relative group shadow-2xl">
-          <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-2xl"></div>
-          <div className="h-8 glass border-b border-border/50 flex items-center px-3 gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-accentSec/60"></div>
-            <div className="w-2.5 h-2.5 rounded-full bg-warning/60"></div>
-            <div className="w-2.5 h-2.5 rounded-full bg-success/60"></div>
-          </div>
-          <div className="flex h-[500px] md:h-[600px]">
-            <div className="w-16 md:w-56 glass border-r border-border/50 flex flex-col justify-between py-6">
-              <div className="px-4 flex flex-col gap-6">
-                <div className="flex items-center gap-3 px-2 text-accent">
-                   <LayoutGrid size={20} />
-                  <span className="hidden md:block font-display font-medium text-sm">Dashboard</span>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <div className="text-[10px] font-medium text-muted/50 px-2 mb-2 hidden md:block uppercase tracking-wider font-mono">MODULES</div>
-                  <a href="#" className="flex items-center gap-3 px-2 py-2 text-muted hover:text-text hover:bg-white/5 rounded-xl transition-colors">
-                     <Mail size={18} />
-                    <span className="hidden md:block text-sm">Emails</span>
-                  </a>
-                  <a href="#" className="flex items-center gap-3 px-2 py-2 text-muted hover:text-text hover:bg-white/5 rounded-xl transition-colors">
-                     <MessageSquare size={18} />
-                    <span className="hidden md:block text-sm">Messages</span>
-                  </a>
-                  <a href="#" className="flex items-center gap-3 px-2 py-2 text-muted hover:text-text hover:bg-white/5 rounded-xl transition-colors">
-                     <Calendar size={18} />
-                    <span className="hidden md:block text-sm">Calendrier</span>
-                  </a>
-                  <a href="#" className="flex items-center gap-3 px-2 py-2 text-accent hover:bg-accent/5 rounded-xl transition-colors">
-                     <TrendingUp size={18} />
-                    <span className="hidden md:block text-sm">Investissements</span>
-                  </a>
-                </div>
-              </div>
-              <div className="px-4">
-                <div className="flex items-center gap-3 px-2 py-2 text-muted hover:text-text cursor-pointer rounded-xl transition-colors">
-                   <Settings size={18} />
-                  <span className="hidden md:block text-sm">Settings</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex-1 bg-bg/50 p-6 overflow-auto">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="glass rounded-xl p-4 gradient-border">
-                  <div className="text-xs text-muted mb-1">Emails importants</div>
-                  <div className="text-xl font-display font-semibold tracking-tight font-mono">12</div>
-                  <div className="text-xs text-success flex items-center gap-1 mt-1">
-                                         <TrendingUp size={12} /> +3
-                  </div>
-                </div>
-                <div className="glass rounded-xl p-4 gradient-border">
-                  <div className="text-xs text-muted mb-1">Tâches à faire</div>
-                  <div className="text-xl font-display font-semibold tracking-tight font-mono">8</div>
-                  <div className="text-xs text-accentSec mt-1">-2</div>
-                </div>
-                <div className="glass rounded-xl p-4 gradient-border">
-                  <div className="text-xs text-muted mb-1">Événements</div>
-                  <div className="text-xl font-display font-semibold tracking-tight font-mono">4</div>
-                  <div className="text-xs text-muted mt-1">Aujourd'hui</div>
-                </div>
-                <div className="glass rounded-xl p-4 gradient-border">
-                  <div className="text-xs text-muted mb-1">Portfolio</div>
-                  <div className="text-xl font-display font-semibold tracking-tight font-mono text-success">+12.4%</div>
-                  <div className="text-xs text-muted mt-1">Ce mois</div>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 glass rounded-xl p-5 gradient-border">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-sm font-display font-medium">Activité récente</h3>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 glass rounded-xl">
-                       <Mail size={16} className="text-accent" />
-                      <div className="flex-1">
-                        <p className="text-sm">Réunion client demain</p>
-                        <p className="text-xs text-muted">Sophie Martin • Il y a 2h</p>
-                      </div>
-                      <span className="text-xs text-accentSec bg-accentSec/10 px-2 py-0.5 rounded-full font-mono">Urgent</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 glass rounded-xl">
-                       <CheckCircle size={16} className="text-success" />
-                      <div className="flex-1">
-                        <p className="text-sm">Tâche complétée</p>
-                        <p className="text-xs text-muted">Rapport hebdomadaire • Hier</p>
-                      </div>
-                      <span className="text-xs text-success bg-success/10 px-2 py-0.5 rounded-full font-mono">Fait</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 glass rounded-xl">
-                       <TrendingUp size={16} className="text-warning" />
-                      <div className="flex-1">
-                        <p className="text-sm">Investissement: +5.2%</p>
-                        <p className="text-xs text-muted">Portfolio Tech • Aujourd'hui</p>
-                      </div>
-                      <span className="text-xs text-success bg-success/10 px-2 py-0.5 rounded-full font-mono">+5.2%</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="glass rounded-xl p-5 gradient-border">
-                  <h3 className="text-sm font-display font-medium mb-4">Focus du jour</h3>
-                  <div className="space-y-3">
-                    <div className="p-3 glass rounded-xl border-l-2 border-accentSec">
-                      <p className="text-xs text-muted mb-1">Haute priorité</p>
-                      <p className="text-sm">Réunion client - Approbation</p>
-                      <p className="text-xs text-muted mt-2 font-mono">14:00 - 15:30</p>
-                    </div>
-                    <div className="p-3 glass rounded-xl border-l-2 border-warning">
-                      <p className="text-xs text-muted mb-1">Moyenne priorité</p>
-                      <p className="text-sm">Envoyer le rapport</p>
-                      <p className="text-xs text-muted mt-2 font-mono">Avant 17:00</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Features */}
-      <section id="features" className="py-24 px-6 max-w-7xl mx-auto">
-        <div className="mb-12">
-          <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight mb-4">Tout ce dont vous avez besoin</h2>
-          <p className="text-muted max-w-2xl text-lg">Un seul endroit pour gérer votre vie numérique. Emails, messages, tâches, investissements.</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((f, i) => (
-            <div key={i} className="glass rounded-xl p-6 transition-colors duration-200 group">
-              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4 text-accent">
-                 <f.icon size={18} />
+      <section id="features" className="py-16 px-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-10">
+            <h2 className="text-2xl md:text-3xl font-display font-semibold tracking-tight mb-3">Ce que ca fait</h2>
+            <p className="text-muted max-w-xl">Six modules, un seul dashboard. Pas de surcharge, pas d options inutiles.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {features.map((f, i) => (
+              <div key={i} className="p-5 rounded-xl transition-colors duration-150" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+                <f.icon size={18} style={{ color: '#2563EB' }} className="mb-3" />
+                <h3 className="text-sm font-display font-medium mb-1.5">{f.title}</h3>
+                <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-muted)' }}>{f.desc}</p>
               </div>
-              <h3 className="text-lg font-display font-medium mb-2">{f.title}</h3>
-              <p className="text-sm text-muted leading-relaxed">{f.desc}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="border-y border-border/50 bg-surface/30">
-        <div className="max-w-7xl mx-auto px-6 py-24">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
-            <div className="relative">
-              <div className="text-5xl font-display font-bold text-border absolute -top-8 -left-4 md:-left-6 opacity-30">01</div>
-              <h4 className="text-lg font-display font-medium mb-3 relative z-10">Connectez vos outils</h4>
-              <p className="text-sm text-muted leading-relaxed">Gmail, Notion, WhatsApp, Slack - connectez en quelques clics.</p>
+      {/* How it works */}
+      <section id="how" className="py-16 px-6 border-t" style={{ borderColor: 'var(--color-border)', background: 'var(--color-surface-solid)' }}>
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-display font-semibold tracking-tight mb-10">Comment ca marche</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <span className="text-3xl font-display font-semibold mb-3 block" style={{ color: 'var(--color-border)' }}>01</span>
+              <h4 className="text-sm font-display font-medium mb-2">Connecte Gmail</h4>
+              <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-muted)' }}>Autorise l acces a tes emails. Le filtre les trie automatiquement par priorite.</p>
             </div>
-            <div className="relative">
-              <div className="text-5xl font-display font-bold text-border absolute -top-8 -left-4 md:-left-6 opacity-30">02</div>
-              <h4 className="text-lg font-display font-medium mb-3 relative z-10">Laissez l'IA trier</h4>
-              <p className="text-sm text-muted leading-relaxed">Filtre automatique des emails urgents et importants.</p>
+            <div>
+              <span className="text-3xl font-display font-semibold mb-3 block" style={{ color: 'var(--color-border)' }}>02</span>
+              <h4 className="text-sm font-display font-medium mb-2">Scanne le QR WhatsApp</h4>
+              <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-muted)' }}>Comme WhatsApp Web. Tes conversations apparaissent dans le dashboard.</p>
             </div>
-            <div className="relative">
-              <div className="text-5xl font-display font-bold text-border absolute -top-8 -left-4 md:-left-6 opacity-30">03</div>
-              <h4 className="text-lg font-display font-medium mb-3 relative z-10">Gérez votre vie</h4>
-              <p className="text-sm text-muted leading-relaxed">Tout centralisé: emails, tâches, calendrier, investissements.</p>
+            <div>
+              <span className="text-3xl font-display font-semibold mb-3 block" style={{ color: 'var(--color-border)' }}>03</span>
+              <h4 className="text-sm font-display font-medium mb-2">Travaille au calme</h4>
+              <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-muted)' }}>Focus du jour, taches, calendrier, Pomodoro. Tout au meme endroit.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="py-24 px-6 max-w-5xl mx-auto">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-display font-semibold tracking-tight mb-4">Simple et transparent</h2>
-          <p className="text-muted text-lg">Commencez gratuitement, évoluez quand vous êtes prêt</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {pricingPlans.map((plan, i) => (
-            <div key={i} className={`glass rounded-2xl p-6 transition-all duration-300 ${plan.featured ? 'ring-1 ring-accent/30 shadow-[0_0_40px_-10px_rgba(37,99,235,0.15)]' : ''}`}>
-              {plan.featured && <div className="text-xs text-accent bg-accent/10 px-2.5 py-1 rounded-full inline-block mb-4 font-mono">Populaire</div>}
-              <h3 className="text-lg font-display font-medium mb-2">{plan.name}</h3>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-3xl font-display font-semibold tracking-tight">{plan.price}</span>
-                <span className="text-sm text-muted">/{plan.period}</span>
+      <section id="pricing" className="py-16 px-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-10">
+            <h2 className="text-2xl md:text-3xl font-display font-semibold tracking-tight mb-3">Gratuit pour le moment</h2>
+            <p className="text-muted">L app est en beta. Toutes les fonctionnalites sont ouvertes a tous.</p>
+          </div>
+          <div className="p-6 rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+            <div className="flex items-start justify-between flex-wrap gap-4 mb-6">
+              <div>
+                <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ background: 'rgba(16,185,129,0.1)', color: '#10B981' }}>Beta ouverte</span>
+                <div className="mt-3">
+                  <span className="text-4xl font-display font-semibold tracking-tight">0€</span>
+                  <span className="text-sm ml-1" style={{ color: 'var(--color-muted)' }}>/ pour l instant</span>
+                </div>
               </div>
-              <ul className="space-y-3 mb-6">
-                {plan.features.map((f, j) => (
-                  <li key={j} className="flex items-center gap-2.5 text-sm text-muted">
-                                         <Check size={14} className="text-success" />{f}
-                  </li>
-                ))}
-              </ul>
-              <button onClick={go} className={`w-full py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${plan.featured ? 'bg-accent text-bg hover:bg-[#2563EB] shadow-[0_0_20px_-5px_rgba(37,99,235,0.3)]' : 'glass hover:bg-accent/5 hover:border-accent/30'}`}>{plan.cta}</button>
+              <button onClick={go} className="text-sm font-medium px-5 py-2.5 rounded-lg transition-colors" style={{ background: '#2563EB', color: '#FFF' }}>
+                Commencer
+              </button>
             </div>
-          ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                'Gmail connecte en 1 clic',
+                'Filtrage par priorite',
+                'WhatsApp integre',
+                'Calendrier + taches',
+                'Pomodoro configurable',
+                'Notes rapides',
+                'Mode sombre / clair',
+                'Mobile responsive',
+              ].map((f, i) => (
+                <div key={i} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-muted)' }}>
+                  <Check size={14} style={{ color: '#10B981' }} className="shrink-0" />
+                  {f}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 bg-bg py-12">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+      <footer className="border-t py-10 px-6" style={{ borderColor: 'var(--color-border)' }}>
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="Personal Place" className="w-6 h-6 rounded-md" />
-            <span className="text-sm font-display font-medium text-muted">Personal Place</span>
+            <img src="/logo.png" alt="Personal Place" className="w-5 h-5 rounded" />
+            <span className="text-xs" style={{ color: 'var(--color-muted)' }}>Personal Place</span>
           </div>
-          <div className="flex gap-6 text-xs text-muted">
-            <a href="#" className="hover:text-text transition-colors">Confidentialité</a>
+          <div className="flex gap-5 text-xs" style={{ color: 'var(--color-muted)' }}>
+            <a href="#" className="hover:text-text transition-colors">Confidentialite</a>
             <a href="#" className="hover:text-text transition-colors">Conditions</a>
             <a href="#" className="hover:text-text transition-colors">Contact</a>
           </div>
-          <div className="text-xs text-muted/50 font-mono">© 2024 Personal Place</div>
+          <div className="text-xs" style={{ color: 'var(--color-muted)', opacity: 0.5 }}>&copy; 2026 Personal Place</div>
         </div>
       </footer>
     </div>
