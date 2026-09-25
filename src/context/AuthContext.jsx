@@ -15,11 +15,14 @@ export function AuthProvider({ children }) {
 
     if (tokenFromUrl && userFromUrl) {
       localStorage.setItem('command_center_token', tokenFromUrl)
-      setUser(JSON.parse(userFromUrl))
+      try { setUser(JSON.parse(userFromUrl)) }
+      catch { localStorage.removeItem('command_center_token') }
       window.history.replaceState({}, '', window.location.pathname)
+      setLoading(false)
     } else if (errorFromUrl) {
       console.error('Google OAuth error:', errorFromUrl)
       window.history.replaceState({}, '', window.location.pathname)
+      setLoading(false)
     } else {
       const token = localStorage.getItem('command_center_token')
       if (!token) { setLoading(false); return }
@@ -50,6 +53,12 @@ export function AuthProvider({ children }) {
     return user
   }
 
+  const refreshUser = async () => {
+    const { user } = await apiFetch('/api/auth/me')
+    setUser(user)
+    return user
+  }
+
   const logout = () => {
     setUser(null)
     localStorage.removeItem('command_center_token')
@@ -71,6 +80,7 @@ export function AuthProvider({ children }) {
     signup,
     logout,
     updateProfile,
+    refreshUser,
   }
 
   return (

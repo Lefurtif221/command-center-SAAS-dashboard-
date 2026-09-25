@@ -19,9 +19,10 @@ export default function AuthPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const nextPath = searchParams.get('next')
-  const { login, signup, isAuthenticated } = useAuth()
+  const { login, signup, isAuthenticated, refreshUser } = useAuth()
   const [activeTab, setActiveTab] = useState('login')
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState('')
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
   const [signupForm, setSignupForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
@@ -39,8 +40,15 @@ export default function AuthPage() {
 
   useEffect(() => { if (urlError) setError(urlError) }, [urlError])
 
+  // Reveille l'API (Render se couche apres inactivite) avant le parcours Google
   useEffect(() => {
-    if (isAuthenticated) navigate(resolveNext())
+    fetch(`${API_URL}/api/health`).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+    if (window.opener && !window.opener.closed) { window.close(); return }
+    navigate(resolveNext())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, navigate])
 
@@ -65,7 +73,31 @@ export default function AuthPage() {
 
   const handleGoogle = () => {
     if (nextPath && nextPath.startsWith('/')) localStorage.setItem('auth_next', nextPath)
-    window.location.href = `${API_URL}/api/auth/google`
+    setError('')
+    localStorage.removeItem('command_center_token')
+
+    const url = `${API_URL}/api/auth/google`
+    const popup = window.open(url, 'pp_google_auth', 'width=540,height=680,left=200,top=80')
+    if (!popup) { window.location.href = url; return }
+
+    setGoogleLoading(true)
+    const started = Date.now()
+    const timer = setInterval(async () => {
+      const token = localStorage.getItem('command_center_token')
+      if (token) {
+        clearInterval(timer)
+        try { popup.close() } catch {}
+        try { await refreshUser() }
+        catch { setError('Connexion impossible, reessaie') }
+        setGoogleLoading(false)
+        return
+      }
+      if (popup.closed || Date.now() - started > 180000) {
+        clearInterval(timer)
+        setGoogleLoading(false)
+        if (Date.now() - started <= 180000) setError('Connexion Google annulee')
+      }
+    }, 400)
   }
 
   const inputStyle = { background: 'var(--color-bg)', border: '1px solid var(--color-border)' }
@@ -203,12 +235,17 @@ export default function AuthPage() {
             <span className="flex-1 h-px" style={{ background: 'var(--color-border)' }} />
           </div>
 
-          <button type="button" onClick={handleGoogle}
-            className="w-full flex items-center justify-center gap-2.5 text-sm font-medium py-2.5 rounded-lg transition-colors duration-150 hover:border-[#2563EB]"
+          <button type="button" onClick={handleGoogle} disabled={googleLoading}
+            className="w-full flex items-center justify-center gap-2.5 text-sm font-medium py-2.5 rounded-lg transition-colors duration-150 hover:border-[#2563EB] disabled:opacity-60"
             style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }}>
             <GoogleIcon />
-            Continuer avec Google
+            {googleLoading ? 'Connexion a Google...' : 'Continuer avec Google'}
           </button>
+          {googleLoading && (
+            <p className="mt-3 text-center text-xs" style={{ color: 'var(--color-muted)' }}>
+              Choisis ton compte dans la fenetre Google
+            </p>
+          )}
 
           <p className="mt-6 text-center text-xs" style={{ color: 'var(--color-muted)' }}>
             {activeTab === 'login' ? <>Pas encore de compte ? <button onClick={() => setActiveTab('signup')} style={{ color: '#2563EB' }}>Creer un compte</button></> : <>Deja un compte ? <button onClick={() => setActiveTab('login')} style={{ color: '#2563EB' }}>Se connecter</button></>}
