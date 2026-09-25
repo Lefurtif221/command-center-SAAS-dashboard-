@@ -16,7 +16,15 @@ export function DashboardProvider({ children }) {
   const [events, setEvents] = useState([])
   const [filterPriority, setFilterPriority] = useState('all')
   const [filterTime, setFilterTime] = useState('today')
+  const [apiError, setApiError] = useState(null)
   const [activeSection, setActiveSection] = useState(() => localStorage.getItem('activeSection') || 'dashboard')
+
+  const handleFetchError = (err) => {
+    console.error(err)
+    if (err?.code === 'NETWORK') setApiError('Serveur injoignable. Nouvelle tentative en cours...')
+    else setApiError(null)
+  }
+  const handleFetchSuccess = () => setApiError(null)
 
   useEffect(() => {
     localStorage.setItem('activeSection', activeSection)
@@ -40,14 +48,16 @@ export function DashboardProvider({ children }) {
     try {
       const data = await apiFetch('/api/tasks')
       if (data.tasks) setTasks(data.tasks)
-    } catch (err) { console.error(err) }
+      handleFetchSuccess()
+    } catch (err) { handleFetchError(err) }
   }
 
   const fetchEvents = async () => {
     try {
       const data = await apiFetch('/api/calendar')
       if (data.events) setEvents(data.events)
-    } catch (err) { console.error(err) }
+      handleFetchSuccess()
+    } catch (err) { handleFetchError(err) }
   }
 
   const addTask = async (title, priority, due_date) => {
@@ -106,8 +116,10 @@ export function DashboardProvider({ children }) {
         return updated
       })
       if (connected.includes('gmail')) fetchGmailEmails()
+      handleFetchSuccess()
     } catch (err) {
       console.error('Failed to fetch services:', err)
+      if (err?.code === 'NETWORK') setApiError('Serveur injoignable. Nouvelle tentative en cours...')
     }
   }
 
@@ -199,12 +211,12 @@ export function DashboardProvider({ children }) {
   }
 
   const value = useMemo(() => ({
-    services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect,
+    services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect, apiError,
     filterPriority, filterTime, activeSection,
     setFilterPriority, setFilterTime, setActiveSection,
     fetchTasks, fetchEvents, addTask, toggleTask, deleteTask, addEvent, removeEvent,
     connectService, disconnectService, syncService, markEmailRead, fetchConnectedServices, refreshEmails, updateEmailPriority
-  }), [services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect, filterPriority, filterTime, activeSection])
+  }), [services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect, apiError, filterPriority, filterTime, activeSection])
 
   return (
     <DashboardContext.Provider value={value}>

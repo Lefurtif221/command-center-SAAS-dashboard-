@@ -156,9 +156,9 @@ export default function LandingPage() {
             <span className="text-xs" style={{ color: 'var(--color-muted)' }}>Personal Place</span>
           </div>
           <div className="flex gap-5 text-xs" style={{ color: 'var(--color-muted)' }}>
-            <a href="#" className="hover:text-text transition-colors">Confidentialite</a>
-            <a href="#" className="hover:text-text transition-colors">Conditions</a>
-            <a href="#" className="hover:text-text transition-colors">Contact</a>
+            <a href="/confidentialite" className="hover:text-text transition-colors">Confidentialite</a>
+            <a href="/conditions" className="hover:text-text transition-colors">Conditions</a>
+            <a href="/contact" className="hover:text-text transition-colors">Contact</a>
           </div>
           <div className="text-xs" style={{ color: 'var(--color-muted)', opacity: 0.5 }}>&copy; 2026 Personal Place</div>
         </div>

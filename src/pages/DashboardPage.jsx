@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { WifiOff } from 'lucide-react'
 import Sidebar from '../components/layout/Sidebar'
 import TopBar from '../components/layout/TopBar'
 import StatsGrid from '../components/dashboard/StatsGrid'
@@ -15,7 +16,7 @@ import { useDashboard } from '../hooks/useDashboard'
 import { useAuth } from '../hooks/useAuth'
 
 export default function DashboardPage() {
-  const { activeSection } = useDashboard()
+  const { activeSection, apiError } = useDashboard()
   const { user, updateProfile } = useAuth()
   const [name, setName] = useState(user?.name || '')
   const [saving, setSaving] = useState(false)
@@ -34,6 +35,14 @@ export default function DashboardPage() {
 
       <div className="md:ml-56 overflow-x-hidden min-h-screen">
         <TopBar />
+
+        {apiError && (
+          <div className="mx-3 md:mx-6 mt-3 flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-xs" style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.25)', color: '#F59E0B' }}>
+            <WifiOff size={14} className="shrink-0" />
+            <span>{apiError}</span>
+            <button onClick={() => window.location.reload()} className="ml-auto font-medium underline underline-offset-2 shrink-0">Reessayer</button>
+          </div>
+        )}
 
         <main className="p-3 md:p-6 max-w-[1400px] mx-auto">
           {activeSection === 'dashboard' && (

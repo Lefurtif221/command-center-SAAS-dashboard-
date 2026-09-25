@@ -11,6 +11,8 @@ const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
 const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const OAuthCallback = lazy(() => import('./pages/OAuthCallback'))
+const NotFound = lazy(() => import('./pages/NotFound'))
+const Legal = lazy(() => import('./pages/Legal'))
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -63,8 +65,11 @@ function AppRoutes() {
         <Route path="/auth/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
         <Route path="/auth/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
         <Route path="/auth/callback/:service" element={<ProtectedRoute><OAuthCallback /></ProtectedRoute>} />
+        <Route path="/confidentialite" element={<Legal />} />
+        <Route path="/conditions" element={<Legal />} />
+        <Route path="/contact" element={<Legal />} />
         <Route path="/dashboard/*" element={<ProtectedRoute><DashboardProvider><ErrorBoundary><DashboardPage /></ErrorBoundary></DashboardProvider></ProtectedRoute>} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   )
