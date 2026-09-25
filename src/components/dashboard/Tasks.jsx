@@ -9,6 +9,7 @@ export default function Tasks() {
   const [newPriority, setNewPriority] = useState('medium')
   const [newTeamId, setNewTeamId] = useState('')
   const [adding, setAdding] = useState(false)
+  const [scope, setScope] = useState('all')
 
   useEffect(() => {
     const tracked = JSON.parse(localStorage.getItem('lastWarningTasks') || '{}')
@@ -35,6 +36,10 @@ export default function Tasks() {
     localStorage.setItem('lastWarningTasks', JSON.stringify(tracked))
   }, [tasks, deleteTask])
 
+  useEffect(() => {
+    if (scope !== 'all' && scope !== 'personal' && !teams.some(t => t.id === scope)) setScope('all')
+  }, [teams, scope])
+
   const handleAdd = async () => {
     if (!newTitle.trim()) return
     setAdding(true)
@@ -49,12 +54,18 @@ export default function Tasks() {
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
   const sevenDaysAgoStr = sevenDaysAgo.toLocaleDateString('sv-SE')
 
-  const overdueTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date < todayStr && t.due_date >= sevenDaysAgoStr)
-  const lastWarningTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date < sevenDaysAgoStr)
-  const todayTasks = tasks.filter(t => !t.completed && t.due_date === todayStr)
-  const upcomingTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date > todayStr)
-  const noDateTasks = tasks.filter(t => !t.completed && !t.due_date)
-  const doneTasks = tasks.filter(t => t.completed)
+  const visible = tasks.filter(t => {
+    if (scope === 'all') return true
+    if (scope === 'personal') return !t.team_id
+    return t.team_id === scope
+  })
+
+  const overdueTasks = visible.filter(t => !t.completed && t.due_date && t.due_date < todayStr && t.due_date >= sevenDaysAgoStr)
+  const lastWarningTasks = visible.filter(t => !t.completed && t.due_date && t.due_date < sevenDaysAgoStr)
+  const todayTasks = visible.filter(t => !t.completed && t.due_date === todayStr)
+  const upcomingTasks = visible.filter(t => !t.completed && t.due_date && t.due_date > todayStr)
+  const noDateTasks = visible.filter(t => !t.completed && !t.due_date)
+  const doneTasks = visible.filter(t => t.completed)
 
   const priorityColors = { high: '#1E40AF', medium: '#F59E0B', low: '#10B981' }
 
@@ -106,8 +117,27 @@ export default function Tasks() {
       <div className="flex items-center gap-2 px-4 pt-4 pb-2">
         <CheckSquare size={14} style={{ color: '#2563EB' }} />
         <h3 className="text-sm font-display font-medium">Taches</h3>
-        <span className="text-[11px] ml-auto" style={{ color: 'var(--color-muted)' }}>{tasks.filter(t => !t.completed).length} en cours</span>
+        <span className="text-[11px] ml-auto" style={{ color: 'var(--color-muted)' }}>{visible.filter(t => !t.completed).length} en cours</span>
       </div>
+
+      {teams.length > 0 && (
+        <div className="px-4 pb-1 flex gap-1.5 overflow-x-auto">
+          {[
+            { id: 'all', label: 'Toutes', count: tasks.length },
+            { id: 'personal', label: 'Personnelles', count: tasks.filter(t => !t.team_id).length },
+            ...teams.map(t => ({ id: t.id, label: t.name, count: tasks.filter(x => x.team_id === t.id).length })),
+          ].map(chip => (
+            <button key={chip.id} onClick={() => setScope(chip.id)}
+              className="px-2.5 py-1 rounded-lg text-[11px] font-medium whitespace-nowrap transition-colors duration-150 shrink-0"
+              style={scope === chip.id
+                ? { background: 'rgba(37,99,235,0.15)', color: '#2563EB', border: '1px solid rgba(37,99,235,0.3)' }
+                : { background: 'var(--color-bg)', color: 'var(--color-muted)', border: '1px solid var(--color-border)' }}>
+              {chip.id !== 'all' && chip.id !== 'personal' && <Users size={10} className="inline mr-1 -mt-0.5" />}
+              {chip.label} <span style={{ opacity: 0.7 }}>{chip.count}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="px-4 pb-4 pt-2">
         <div className="flex flex-col sm:flex-row gap-2">
@@ -146,7 +176,9 @@ export default function Tasks() {
 
       <div className="p-4 space-y-4">
         {tasks.length === 0 ? (
-          <p className="text-sm text-center py-4" style={{ color: 'var(--color-muted)' }}>Aucune tache. Ajoute-en une !</p>
+          <p className="text-sm text-center py-4" style={{ color: 'var(--color-muted)' }}>
+            {tasks.length === 0 ? 'Aucune tache. Ajoute-en une !' : 'Aucune tache dans cette vue.'}
+          </p>
         ) : (
           <>
             {lastWarningTasks.length > 0 && (
