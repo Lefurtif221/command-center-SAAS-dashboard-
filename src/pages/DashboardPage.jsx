@@ -194,7 +194,7 @@ export default function DashboardPage() {
                       <p className="text-[11px] mb-2" style={{ color: 'var(--color-muted)' }}>Ce que tu debloques :</p>
                       <ProPerks className="mb-3" />
                       <p className="text-[11px] mb-3" style={{ color: 'var(--color-muted)' }}>
-                        Paiement securise. Annulable a tout moment.
+                        Paiement securise. Pas de prelevement automatique : tu gardes Pro 31 jours, puis tu choisis si tu renouvelles.
                       </p>
                       <UpgradeButton />
                     </div>
