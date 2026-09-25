@@ -11,6 +11,7 @@ import QuickActions from '../components/dashboard/QuickActions'
 import Calendar from '../components/dashboard/Calendar'
 import Tasks from '../components/dashboard/Tasks'
 import Team from '../components/dashboard/Team'
+import StatsHistory from '../components/dashboard/StatsHistory'
 import Concentration from '../components/dashboard/Concentration'
 import OnboardingTutorial from '../components/dashboard/OnboardingTutorial'
 import { useDashboard } from '../hooks/useDashboard'
@@ -84,6 +85,12 @@ export default function DashboardPage() {
           {activeSection === 'tasks' && (
             <div className="page-enter">
               <Tasks />
+            </div>
+          )}
+
+          {activeSection === 'stats' && (
+            <div className="page-enter">
+              <StatsHistory />
             </div>
           )}
 

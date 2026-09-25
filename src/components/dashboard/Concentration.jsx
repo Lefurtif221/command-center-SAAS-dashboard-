@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
+import { apiFetch } from '../../utils/api'
 import { List, CheckSquare, Calendar as CalendarIcon, Timer, Play, Pause, RotateCcw, BarChart3, Settings, ChevronDown, ChevronUp } from 'lucide-react'
 
 const DEFAULTS = { work: 25, break: 5, longBreak: 15, sessions: 4 }
@@ -77,6 +78,10 @@ export default function Concentration() {
     all.push(session)
     localStorage.setItem('pomodoro_sessions', JSON.stringify(all))
     setTodaySessions(prev => [...prev, session])
+    apiFetch('/api/stats/focus', {
+      method: 'POST',
+      body: JSON.stringify({ duration_seconds: duration, task_title: itemTitle }),
+    }).catch(() => {})
   }
 
   const getDuration = useCallback(() => {
