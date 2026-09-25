@@ -92,6 +92,7 @@ export default function Sidebar({ onToggle }) {
       </nav>
       <div className="px-2 pb-4 space-y-0.5">
         <button onClick={() => handleNav('settings')}
+          data-tutorial="sidebar-settings"
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200"
           style={activeSection === 'settings'
             ? { background: 'rgba(37,99,235,0.15)', color: '#2563EB' }

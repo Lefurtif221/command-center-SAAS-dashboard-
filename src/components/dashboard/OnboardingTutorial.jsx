@@ -50,9 +50,23 @@ const mobileSteps = [
     position: 'left',
   },
   {
+    target: '[data-tutorial="sidebar-stats"]',
+    title: 'Statistiques',
+    desc: "Tes minutes de focus, tes taches du jour et ton streak. Les 7 derniers jours sont gratuits, 365 jours avec la formule Pro.",
+    position: 'right',
+    openSidebar: true,
+  },
+  {
+    target: '[data-tutorial="sidebar-settings"]',
+    title: 'Ton abonnement',
+    desc: "Settings affiche ta formule : Gratuit (1 equipe, 3 membres, stats 7 jours) ou Pro a 2000 FCFA / 31 jours. Le bouton 'Passer en Pro' ouvre le paiement Mobile Money.",
+    position: 'right',
+    openSidebar: true,
+  },
+  {
     target: null,
     title: "C'est tout !",
-    desc: "Tu es pret. Explore l'app et connecte tes services pour commencer. Tu peux revoir ce tutoriel en cliquant sur ton profil.",
+    desc: "Tu es pret. Connecte d'abord Gmail dans les services, puis reviens sur Settings pour revoir ce tutoriel quand tu veux.",
     position: 'center',
   },
 ]
@@ -101,9 +115,21 @@ const desktopSteps = [
     position: 'left',
   },
   {
+    target: '[data-tutorial="sidebar-stats"]',
+    title: 'Statistiques',
+    desc: "Tes minutes de focus, tes taches du jour et ton streak. Les 7 derniers jours sont gratuits, 365 jours avec la formule Pro.",
+    position: 'right',
+  },
+  {
+    target: '[data-tutorial="sidebar-settings"]',
+    title: 'Ton abonnement',
+    desc: "Settings affiche ta formule : Gratuit (1 equipe, 3 membres, stats 7 jours) ou Pro a 2000 FCFA / 31 jours. Le bouton 'Passer en Pro' ouvre le paiement Mobile Money.",
+    position: 'right',
+  },
+  {
     target: null,
     title: "C'est tout !",
-    desc: "Tu es pret. Explore l'app et connecte tes services pour commencer. Tu peux revoir ce tutoriel en cliquant sur ton profil.",
+    desc: "Tu es pret. Connecte d'abord Gmail dans les services, puis reviens sur Settings pour revoir ce tutoriel quand tu veux.",
     position: 'center',
   },
 ]
@@ -129,6 +155,13 @@ export default function OnboardingTutorial() {
     if (!seen) {
       setTimeout(() => setShow(true), 1500)
     }
+  }, [])
+
+  // Relance depuis Settings ("Revoir le tutoriel")
+  useEffect(() => {
+    const restart = () => { setStep(0); setShow(true) }
+    window.addEventListener('tutorial:restart', restart)
+    return () => window.removeEventListener('tutorial:restart', restart)
   }, [])
 
   const findTarget = useCallback(() => {

@@ -205,6 +205,16 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 )}
+
+                <button type="button"
+                  onClick={() => {
+                    localStorage.removeItem('personalplace_onboarding_seen')
+                    window.dispatchEvent(new Event('tutorial:restart'))
+                  }}
+                  className="w-full mt-5 pt-3 text-[11px] text-center transition-colors"
+                  style={{ borderTop: '1px solid var(--color-border)', color: 'var(--color-muted)' }}>
+                  Revoir le tutoriel
+                </button>
               </div>
             </div>
           )}
