@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Sparkles, Loader2 } from 'lucide-react'
 import { apiFetch } from '../../utils/api'
 
-export default function UpgradeButton({ label = 'Passer en Pro', size = 'md' }) {
+export default function UpgradeButton({ label = 'Passer en Pro', size = 'md', full = false }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -30,7 +30,7 @@ export default function UpgradeButton({ label = 'Passer en Pro', size = 'md' }) 
   return (
     <span className="inline-flex flex-col gap-1.5 items-start">
       <button type="button" onClick={start} disabled={loading}
-        className={`inline-flex items-center gap-1.5 font-medium rounded-xl transition-colors duration-150 disabled:opacity-60 ${size === 'sm' ? 'px-3 py-1.5 text-[11px]' : 'px-4 py-2 text-xs'}`}
+        className={`inline-flex items-center gap-1.5 font-medium rounded-xl transition-colors duration-150 disabled:opacity-60 ${full ? 'w-full justify-center px-4 py-2.5 text-xs' : size === 'sm' ? 'px-3 py-1.5 text-[11px]' : 'px-4 py-2 text-xs'}`}
         style={{ background: '#2563EB', color: '#FFF' }}>
         {loading ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
         {loading ? 'Ouverture du paiement...' : label}
