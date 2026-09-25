@@ -13,6 +13,7 @@ const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const OAuthCallback = lazy(() => import('./pages/OAuthCallback'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 const Legal = lazy(() => import('./pages/Legal'))
+const TeamInvite = lazy(() => import('./pages/TeamInvite'))
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -65,6 +66,7 @@ function AppRoutes() {
         <Route path="/auth/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
         <Route path="/auth/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
         <Route path="/auth/callback/:service" element={<ProtectedRoute><OAuthCallback /></ProtectedRoute>} />
+        <Route path="/team/invite" element={<TeamInvite />} />
         <Route path="/confidentialite" element={<Legal />} />
         <Route path="/conditions" element={<Legal />} />
         <Route path="/contact" element={<Legal />} />

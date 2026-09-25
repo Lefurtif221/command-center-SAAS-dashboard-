@@ -77,7 +77,7 @@ export default function Legal() {
         {page === 'contact' && (
           <div className="mt-10 p-5 rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
             <p className="text-sm mb-1 font-medium">E-mail</p>
-            <a href="mailto:contact@personalplace.app" className="text-sm" style={{ color: '#2563EB' }}>contact@personalplace.app</a>
+            <a href="mailto:touremouhamadou753@gmail.com" className="text-sm" style={{ color: '#2563EB' }}>touremouhamadou753@gmail.com</a>
           </div>
         )}
       </main>

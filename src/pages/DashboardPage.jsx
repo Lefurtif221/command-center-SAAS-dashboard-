@@ -10,6 +10,7 @@ import TodayFocus from '../components/dashboard/TodayFocus'
 import QuickActions from '../components/dashboard/QuickActions'
 import Calendar from '../components/dashboard/Calendar'
 import Tasks from '../components/dashboard/Tasks'
+import Team from '../components/dashboard/Team'
 import Concentration from '../components/dashboard/Concentration'
 import OnboardingTutorial from '../components/dashboard/OnboardingTutorial'
 import { useDashboard } from '../hooks/useDashboard'
@@ -83,6 +84,12 @@ export default function DashboardPage() {
           {activeSection === 'tasks' && (
             <div className="page-enter">
               <Tasks />
+            </div>
+          )}
+
+          {activeSection === 'team' && (
+            <div className="page-enter max-w-2xl">
+              <Team />
             </div>
           )}
 

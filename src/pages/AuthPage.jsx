@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { ArrowLeft, Mail, Lock, Timer, Eye, EyeOff } from 'lucide-react'
 
 export default function AuthPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const nextPath = searchParams.get('next')
   const { login, signup, isAuthenticated } = useAuth()
   const [activeTab, setActiveTab] = useState('login')
   const [loading, setLoading] = useState(false)
@@ -16,12 +18,14 @@ export default function AuthPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   useEffect(() => {
-    if (isAuthenticated) navigate('/dashboard')
-  }, [isAuthenticated, navigate])
+    if (isAuthenticated) navigate(nextPath && nextPath.startsWith('/') ? nextPath : '/dashboard')
+  }, [isAuthenticated, navigate, nextPath])
+
+  const afterAuth = () => navigate(nextPath && nextPath.startsWith('/') ? nextPath : '/dashboard')
 
   const handleLogin = async (e) => {
     e.preventDefault(); setError(''); setLoading(true)
-    try { await login(loginForm.email, loginForm.password); navigate('/dashboard') }
+    try { await login(loginForm.email, loginForm.password); afterAuth() }
     catch (err) { setError(err.message || 'Email ou mot de passe incorrect') }
     finally { setLoading(false) }
   }
@@ -31,7 +35,7 @@ export default function AuthPage() {
     if (signupForm.password !== signupForm.confirmPassword) { setError('Les mots de passe ne correspondent pas'); return }
     if (signupForm.password.length < 8) { setError('Le mot de passe doit contenir au moins 8 caracteres'); return }
     setLoading(true)
-    try { await signup(signupForm.name, signupForm.email, signupForm.password); navigate('/dashboard') }
+    try { await signup(signupForm.name, signupForm.email, signupForm.password); afterAuth() }
     catch (err) { setError(err.message || 'Une erreur est survenue') }
     finally { setLoading(false) }
   }

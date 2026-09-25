@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
-import { Trash2, CheckSquare, AlertTriangle, Plus } from 'lucide-react'
+import { Trash2, CheckSquare, AlertTriangle, Plus, Users } from 'lucide-react'
 
 export default function Tasks() {
-  const { tasks, addTask, toggleTask, deleteTask } = useDashboard()
+  const { tasks, addTask, toggleTask, deleteTask, teams, shareTask } = useDashboard()
   const [newTitle, setNewTitle] = useState('')
   const [newDate, setNewDate] = useState('')
   const [newPriority, setNewPriority] = useState('medium')
+  const [newTeamId, setNewTeamId] = useState('')
   const [adding, setAdding] = useState(false)
 
   useEffect(() => {
@@ -37,8 +38,8 @@ export default function Tasks() {
   const handleAdd = async () => {
     if (!newTitle.trim()) return
     setAdding(true)
-    await addTask(newTitle.trim(), newPriority, newDate || null)
-    setNewTitle(''); setNewDate(''); setNewPriority('medium')
+    await addTask(newTitle.trim(), newPriority, newDate || null, newTeamId || null)
+    setNewTitle(''); setNewDate(''); setNewPriority('medium'); setNewTeamId('')
     setAdding(false)
   }
 
@@ -73,8 +74,27 @@ export default function Tasks() {
       </button>
       <div className="flex-1 min-w-0">
         <p className={`text-sm ${task.completed ? 'line-through' : ''}`} style={{ color: task.completed ? 'var(--color-muted)' : 'var(--color-text)' }}>{task.title}</p>
-        {task.due_date && <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-muted)' }}>{formatDate(task.due_date)}</p>}
+        <div className="flex items-center gap-2 mt-0.5">
+          {task.due_date && <p className="text-[10px]" style={{ color: 'var(--color-muted)' }}>{formatDate(task.due_date)}</p>}
+          {task.team_name && (
+            <span className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md"
+              style={{ background: 'rgba(37,99,235,0.12)', color: '#2563EB' }}>
+              <Users size={9} /> {task.team_name}
+            </span>
+          )}
+        </div>
       </div>
+      {teams.length > 0 && (
+        <select
+          value={task.team_id || ''}
+          onChange={(e) => shareTask(task.id, e.target.value || null)}
+          aria-label="Partager la tache"
+          className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity duration-150 text-[10px] px-1.5 py-1 rounded-md cursor-pointer max-w-[110px]"
+          style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}>
+          <option value="">Prive</option>
+          {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+        </select>
+      )}
       <button onClick={() => deleteTask(task.id)} className="opacity-0 group-hover:opacity-100 transition-opacity duration-150" style={{ color: 'var(--color-muted)' }}>
         <Trash2 size={14} />
       </button>
@@ -106,6 +126,15 @@ export default function Tasks() {
               <option value="medium">Moyen</option>
               <option value="low">Faible</option>
             </select>
+            {teams.length > 0 && (
+              <select value={newTeamId} onChange={(e) => setNewTeamId(e.target.value)}
+                aria-label="Partager avec"
+                className="px-2 py-2.5 rounded-lg text-xs focus:outline-none cursor-pointer transition-colors duration-150"
+                style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                <option value="">Prive</option>
+                {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+              </select>
+            )}
             <button onClick={handleAdd} disabled={adding || !newTitle.trim()}
               className="px-3 py-2.5 text-sm font-medium rounded-lg transition-colors duration-150 disabled:opacity-50"
               style={{ background: '#2563EB', color: '#FFF' }}>

@@ -17,6 +17,7 @@ export function DashboardProvider({ children }) {
   const [filterPriority, setFilterPriority] = useState('all')
   const [filterTime, setFilterTime] = useState('today')
   const [apiError, setApiError] = useState(null)
+  const [teams, setTeams] = useState([])
   const [activeSection, setActiveSection] = useState(() => localStorage.getItem('activeSection') || 'dashboard')
 
   const handleFetchError = (err) => {
@@ -34,6 +35,7 @@ export function DashboardProvider({ children }) {
     fetchConnectedServices()
     fetchTasks()
     fetchEvents()
+    fetchTeams()
     const interval = setInterval(() => {
       if (localStorage.getItem('command_center_token')) {
         fetchGmailEmails()
@@ -43,6 +45,14 @@ export function DashboardProvider({ children }) {
     }, 30000)
     return () => clearInterval(interval)
   }, [])
+
+  const fetchTeams = async () => {
+    try {
+      const data = await apiFetch('/api/teams')
+      if (data.teams) setTeams(data.teams)
+      handleFetchSuccess()
+    } catch (err) { handleFetchError(err) }
+  }
 
   const fetchTasks = async () => {
     try {
@@ -60,14 +70,34 @@ export function DashboardProvider({ children }) {
     } catch (err) { handleFetchError(err) }
   }
 
-  const addTask = async (title, priority, due_date) => {
+  const addTask = async (title, priority, due_date, team_id) => {
     try {
       const data = await apiFetch('/api/tasks', {
         method: 'POST',
-        body: JSON.stringify({ title, priority, due_date }),
+        body: JSON.stringify({ title, priority, due_date, team_id: team_id || null }),
       })
-      if (data.task) setTasks(prev => [data.task, ...prev])
+      if (data.task) {
+        const team = teams.find(t => t.id === team_id)
+        setTasks(prev => [{ ...data.task, team_name: team?.name, is_owner: true }, ...prev])
+      }
     } catch (err) { console.error(err) }
+  }
+
+  const shareTask = async (id, team_id) => {
+    try {
+      const data = await apiFetch(`/api/tasks/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ team_id: team_id || null }),
+      })
+      if (data.task) {
+        const team = teams.find(t => t.id === team_id)
+        setTasks(prev => prev.map(t => t.id === id ? { ...t, team_id: team_id || null, team_name: team?.name } : t))
+      }
+      return { ok: true }
+    } catch (err) {
+      console.error(err)
+      return { ok: false, error: err.message }
+    }
   }
 
   const toggleTask = async (id, completed) => {
@@ -211,12 +241,12 @@ export function DashboardProvider({ children }) {
   }
 
   const value = useMemo(() => ({
-    services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect, apiError,
+    services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect, apiError, teams,
     filterPriority, filterTime, activeSection,
     setFilterPriority, setFilterTime, setActiveSection,
-    fetchTasks, fetchEvents, addTask, toggleTask, deleteTask, addEvent, removeEvent,
+    fetchTasks, fetchEvents, addTask, toggleTask, deleteTask, addEvent, removeEvent, shareTask, fetchTeams,
     connectService, disconnectService, syncService, markEmailRead, fetchConnectedServices, refreshEmails, updateEmailPriority
-  }), [services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect, apiError, filterPriority, filterTime, activeSection])
+  }), [services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect, apiError, teams, filterPriority, filterTime, activeSection])
 
   return (
     <DashboardContext.Provider value={value}>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import { useDashboard } from '../../hooks/useDashboard'
-import { LayoutGrid, Mail, MessageSquare, Calendar, CheckSquare, Timer, Sparkles, ChevronLeft, ChevronRight, X, Settings, LogOut, Menu } from 'lucide-react'
+import { LayoutGrid, Mail, MessageSquare, Calendar, CheckSquare, Timer, Sparkles, ChevronLeft, ChevronRight, X, Settings, LogOut, Menu, Users } from 'lucide-react'
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
@@ -9,6 +9,7 @@ const navItems = [
   { id: 'messages', label: 'Messages', icon: MessageSquare },
   { id: 'calendar', label: 'Calendrier', icon: Calendar },
   { id: 'tasks', label: 'Taches', icon: CheckSquare },
+  { id: 'team', label: 'Equipe', icon: Users },
   { id: 'concentration', label: 'Concentration', icon: Timer },
 ]
 
