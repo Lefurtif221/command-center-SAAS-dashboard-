@@ -55,7 +55,7 @@ export default function TopBar() {
             onFocus={() => setOpen(true)}
             onBlur={() => setTimeout(() => setOpen(false), 200)}
             className="flex-1 bg-transparent border-none outline-none text-sm min-w-0" />
-          <kbd className="hidden md:inline text-[10px] font-mono px-1.5 py-0.5 rounded-md shrink-0" style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Ctrl+K</kbd>
+          <kbd className="hidden md:inline text-[10px] px-1.5 py-0.5 rounded-md shrink-0" style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Ctrl+K</kbd>
         </div>
         {open && results.length > 0 && (
           <div className="absolute top-full left-0 right-0 mt-2 rounded-xl shadow-2xl overflow-hidden z-50 animate-scale-in" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
@@ -70,7 +70,7 @@ export default function TopBar() {
                   <p className="text-sm truncate">{item.label}</p>
                   <p className="text-[10px] truncate" style={{ color: 'var(--color-muted)' }}>{item.sub}</p>
                 </div>
-                <span className="text-[10px] capitalize font-mono shrink-0" style={{ color: 'var(--color-muted)' }}>{item.type}</span>
+                <span className="text-[10px] capitalize shrink-0" style={{ color: 'var(--color-muted)' }}>{item.type}</span>
               </button>
             ))}
           </div>

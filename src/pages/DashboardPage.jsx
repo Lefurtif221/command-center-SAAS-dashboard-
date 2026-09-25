@@ -89,13 +89,13 @@ export default function DashboardPage() {
                 <h3 className="text-base font-display font-medium mb-6">Parametres</h3>
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-xs text-muted mb-1.5 font-mono">Nom</label>
+                    <label className="block text-xs text-muted mb-1.5">Nom</label>
                     <input type="text" value={name} onChange={(e) => setName(e.target.value)}
                       className="w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-accent transition-all duration-200"
                       style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
                   </div>
                   <div>
-                    <label className="block text-xs text-muted mb-1.5 font-mono">Email</label>
+                    <label className="block text-xs text-muted mb-1.5">Email</label>
                     <input type="email" value={user?.email || ''} disabled
                       className="w-full px-4 py-2.5 rounded-xl text-sm cursor-not-allowed opacity-60"
                       style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />

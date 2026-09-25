@@ -248,7 +248,7 @@ export default function OnboardingTutorial() {
       >
         <div className="rounded-2xl p-5 shadow-2xl animate-scale-in" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-mono" style={{ color: '#2563EB' }}>{step + 1} / {steps.length}</span>
+            <span className="text-[10px]" style={{ color: '#2563EB' }}>{step + 1} / {steps.length}</span>
             <button onClick={handleClose} className="p-1 rounded-lg transition-colors " style={{ color: 'var(--color-muted)' }}>
               <X size={14} />
             </button>

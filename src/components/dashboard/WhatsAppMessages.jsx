@@ -196,7 +196,7 @@ export default function WhatsAppMessages() {
           <div className="flex gap-0.5">
             {['all', 'important'].map(f => (
               <button key={f} onClick={() => setFilter(f)}
-                className={`px-2 py-1 rounded-lg text-[10px] font-mono transition-all`}
+                className={`px-2 py-1 rounded-lg text-[10px] transition-all`}
                 style={filter === f
                   ? { background: 'rgba(37,99,235,0.15)', color: '#2563EB' }
                   : { color: 'var(--color-muted)' }}>

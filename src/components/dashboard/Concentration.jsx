@@ -187,11 +187,11 @@ export default function Concentration() {
                   <CheckSquare size={14} style={{ color: '#F59E0B' }} />
                   <span className="text-sm truncate">{task.title}</span>
                 </div>
-                {task.due_date && <p className="text-[10px] mt-1 ml-5 font-mono" style={{ color: 'var(--color-muted)' }}>Echeance : {task.due_date}</p>}
+                {task.due_date && <p className="text-[10px] mt-1 ml-5" style={{ color: 'var(--color-muted)' }}>Echeance : {task.due_date}</p>}
               </button>
             ))}
 
-            <p className="text-[10px] uppercase tracking-wider font-medium mt-4 font-mono" style={{ color: 'var(--color-muted)' }}>Evenements calendrier</p>
+            <p className="text-[10px] uppercase tracking-wider font-medium mt-4" style={{ color: 'var(--color-muted)' }}>Evenements calendrier</p>
             {events.length === 0 && (
               <p className="text-xs py-2" style={{ color: 'var(--color-muted)' }}>Aucun evenement</p>
             )}
@@ -207,7 +207,7 @@ export default function Concentration() {
                   <CalendarIcon size={14} style={{ color: '#2563EB' }} />
                   <span className="text-sm truncate">{evt.title}</span>
                 </div>
-                <p className="text-[10px] mt-1 ml-5 font-mono" style={{ color: 'var(--color-muted)' }}>{evt.date} a {String(evt.hour).padStart(2, '0')}:00</p>
+                <p className="text-[10px] mt-1 ml-5" style={{ color: 'var(--color-muted)' }}>{evt.date} a {String(evt.hour).padStart(2, '0')}:00</p>
               </button>
             ))}
           </div>
@@ -233,7 +233,7 @@ export default function Concentration() {
               <div className="flex gap-2 mb-3 flex-wrap">
                 {presets.map(p => (
                   <button key={p.label} onClick={() => setSettings({ work: p.work, break: p.break, longBreak: p.longBreak, sessions: p.sessions })}
-                    className="px-2 py-1 rounded-lg text-[10px] font-mono transition-colors duration-150 "
+                    className="px-2 py-1 rounded-lg text-[10px] transition-colors duration-150 "
                     style={{ background: settings.work === p.work ? 'rgba(37,99,235,0.15)' : 'var(--color-surface-solid)', color: settings.work === p.work ? '#2563EB' : 'var(--color-muted)', border: '1px solid var(--color-border)' }}>
                     {p.label}
                   </button>
@@ -247,15 +247,15 @@ export default function Concentration() {
                   { key: 'sessions', label: 'Sessions avant pause longue', icon: '.Loop' },
                 ].map(item => (
                   <div key={item.key}>
-                    <label className="text-[10px] font-mono mb-1 block" style={{ color: 'var(--color-muted)' }}>{item.label}</label>
+                    <label className="text-[10px] mb-1 block" style={{ color: 'var(--color-muted)' }}>{item.label}</label>
                     <input type="number" value={settings[item.key]} onChange={(e) => updateSetting(item.key, e.target.value)}
-                      className="w-full px-2 py-1.5 rounded-lg text-sm font-mono focus:outline-none transition-all duration-200"
+                      className="w-full px-2 py-1.5 rounded-lg text-sm focus:outline-none transition-all duration-200"
                       style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}
                       min="1" max="120" />
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] mt-2 font-mono" style={{ color: 'var(--color-muted)' }}>
+              <p className="text-[10px] mt-2" style={{ color: 'var(--color-muted)' }}>
                 Total cycle : {settings.work * settings.sessions + settings.break * (settings.sessions - 1) + settings.longBreak} min
               </p>
             </div>
@@ -263,7 +263,7 @@ export default function Concentration() {
 
           {selectedTitle ? (
             <>
-              <p className="text-[10px] mb-1 font-mono" style={{ color: 'var(--color-muted)' }}>Cible :</p>
+              <p className="text-[10px] mb-1" style={{ color: 'var(--color-muted)' }}>Cible :</p>
               <p className="text-sm font-display font-medium mb-6 text-center" style={{ color: '#2563EB' }}>{selectedTitle}</p>
             </>
           ) : (
@@ -280,8 +280,8 @@ export default function Concentration() {
                 className="transition-all duration-1000" style={{ filter: `drop-shadow(0 0 8px ${phaseColor}60)` }} />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl sm:text-4xl font-mono font-bold">{formatTime(timeLeft)}</span>
-              <span className="text-[10px] mt-1 uppercase tracking-wider font-mono" style={{ color: 'var(--color-muted)' }}>{PHASES[phase]}</span>
+              <span className="text-3xl sm:text-4xl font-bold">{formatTime(timeLeft)}</span>
+              <span className="text-[10px] mt-1 uppercase tracking-wider" style={{ color: 'var(--color-muted)' }}>{PHASES[phase]}</span>
             </div>
           </div>
 
@@ -313,7 +313,7 @@ export default function Concentration() {
               <div key={i} className="w-3 h-3 rounded-full transition-all duration-300"
                 style={{ background: i < (sessionsCompleted % settings.sessions) ? '#2563EB' : 'var(--color-border)', boxShadow: i < (sessionsCompleted % settings.sessions) ? '0 0 8px rgba(37,99,235,0.5)' : 'none' }} />
             ))}
-            <span className="text-[10px] ml-2 font-mono" style={{ color: 'var(--color-muted)' }}>{sessionsCompleted % settings.sessions}/{settings.sessions}</span>
+            <span className="text-[10px] ml-2" style={{ color: 'var(--color-muted)' }}>{sessionsCompleted % settings.sessions}/{settings.sessions}</span>
           </div>
         </div>
 
@@ -337,13 +337,13 @@ export default function Concentration() {
 
           {todaySessions.length > 0 && (
             <div className="mt-4">
-              <p className="text-[10px] uppercase tracking-wider font-medium mb-2 font-mono" style={{ color: 'var(--color-muted)' }}>Historique</p>
+              <p className="text-[10px] uppercase tracking-wider font-medium mb-2" style={{ color: 'var(--color-muted)' }}>Historique</p>
               <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
                 {[...todaySessions].reverse().map((s, i) => (
                   <div key={i} className="flex items-center justify-between p-2 rounded-lg transition-colors duration-150 hover:translate-x-1"
                     style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
                     <span className="text-xs truncate">{s.title}</span>
-                    <span className="text-[10px] flex-shrink-0 ml-2 font-mono" style={{ color: 'var(--color-muted)' }}>{Math.floor(s.duration / 60)}min</span>
+                    <span className="text-[10px] flex-shrink-0 ml-2" style={{ color: 'var(--color-muted)' }}>{Math.floor(s.duration / 60)}min</span>
                   </div>
                 ))}
               </div>

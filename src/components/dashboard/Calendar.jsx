@@ -110,7 +110,7 @@ export default function Calendar() {
         </div>
         <div className="flex items-center gap-1 sm:gap-2">
           <span className="text-xs sm:text-sm font-display font-medium mr-1 sm:mr-2">{weekLabel}</span>
-          <button onClick={goToToday} className="px-1.5 sm:px-2 py-1 text-[10px] sm:text-xs font-mono rounded-lg transition-all duration-200" style={{ color: '#2563EB', border: '1px solid rgba(37,99,235,0.2)' }}>Auj.</button>
+          <button onClick={goToToday} className="px-1.5 sm:px-2 py-1 text-[10px] sm:text-xs rounded-lg transition-all duration-200" style={{ color: '#2563EB', border: '1px solid rgba(37,99,235,0.2)' }}>Auj.</button>
           <button onClick={() => navigateWeek(-1)} className="p-1 rounded-lg transition-colors" style={{ color: 'var(--color-muted)' }}>
             <ChevronLeft size={16} />
           </button>
@@ -130,7 +130,7 @@ export default function Calendar() {
                 const isToday = isSameDay(d, today)
                 return (
                   <th key={i} className="p-2 border-b border-r" style={{ borderColor: 'var(--color-border)', background: isToday ? 'rgba(37,99,235,0.05)' : 'transparent' }}>
-                    <div className="text-[10px] uppercase font-mono" style={{ color: 'var(--color-muted)' }}>{DAYS[i]}</div>
+                    <div className="text-[10px] uppercase" style={{ color: 'var(--color-muted)' }}>{DAYS[i]}</div>
                     <div className={`text-sm font-display font-medium mt-0.5`} style={{ color: isToday ? '#2563EB' : 'var(--color-text)' }}>{d.getDate()}</div>
                   </th>
                 )
@@ -141,7 +141,7 @@ export default function Calendar() {
             {HOURS.map(hour => (
               <tr key={hour}>
                 <td className="p-2 border-b border-r text-right" style={{ borderColor: 'var(--color-border)' }}>
-                  <span className="text-[10px] font-mono" style={{ color: 'var(--color-muted)' }}>{String(hour).padStart(2, '0')}:00</span>
+                  <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>{String(hour).padStart(2, '0')}:00</span>
                 </td>
                 {weekDates.map((d, di) => {
                   const dateStr = formatDate(d)
@@ -184,7 +184,7 @@ export default function Calendar() {
               <button key={i} onClick={() => setMobileDay(i)}
                 className="flex-1 min-w-[60px] py-3 flex flex-col items-center gap-1 transition-all duration-200"
                 style={{ borderBottom: isSelected ? '2px solid #2563EB' : '2px solid transparent', background: isToday ? 'rgba(37,99,235,0.05)' : 'transparent' }}>
-                <span className="text-[10px] uppercase font-mono" style={{ color: 'var(--color-muted)' }}>{DAYS[i]}</span>
+                <span className="text-[10px] uppercase" style={{ color: 'var(--color-muted)' }}>{DAYS[i]}</span>
                 <span className="text-sm font-display font-medium" style={{ color: isToday ? '#2563EB' : isSelected ? 'var(--color-text)' : 'var(--color-muted)' }}>{d.getDate()}</span>
               </button>
             )
@@ -213,7 +213,7 @@ export default function Calendar() {
                         onClick={() => setExpandedEvents(prev => ({ ...prev, [ev.id + '-' + i]: !prev[ev.id + '-' + i] }))}>
                         {ev.title}
                       </p>
-                      <p className="text-[10px] font-mono" style={{ color: 'var(--color-muted)' }}>{String(ev.hour).padStart(2, '0')}:00</p>
+                      <p className="text-[10px]" style={{ color: 'var(--color-muted)' }}>{String(ev.hour).padStart(2, '0')}:00</p>
                     </div>
                     {ev.type === 'event' && (
                       <button onClick={() => removeEvent(ev.id)} className="text-[10px] px-2 py-1 rounded-lg transition-colors"
@@ -239,13 +239,13 @@ export default function Calendar() {
               <h4 className="text-sm font-display font-medium">Nouvel evenement</h4>
               <button onClick={() => setModalOpen(false)} className="p-1 rounded-lg transition-colors" style={{ color: 'var(--color-muted)' }}><X size={16} /></button>
             </div>
-            <p className="text-xs mb-4 font-mono" style={{ color: 'var(--color-muted)' }}>{selectedSlot && `${new Date(selectedSlot.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} a ${String(selectedSlot.hour).padStart(2, '0')}:00`}</p>
+            <p className="text-xs mb-4" style={{ color: 'var(--color-muted)' }}>{selectedSlot && `${new Date(selectedSlot.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} a ${String(selectedSlot.hour).padStart(2, '0')}:00`}</p>
             <div className="space-y-3">
               <input type="text" placeholder="Titre de l'evenement" value={newEvent.title} onChange={e => setNewEvent({ ...newEvent, title: e.target.value })}
                 className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none transition-all duration-200" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} autoFocus
                 onKeyDown={e => e.key === 'Enter' && handleAddEvent()} />
               <div>
-                <label className="block text-xs mb-1.5 font-mono" style={{ color: 'var(--color-muted)' }}>Couleur</label>
+                <label className="block text-xs mb-1.5" style={{ color: 'var(--color-muted)' }}>Couleur</label>
                 <div className="flex gap-2">
                   {Object.entries(colorLabels).map(([key, label]) => (
                     <button key={key} onClick={() => setNewEvent({ ...newEvent, color: key })}

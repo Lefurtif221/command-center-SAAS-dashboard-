@@ -76,7 +76,7 @@ export default function Sidebar({ onToggle }) {
                   <>
                     <span className="flex-1 text-left text-sm font-medium">{item.label}</span>
                     {b > 0 && (
-                      <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full"
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full"
                         style={{ background: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>
                         {b}
                       </span>
@@ -113,7 +113,7 @@ export default function Sidebar({ onToggle }) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{user?.name || 'Utilisateur'}</p>
-              <p className="text-[10px] font-mono" style={{ color: 'var(--color-muted)' }}>{user?.plan || 'free'} plan</p>
+              <p className="text-[10px]" style={{ color: 'var(--color-muted)' }}>{user?.plan || 'free'} plan</p>
             </div>
           </div>
         </div>

@@ -69,11 +69,11 @@ export default function Tasks() {
       <button onClick={() => toggleTask(task.id, task.completed)}
         className="w-6 h-6 rounded-md border flex-shrink-0 flex items-center justify-center transition-colors duration-150"
         style={{ borderColor: task.completed ? '#2563EB' : 'var(--color-border)', background: task.completed ? '#2563EB' : 'transparent' }}>
-        {task.completed && <span className="text-white text-[10px]">✓</span>}
+        {task.completed && <span className="text-white text-[10px]">âœ“</span>}
       </button>
       <div className="flex-1 min-w-0">
         <p className={`text-sm ${task.completed ? 'line-through' : ''}`} style={{ color: task.completed ? 'var(--color-muted)' : 'var(--color-text)' }}>{task.title}</p>
-        {task.due_date && <p className="text-[10px] mt-0.5 font-mono" style={{ color: 'var(--color-muted)' }}>{formatDate(task.due_date)}</p>}
+        {task.due_date && <p className="text-[10px] mt-0.5" style={{ color: 'var(--color-muted)' }}>{formatDate(task.due_date)}</p>}
       </div>
       <button onClick={() => deleteTask(task.id)} className="opacity-0 group-hover:opacity-100 transition-opacity duration-150" style={{ color: 'var(--color-muted)' }}>
         <Trash2 size={14} />
@@ -126,7 +126,7 @@ export default function Tasks() {
                   <AlertTriangle size={14} style={{ color: '#F59E0B' }} />
                   <p className="text-[11px] font-medium" style={{ color: '#F59E0B' }}>Dernier rappel ({lastWarningTasks.length})</p>
                 </div>
-                <p className="text-[10px] mb-2 font-mono" style={{ color: 'var(--color-muted)' }}>Supprimees demain automatiquement.</p>
+                <p className="text-[10px] mb-2" style={{ color: 'var(--color-muted)' }}>Supprimees demain automatiquement.</p>
                 <div className="space-y-1">{lastWarningTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}
