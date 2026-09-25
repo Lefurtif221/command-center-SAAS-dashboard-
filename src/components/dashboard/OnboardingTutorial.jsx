@@ -1,6 +1,28 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { X, ChevronRight, ChevronLeft } from 'lucide-react'
+import { X, ChevronRight, ChevronLeft, ArrowUpRight } from 'lucide-react'
+import { useDashboard } from '../../hooks/useDashboard'
+
+const SECTION_LABELS = {
+  dashboard: 'Ouvrir le dashboard',
+  emails: 'Voir mes emails',
+  messages: 'Voir mes messages',
+  calendar: 'Voir mon calendrier',
+  tasks: 'Voir mes taches',
+  stats: 'Voir mes statistiques',
+  team: 'Voir mon equipe',
+  concentration: 'Lancer un focus',
+  settings: 'Voir mon abonnement',
+}
+
+// Cible d un etape -> section a ouvrir quand on clique sur le bouton
+function actionFor(target) {
+  if (!target) return null
+  const sidebar = target.match(/sidebar-([a-z]+)/)
+  if (sidebar) return sidebar[1]
+  if (target.includes('connected-services')) return 'dashboard'
+  return null
+}
 
 const mobileSteps = [
   {
@@ -59,7 +81,7 @@ const mobileSteps = [
   {
     target: '[data-tutorial="sidebar-settings"]',
     title: 'Ton abonnement',
-    desc: "Settings affiche ta formule : Gratuit (1 equipe, 3 membres, stats 7 jours) ou Pro a 2000 FCFA / 31 jours. Le bouton 'Passer en Pro' ouvre le paiement Mobile Money.",
+    desc: "Settings affiche ta formule : Gratuit (1 equipe, 3 membres, stats 7 jours) ou Pro a 2000 FCFA le 1er mois puis 2500 / mois. Le bouton 'Passer en Pro' ouvre le paiement.",
     position: 'right',
     openSidebar: true,
   },
@@ -123,7 +145,7 @@ const desktopSteps = [
   {
     target: '[data-tutorial="sidebar-settings"]',
     title: 'Ton abonnement',
-    desc: "Settings affiche ta formule : Gratuit (1 equipe, 3 membres, stats 7 jours) ou Pro a 2000 FCFA / 31 jours. Le bouton 'Passer en Pro' ouvre le paiement Mobile Money.",
+    desc: "Settings affiche ta formule : Gratuit (1 equipe, 3 membres, stats 7 jours) ou Pro a 2000 FCFA le 1er mois puis 2500 / mois. Le bouton 'Passer en Pro' ouvre le paiement.",
     position: 'right',
   },
   {
@@ -140,6 +162,7 @@ export default function OnboardingTutorial() {
   const [targetRect, setTargetRect] = useState(null)
   const [isMobile, setIsMobile] = useState(false)
   const tooltipRef = useRef(null)
+  const { setActiveSection } = useDashboard()
 
   const steps = isMobile ? mobileSteps : desktopSteps
 
@@ -220,9 +243,28 @@ export default function OnboardingTutorial() {
     if (step > 0) setStep(step - 1)
   }
 
+  // Ouvre la section visee puis passe a l etape suivante
+  const openSection = (id) => {
+    setActiveSection(id)
+    handleNext()
+  }
+
+  // Clavier : ← → pour naviguer, Echap pour fermer
+  useEffect(() => {
+    if (!show) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') handleClose()
+      else if (e.key === 'ArrowRight') handleNext()
+      else if (e.key === 'ArrowLeft') handlePrev()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [show, step])
+
   if (!show) return null
 
   const s = steps[step]
+  const stepAction = actionFor(s.target)
   const isCenter = !s.target || s.position === 'center'
 
   const getTooltipStyle = () => {
@@ -290,6 +332,14 @@ export default function OnboardingTutorial() {
           <h3 className="text-base sm:text-lg font-display font-medium mb-2">{s.title}</h3>
           <p className="text-xs sm:text-sm leading-relaxed mb-4" style={{ color: 'var(--color-muted)' }}>{s.desc}</p>
 
+          {stepAction && SECTION_LABELS[stepAction] && (
+            <button type="button" onClick={() => openSection(stepAction)}
+              className="w-full mb-4 px-3 py-2 text-xs font-medium rounded-lg flex items-center justify-center gap-1.5 transition-colors"
+              style={{ background: 'rgba(37,99,235,0.12)', color: '#2563EB' }}>
+              {SECTION_LABELS[stepAction]} <ArrowUpRight size={13} />
+            </button>
+          )}
+
           <div className="flex items-center justify-between">
             <div className="flex gap-1">
               {steps.map((_, i) => (
@@ -311,10 +361,12 @@ export default function OnboardingTutorial() {
             </div>
           </div>
 
-          <button onClick={handleClose} className="w-full mt-3 text-[10px] text-center transition-colors py-1 "
-            style={{ color: 'var(--color-muted)' }}>
-            Passer le tutoriel
-          </button>
+          <div className="w-full mt-3 flex items-center justify-between gap-2">
+            <span className="text-[9px]" style={{ color: 'var(--color-muted)' }}>← → naviguer · Echap fermer</span>
+            <button onClick={handleClose} className="text-[10px] transition-colors py-1" style={{ color: 'var(--color-muted)' }}>
+              Passer le tutoriel
+            </button>
+          </div>
         </div>
       </div>
     </>,

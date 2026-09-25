@@ -15,6 +15,7 @@ import StatsHistory from '../components/dashboard/StatsHistory'
 import Concentration from '../components/dashboard/Concentration'
 import OnboardingTutorial from '../components/dashboard/OnboardingTutorial'
 import UpgradeButton from '../components/dashboard/UpgradeButton'
+import ProPerks from '../components/dashboard/ProPerks'
 import { useDashboard } from '../hooks/useDashboard'
 import { useAuth } from '../hooks/useAuth'
 import { apiFetch } from '../utils/api'
@@ -164,40 +165,34 @@ export default function DashboardPage() {
                         </span>
                       )}
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {[
-                        `${planLimits ? planLimits.teams : 20} equipes`,
-                        `${planLimits ? planLimits.teamMembers : 50} membres par equipe`,
-                        '1 compte Gmail connecte',
-                        'Statistiques sur 365 jours',
-                      ].map((item) => (
-                        <div key={item} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-muted)' }}>
-                          <Check size={13} style={{ color: '#10B981' }} className="shrink-0" />
-                          {item}
-                        </div>
-                      ))}
-                    </div>
+                    <p className="text-[11px]" style={{ color: 'var(--color-muted)' }}>Ce que tu as :</p>
+                    <ProPerks />
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {[
-                        `${planLimits ? planLimits.teams : 1} equipe${(planLimits ? planLimits.teams : 1) > 1 ? 's' : ''} max`,
-                        `${planLimits ? planLimits.teamMembers : 3} membres par equipe`,
-                        '1 compte Gmail connecte',
-                        `Statistiques sur ${planLimits ? planLimits.focusDays : 7} jours`,
-                      ].map((item) => (
-                        <div key={item} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-muted)' }}>
-                          <Check size={13} style={{ color: '#2563EB' }} className="shrink-0" />
-                          {item}
-                        </div>
-                      ))}
+                    <div>
+                      <p className="text-[11px] mb-2" style={{ color: 'var(--color-muted)' }}>Ta formule gratuite :</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {[
+                          `${planLimits ? planLimits.teams : 1} equipe${(planLimits ? planLimits.teams : 1) > 1 ? 's' : ''} max`,
+                          `${planLimits ? planLimits.teamMembers : 3} membres par equipe`,
+                          '1 compte Gmail connecte',
+                          `Statistiques sur ${planLimits ? planLimits.focusDays : 7} jours`,
+                        ].map((item) => (
+                          <div key={item} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-muted)' }}>
+                            <Check size={13} style={{ color: '#2563EB' }} className="shrink-0" />
+                            {item}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     <div className="pt-3" style={{ borderTop: '1px solid var(--color-border)' }}>
                       <p className="text-sm mb-1" style={{ color: 'var(--color-text)' }}>
                         Formule Pro <span className="font-medium">2000 FCFA</span>
-                        <span style={{ color: 'var(--color-muted)' }} className="text-xs"> / 31 jours</span>
+                        <span style={{ color: 'var(--color-muted)' }} className="text-xs"> le 1er mois, puis 2500 FCFA / mois</span>
                       </p>
+                      <p className="text-[11px] mb-2" style={{ color: 'var(--color-muted)' }}>Ce que tu debloques :</p>
+                      <ProPerks className="mb-3" />
                       <p className="text-[11px] mb-3" style={{ color: 'var(--color-muted)' }}>
                         Paiement securise. Annulable a tout moment.
                       </p>

@@ -3,6 +3,7 @@ import { useDashboard } from '../../hooks/useDashboard'
 import { apiFetch } from '../../utils/api'
 import { Timer, Layers, CheckSquare, Flame, RefreshCw, Lock } from 'lucide-react'
 import UpgradeButton from './UpgradeButton'
+import ProPerks from './ProPerks'
 
 const kpis = [
   { key: 'focusMinutes', label: 'Minutes de focus', icon: Timer, accent: '#2563EB', suffix: 'min' },
@@ -61,13 +62,15 @@ export default function StatsHistory() {
       </div>
 
       {plan === 'free' && (
-        <div className="flex flex-wrap items-center gap-3 px-3.5 py-3 rounded-lg text-xs"
-          style={{ background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.25)', color: '#2563EB' }}>
-          <Lock size={14} className="shrink-0" />
-          <span className="flex-1 min-w-[200px]">
-            Formule gratuite : 7 derniers jours d'historique. Pro garde 365 jours — 2 000 FCFA / 31 jours.
-          </span>
-          <UpgradeButton size="sm" />
+        <div className="px-3.5 py-3 rounded-lg text-xs" style={{ background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.25)', color: '#2563EB' }}>
+          <div className="flex flex-wrap items-center gap-3">
+            <Lock size={14} className="shrink-0" />
+            <span className="flex-1 min-w-[200px]">
+              Gratuit : 7 jours d historique. Passer en Pro (2000 FCFA le 1er mois, puis 2500 / mois) debloque :
+            </span>
+            <UpgradeButton size="sm" />
+          </div>
+          <ProPerks className="mt-2.5 pl-5" />
         </div>
       )}
 

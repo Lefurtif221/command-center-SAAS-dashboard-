@@ -144,7 +144,8 @@ export default function LandingPage() {
               <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ background: '#2563EB', color: '#FFF' }}>Pro</span>
               <div className="mt-3 mb-5">
                 <span className="text-4xl font-display font-semibold tracking-tight">2000 FCFA</span>
-                <span className="text-sm ml-1" style={{ color: 'var(--color-muted)' }}>/ 31 jours</span>
+                <span className="text-sm ml-1" style={{ color: 'var(--color-muted)' }}>/ 1er mois</span>
+                <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>puis 2500 FCFA / mois</p>
               </div>
               <div className="space-y-2.5">
                 {[

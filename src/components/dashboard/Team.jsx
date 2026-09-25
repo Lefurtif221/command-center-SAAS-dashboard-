@@ -3,6 +3,7 @@ import { useDashboard } from '../../hooks/useDashboard'
 import { apiFetch } from '../../utils/api'
 import { Users, Plus, Mail, Copy, Trash2, ShieldCheck, UserPlus, X, Check, Link2 } from 'lucide-react'
 import UpgradeButton from './UpgradeButton'
+import ProPerks from './ProPerks'
 
 const roleLabels = { owner: 'Proprietaire', admin: 'Admin', member: 'Membre' }
 
@@ -155,9 +156,12 @@ export default function Team() {
           </p>
         )}
         {plan !== 'pro' && (
-          <div className="mt-3 flex items-center gap-3">
-            <UpgradeButton size="sm" />
-            <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>2 000 FCFA / 31 jours</span>
+          <div className="mt-3 space-y-2.5">
+            <ProPerks />
+            <div className="flex items-center gap-3">
+              <UpgradeButton size="sm" />
+              <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>2000 le 1er mois, puis 2500 / mois</span>
+            </div>
           </div>
         )}
       </div>
