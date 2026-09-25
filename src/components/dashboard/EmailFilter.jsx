@@ -5,7 +5,8 @@ import { Sparkles, Inbox, X, Loader2, FileText } from 'lucide-react'
 import { apiFetch } from '../../utils/api'
 
 export default function EmailFilter() {
-  const { filteredEmails, filterPriority, filterTime, setFilterPriority, setFilterTime, markEmailRead, emailError, gmailReconnect, refreshEmails, updateEmailPriority } = useDashboard()
+  const { filteredEmails, filterPriority, filterTime, setFilterPriority, setFilterTime, markEmailRead, emailError, gmailReconnect, refreshEmails, updateEmailPriority, gmailAccounts } = useDashboard()
+  const [accountScope, setAccountScope] = useState('all')
   const [ruleLoading, setRuleLoading] = useState(null)
   const [keywordInput, setKeywordInput] = useState('')
   const [keywordPriority, setKeywordPriority] = useState('high')
@@ -83,11 +84,17 @@ export default function EmailFilter() {
     } catch (err) { console.error(err) }
   }
 
+  const accountQs = (email) => email.accountKey ? `?account_key=${encodeURIComponent(email.accountKey)}` : ''
+
+  const visibleEmails = accountScope === 'all'
+    ? filteredEmails
+    : filteredEmails.filter(e => e.accountKey === accountScope)
+
   const openEmailFull = async (email) => {
     setEmailModal(email); setEmailBody(''); setEmailBodyLoading(true)
     if (email.unread) setPendingReadId(email.id)
     try {
-      const data = await apiFetch(`/api/services/gmail/emails/${email.id}`)
+      const data = await apiFetch(`/api/services/gmail/emails/${email.id}${accountQs(email)}`)
       setEmailBody(data.body || email.preview || '')
     } catch { setEmailBody(email.preview || '') } finally { setEmailBodyLoading(false) }
   }
@@ -97,14 +104,13 @@ export default function EmailFilter() {
     setSummaryModal(email); setSummaryText(''); setSummaryFullBody(''); setSummaryLoading(true); setShowFullEmail(false)
     if (email.unread) setPendingReadId(email.id)
     try {
-      const data = await apiFetch(`/api/services/gmail/emails/${email.id}/summary`)
+      const data = await apiFetch(`/api/services/gmail/emails/${email.id}/summary${accountQs(email)}`)
       setSummaryText(data.summary || 'Résumé non disponible.')
       setSummaryFullBody(data.body || '')
     } catch { setSummaryText('Erreur lors du chargement du résumé.') } finally { setSummaryLoading(false) }
   }
 
-  const stripHtml = (html) => {
-    if (!html) return ''
+  const stripHtml = (html) => {    if (!html) return ''
     const el = document.createElement('div')
     el.innerHTML = html.replace(/<br\s*\/?>/gi, '\n').replace(/<\/p>/gi, '\n\n').replace(/<\/div>/gi, '\n').replace(/<\/tr>/gi, '\n').replace(/<\/li>/gi, '\n')
     let text = el.textContent || el.innerText || ''
@@ -174,7 +180,7 @@ export default function EmailFilter() {
                   try {
                     const data = await apiFetch('/api/services/gmail/reply', {
                       method: 'POST',
-                      body: JSON.stringify({ to: replyModal.senderEmail, subject: replyModal.subject, body: replyBody.trim() }),
+                      body: JSON.stringify({ to: replyModal.senderEmail, subject: replyModal.subject, body: replyBody.trim(), account_key: replyModal.accountKey || null }),
                     })
                     setSendResult(data.success ? { success: true } : { success: false, error: data.error })
                   } catch (err) { setSendResult({ success: false, error: err.message }) } finally { setSending(false) }
@@ -252,6 +258,17 @@ export default function EmailFilter() {
             <option value="week">Cette semaine</option>
             <option value="all">Tout</option>
           </select>
+          {gmailAccounts.length > 1 && (
+            <select value={accountScope} onChange={(e) => setAccountScope(e.target.value)}
+              aria-label="Filtrer par compte Gmail"
+              className="px-2 py-2 rounded-lg text-xs focus:outline-none cursor-pointer transition-all duration-200 max-w-[160px] truncate"
+              style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+              <option value="all">Tous les comptes</option>
+              {gmailAccounts.map(a => (
+                <option key={a.account_key} value={a.account_key}>{a.email}</option>
+              ))}
+            </select>
+          )}
           <button onClick={() => setShowKeywordForm(!showKeywordForm)} className="px-2 py-2 rounded-lg text-xs transition-colors duration-150 " style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', color: '#2563EB' }}>
             Regles
           </button>
@@ -308,12 +325,12 @@ export default function EmailFilter() {
         </div>
       )}
       <div>
-        {filteredEmails.length === 0 ? (
+        {visibleEmails.length === 0 ? (
           <div className="p-8 text-center">
             <Inbox className="mx-auto mb-2" size={32} style={{ color: 'var(--color-muted)' }} />
             <p className="text-sm" style={{ color: 'var(--color-muted)' }}>Aucun email ne correspond aux filtres</p>
           </div>
-        ) : filteredEmails.map((email) => (
+        ) : visibleEmails.map((email) => (
           <div key={email.id} className="p-4 cursor-pointer transition-colors duration-150 group hover:translate-x-1" style={{ borderBottom: '1px solid var(--color-border)', background: email.unread ? 'rgba(37,99,235,0.05)' : 'transparent' }}
             onClick={() => openEmailFull(email)}>
             <div className="flex items-start gap-3">
@@ -322,6 +339,9 @@ export default function EmailFilter() {
                 <div className="flex items-center gap-2 mb-0.5">
                   {email.unread && <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#2563EB' }} />}
                   <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ background: email.priority === 'high' ? 'rgba(30,64,175,0.1)' : 'rgba(16,185,129,0.1)', color: email.priority === 'high' ? '#1E40AF' : '#10B981' }}>{pLabels[email.priority] || email.priority}</span>
+                  {gmailAccounts.length > 1 && email.accountEmail && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded truncate max-w-[140px]" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}>{email.accountEmail}</span>
+                  )}
                 </div>
                 <p className={`text-sm ${email.unread ? 'font-medium' : ''}`} style={{ color: email.unread ? 'var(--color-text)' : 'var(--color-muted)' }}>{email.subject}</p>
                 <p className="text-xs truncate mt-0.5" style={{ color: 'var(--color-muted)' }}>{email.preview}</p>

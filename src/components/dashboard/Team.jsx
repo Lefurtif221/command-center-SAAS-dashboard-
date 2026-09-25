@@ -6,7 +6,7 @@ import { Users, Plus, Mail, Copy, Trash2, ShieldCheck, UserPlus, X, Check, Link2
 const roleLabels = { owner: 'Proprietaire', admin: 'Admin', member: 'Membre' }
 
 export default function Team() {
-  const { teams, fetchTeams, fetchTasks } = useDashboard()
+  const { teams, fetchTeams, fetchTasks, plan, planLimits } = useDashboard()
   const [selectedId, setSelectedId] = useState(null)
   const [detail, setDetail] = useState(null)
   const [newTeamName, setNewTeamName] = useState('')
@@ -113,6 +113,9 @@ export default function Team() {
   const selected = teams.find(t => t.id === selectedId)
   const isOwner = detail?.role === 'owner' || selected?.role === 'owner'
   const canManage = ['owner', 'admin'].includes(detail?.role)
+  const atTeamLimit = plan !== 'pro' && !!planLimits && teams.length >= planLimits.teams
+  const atMemberLimit = plan !== 'pro' && !!planLimits && !!detail &&
+    (detail.members.length + (detail.invitations?.length || 0)) >= planLimits.teamMembers
 
   const inputStyle = { background: 'var(--color-bg)', border: '1px solid var(--color-border)' }
 
@@ -121,8 +124,14 @@ export default function Team() {
       <div className="flex items-center gap-2 px-4 pt-4 pb-2">
         <Users size={14} style={{ color: '#2563EB' }} />
         <h3 className="text-sm font-display font-medium">Equipe</h3>
+        <span className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={plan === 'pro'
+          ? { background: 'rgba(16,185,129,0.12)', color: '#10B981', border: '1px solid rgba(16,185,129,0.25)' }
+          : { background: 'var(--color-bg)', color: 'var(--color-muted)', border: '1px solid var(--color-border)' }}>
+          {plan === 'pro' ? 'Pro' : 'Gratuit'}
+        </span>
         <span className="text-[11px] ml-auto" style={{ color: 'var(--color-muted)' }}>
-          {teams.length} {teams.length > 1 ? 'equipes' : 'equipe'}
+          {teams.length}{planLimits ? `/${planLimits.teams}` : ''} {teams.length > 1 ? 'equipes' : 'equipe'}
+          {plan !== 'pro' && planLimits ? ` · max ${planLimits.teamMembers} membres` : ''}
         </span>
       </div>
 
@@ -133,12 +142,17 @@ export default function Team() {
             onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
             className="flex-1 px-3 py-2.5 rounded-lg text-sm focus:outline-none transition-colors duration-150"
             style={inputStyle} />
-          <button onClick={handleCreate} disabled={loading || !newTeamName.trim()}
+          <button onClick={handleCreate} disabled={loading || !newTeamName.trim() || atTeamLimit}
             className="px-3 py-2.5 text-sm font-medium rounded-lg transition-colors duration-150 disabled:opacity-50 flex items-center gap-1.5"
             style={{ background: '#2563EB', color: '#FFF' }}>
             <Plus size={15} /> Creer
           </button>
         </div>
+        {atTeamLimit && (
+          <p className="mt-2 text-[10px] leading-relaxed" style={{ color: '#F59E0B' }}>
+            Quota gratuit atteint ({planLimits.teams} equipe). Passe en Pro pour en creer davantage.
+          </p>
+        )}
       </div>
 
       <div className="px-4 pb-4 space-y-4">
@@ -218,19 +232,27 @@ export default function Team() {
                       <input type="email" placeholder="email@exemple.com" value={inviteEmail}
                         onChange={(e) => setInviteEmail(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleInvite()}
-                        className="flex-1 px-3 py-2 rounded-lg text-xs focus:outline-none"
+                        disabled={atMemberLimit}
+                        className="flex-1 px-3 py-2 rounded-lg text-xs focus:outline-none disabled:opacity-50"
                         style={inputStyle} />
                       <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)}
-                        className="px-2 py-2 rounded-lg text-xs cursor-pointer" style={inputStyle}>
+                        disabled={atMemberLimit}
+                        className="px-2 py-2 rounded-lg text-xs cursor-pointer disabled:opacity-50" style={inputStyle}>
                         <option value="member">Membre</option>
                         <option value="admin">Admin</option>
                       </select>
-                      <button onClick={handleInvite} disabled={loading || !inviteEmail}
+                      <button onClick={handleInvite} disabled={loading || !inviteEmail || atMemberLimit}
                         className="px-3 py-2 text-xs font-medium rounded-lg disabled:opacity-50 flex items-center gap-1.5"
                         style={{ background: '#2563EB', color: '#FFF' }}>
                         <Mail size={13} /> Inviter
                       </button>
                     </div>
+
+                    {atMemberLimit && (
+                      <p className="mt-2 text-[10px] leading-relaxed" style={{ color: '#F59E0B' }}>
+                        Quota gratuit atteint ({planLimits.teamMembers} membres par equipe). Passe en Pro pour inviter plus de monde.
+                      </p>
+                    )}
 
                     {lastInviteUrl && (
                       <div className="mt-2 flex items-center gap-2 p-2 rounded-lg" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>

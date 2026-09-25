@@ -34,7 +34,7 @@ export default function OAuthCallback() {
     })
       .then(data => {
         if (data.success) {
-          setStatus(`${service} connecté avec succès !`)
+          setStatus(data.account ? `${service} connecté : ${data.account}` : `${service} connecté avec succès !`)
         } else {
           setStatus(`Erreur: ${data.error || 'Inconnue'}`)
         }

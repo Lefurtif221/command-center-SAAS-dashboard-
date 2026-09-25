@@ -3,7 +3,7 @@ import { useDashboard } from '../../hooks/useDashboard'
 import { apiFetch } from '../../utils/api'
 
 export default function ConnectedServices() {
-  const { disconnectService } = useDashboard()
+  const { disconnectService, gmailAccounts, fetchConnectedServices } = useDashboard()
   const [connectedList, setConnectedList] = useState([])
   const [loading, setLoading] = useState(null)
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false)
@@ -91,16 +91,21 @@ export default function ConnectedServices() {
     }, 2000)
   }
 
-  const handleDisconnect = async (serviceName) => {
-    if (!window.confirm(`Deconnecter ${serviceName} ?`)) return
+  const handleDisconnect = async (serviceName, accountKey) => {
+    const suffix = accountKey && accountKey !== 'default' ? ` (${accountKey})` : ''
+    if (!window.confirm(`Deconnecter ${serviceName}${suffix} ?`)) return
     try {
       if (serviceName === 'whatsapp') {
         await apiFetch('/api/whatsapp/disconnect', { method: 'POST' })
-      } else {
-        await apiFetch(`/api/services/${serviceName}`, { method: 'DELETE' })
+        disconnectService(serviceName)
+        await fetchServices()
+        await fetchConnectedServices()
+        return
       }
-      setConnectedList(prev => prev.filter(s => s !== serviceName))
-      disconnectService(serviceName)
+      const qs = accountKey ? `?account_key=${encodeURIComponent(accountKey)}` : ''
+      await apiFetch(`/api/services/${serviceName}${qs}`, { method: 'DELETE' })
+      await fetchServices()
+      await fetchConnectedServices()
     } catch (err) { console.error('Disconnect error:', err) }
   }
 
@@ -127,16 +132,40 @@ export default function ConnectedServices() {
                   <p className="text-[11px] truncate" style={{ color: 'var(--color-muted)' }}>{service.desc}</p>
                 </div>
               </div>
-              <div className="flex gap-2">
-                {isConnected ? (
-                  <button onClick={() => handleDisconnect(service.id)} className="flex-1 px-2 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150"
-                    style={{ color: '#10B981', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)' }}>Deconnecter</button>
-                ) : (
+              <div className="space-y-2">
+                {!isConnected ? (
                   <button onClick={() => handleConnect(service.id)} disabled={loading === service.id}
-                    className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150 disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150 disabled:opacity-50"
                     style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', color: '#2563EB' }}>
                     {loading === service.id ? '...' : 'Connecter'}
                   </button>
+                ) : service.id === 'gmail' ? (
+                  <>
+                    {gmailAccounts.length === 0 && (
+                      <div className="flex items-center justify-between px-2.5 py-2 rounded-lg" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                        <span className="text-[11px]" style={{ color: 'var(--color-muted)' }}>Compte connecte</span>
+                        <button onClick={() => handleDisconnect('gmail')} className="text-[11px] px-2 py-1 rounded transition-colors"
+                          style={{ color: '#EF4444', border: '1px solid rgba(239,68,68,0.25)' }}>Retirer</button>
+                      </div>
+                    )}
+                    {gmailAccounts.map(acc => (
+                      <div key={acc.account_key} className="flex items-center gap-2 px-2.5 py-2 rounded-lg" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                        <span className="flex-1 min-w-0 text-[11px] truncate">{acc.email}</span>
+                        <button onClick={() => handleDisconnect('gmail', acc.account_key)}
+                          className="shrink-0 text-[11px] px-2 py-1 rounded transition-colors"
+                          style={{ color: '#EF4444', border: '1px solid rgba(239,68,68,0.25)' }}>Retirer</button>
+                      </div>
+                    ))}
+                    <button onClick={() => handleConnect('gmail')} disabled={loading === 'gmail'}
+                      className="w-full px-2 py-2 rounded-lg text-[11px] font-medium transition-colors duration-150 disabled:opacity-50"
+                      style={{ color: '#2563EB', border: '1px dashed rgba(37,99,235,0.35)' }}>
+                      {loading === 'gmail' ? '...' : '+ Ajouter un compte'}
+                    </button>
+                  </>
+                ) : (
+                  <button onClick={() => handleDisconnect('whatsapp')}
+                    className="w-full px-2 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150"
+                    style={{ color: '#10B981', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)' }}>Deconnecter</button>
                 )}
               </div>
             </div>

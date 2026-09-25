@@ -39,7 +39,12 @@ export async function apiFetch(path, options = {}) {
     try { data = JSON.parse(text) } catch { data = null }
   }
 
-  if (!res.ok) throw new Error((data && data.error) || `Erreur serveur (${res.status})`)
+  if (!res.ok) {
+    const e = new Error((data && data.error) || `Erreur serveur (${res.status})`)
+    e.status = res.status
+    e.apiCode = data && data.code
+    throw e
+  }
   if (data === null) throw new Error('Reponse invalide du serveur.')
   return data
 }
