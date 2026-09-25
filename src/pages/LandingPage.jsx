@@ -203,9 +203,9 @@ export default function LandingPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((f, i) => (
-            <div key={i} className="glass rounded-2xl p-6 transition-all duration-300 card-glow gradient-border group">
-              <div className="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center mb-4 text-accent group-hover:bg-accent/15 transition-colors">
-                 <f.icon size={20} />
+            <div key={i} className="glass rounded-xl p-6 transition-colors duration-200 group">
+              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4 text-accent">
+                 <f.icon size={18} />
               </div>
               <h3 className="text-lg font-display font-medium mb-2">{f.title}</h3>
               <p className="text-sm text-muted leading-relaxed">{f.desc}</p>

@@ -1,30 +1,27 @@
 import { useDashboard } from '../../hooks/useDashboard'
-import { Sparkles, Mail, CheckSquare, Calendar, MessageSquare } from 'lucide-react'
+import { Mail, CheckSquare, Calendar, MessageSquare } from 'lucide-react'
 
 export default function QuickActions() {
   const { setActiveSection } = useDashboard()
 
   const actions = [
-    { id: 'emails', label: 'Emails', icon: Mail, section: 'emails', color: '#2563EB' },
-    { id: 'tasks', label: 'Taches', icon: CheckSquare, section: 'tasks', color: '#1E40AF' },
-    { id: 'calendar', label: 'Calendrier', icon: Calendar, section: 'calendar', color: '#E5E5E5' },
-    { id: 'messages', label: 'Messages', icon: MessageSquare, section: 'messages', color: '#A3A3A3' },
+    { id: 'emails', label: 'Emails', icon: Mail, section: 'emails' },
+    { id: 'tasks', label: 'Taches', icon: CheckSquare, section: 'tasks' },
+    { id: 'calendar', label: 'Calendrier', icon: Calendar, section: 'calendar' },
+    { id: 'messages', label: 'Messages', icon: MessageSquare, section: 'messages' },
   ]
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-      <div className="flex items-center gap-2 p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
-        <Sparkles size={14} style={{ color: '#2563EB' }} />
+    <div className="rounded-xl overflow-hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+      <div className="px-4 pt-4 pb-2">
         <h3 className="text-sm font-display font-medium">Actions rapides</h3>
       </div>
-      <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="px-4 pb-4 grid grid-cols-2 md:grid-cols-4 gap-2">
         {actions.map((a) => (
           <button key={a.id} onClick={() => setActiveSection(a.section)}
-            className="group relative flex flex-col items-center gap-2.5 p-5 md:p-6 rounded-xl transition-all duration-300 hover:scale-[1.03] hover:shadow-lg"
+            className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-colors duration-150 text-left"
             style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110" style={{ background: `${a.color}15` }}>
-              <a.icon size={18} style={{ color: a.color }} className="transition-transform duration-300 group-hover:scale-110" />
-            </div>
+            <a.icon size={15} style={{ color: 'var(--color-muted)' }} />
             <span className="text-xs font-medium">{a.label}</span>
           </button>
         ))}

@@ -67,7 +67,7 @@ export default function Tasks() {
     <div className="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group hover:translate-x-1"
       style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderLeft: `3px solid ${priorityColors[task.priority] || '#9CA3AF'}` }}>
       <button onClick={() => toggleTask(task.id, task.completed)}
-        className="w-6 h-6 rounded-lg border flex-shrink-0 flex items-center justify-center transition-all duration-200 hover:scale-110"
+        className="w-6 h-6 rounded-md border flex-shrink-0 flex items-center justify-center transition-colors duration-150"
         style={{ borderColor: task.completed ? '#2563EB' : 'var(--color-border)', background: task.completed ? '#2563EB' : 'transparent' }}>
         {task.completed && <span className="text-white text-[10px]">✓</span>}
       </button>
@@ -75,41 +75,39 @@ export default function Tasks() {
         <p className={`text-sm ${task.completed ? 'line-through' : ''}`} style={{ color: task.completed ? 'var(--color-muted)' : 'var(--color-text)' }}>{task.title}</p>
         {task.due_date && <p className="text-[10px] mt-0.5 font-mono" style={{ color: 'var(--color-muted)' }}>{formatDate(task.due_date)}</p>}
       </div>
-      <button onClick={() => deleteTask(task.id)} className="opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110" style={{ color: 'var(--color-muted)' }}>
+      <button onClick={() => deleteTask(task.id)} className="opacity-0 group-hover:opacity-100 transition-opacity duration-150" style={{ color: 'var(--color-muted)' }}>
         <Trash2 size={14} />
       </button>
     </div>
   )
 
   return (
-    <div className="rounded-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-      <div className="flex items-center gap-2 p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
-        <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
-          <CheckSquare size={14} style={{ color: '#2563EB' }} />
-        </div>
+    <div className="rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+      <div className="flex items-center gap-2 px-4 pt-4 pb-2">
+        <CheckSquare size={14} style={{ color: '#2563EB' }} />
         <h3 className="text-sm font-display font-medium">Taches</h3>
-        <span className="text-[10px] ml-auto font-mono" style={{ color: 'var(--color-muted)' }}>{tasks.filter(t => !t.completed).length} en cours</span>
+        <span className="text-[11px] ml-auto" style={{ color: 'var(--color-muted)' }}>{tasks.filter(t => !t.completed).length} en cours</span>
       </div>
 
-      <div className="p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
+      <div className="px-4 pb-4 pt-2">
         <div className="flex flex-col sm:flex-row gap-2">
           <input type="text" placeholder="Nouvelle tache..." value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-            className="flex-1 px-3 py-2.5 rounded-xl text-sm focus:outline-none transition-all duration-200"
+            className="flex-1 px-3 py-2.5 rounded-lg text-sm focus:outline-none transition-colors duration-150"
             style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
           <div className="flex gap-2">
             <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)}
-              className="flex-1 sm:flex-none px-2 py-2.5 rounded-xl text-xs font-mono focus:outline-none transition-all duration-200"
+              className="flex-1 sm:flex-none px-2 py-2.5 rounded-lg text-xs focus:outline-none transition-colors duration-150"
               style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
             <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)}
-              className="px-2 py-2.5 rounded-xl text-xs focus:outline-none cursor-pointer transition-all duration-200"
+              className="px-2 py-2.5 rounded-lg text-xs focus:outline-none cursor-pointer transition-colors duration-150"
               style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
               <option value="high">Urgent</option>
               <option value="medium">Moyen</option>
               <option value="low">Faible</option>
             </select>
             <button onClick={handleAdd} disabled={adding || !newTitle.trim()}
-              className="px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 disabled:opacity-50 hover:scale-105"
+              className="px-3 py-2.5 text-sm font-medium rounded-lg transition-colors duration-150 disabled:opacity-50"
               style={{ background: '#2563EB', color: '#FFF' }}>
               {adding ? '...' : <Plus size={16} />}
             </button>
@@ -126,7 +124,7 @@ export default function Tasks() {
               <div className="rounded-xl p-3" style={{ background: 'rgba(37,99,235,0.05)', border: '1px solid rgba(37,99,235,0.1)' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <AlertTriangle size={14} style={{ color: '#F59E0B' }} />
-                  <p className="text-[10px] font-mono font-medium uppercase tracking-wider" style={{ color: '#F59E0B' }}>Dernier rappel ({lastWarningTasks.length})</p>
+                  <p className="text-[11px] font-medium" style={{ color: '#F59E0B' }}>Dernier rappel ({lastWarningTasks.length})</p>
                 </div>
                 <p className="text-[10px] mb-2 font-mono" style={{ color: 'var(--color-muted)' }}>Supprimees demain automatiquement.</p>
                 <div className="space-y-1">{lastWarningTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
@@ -134,31 +132,31 @@ export default function Tasks() {
             )}
             {overdueTasks.length > 0 && (
               <div>
-                <p className="text-[10px] font-mono font-medium uppercase tracking-wider mb-2" style={{ color: '#F59E0B' }}>En retard ({overdueTasks.length})</p>
+                <p className="text-[11px] font-medium mb-2" style={{ color: '#F59E0B' }}>En retard ({overdueTasks.length})</p>
                 <div className="space-y-1">{overdueTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}
             {todayTasks.length > 0 && (
               <div>
-                <p className="text-[10px] font-mono font-medium uppercase tracking-wider mb-2" style={{ color: '#2563EB' }}>Aujourd'hui</p>
+                <p className="text-[11px] font-medium mb-2" style={{ color: '#2563EB' }}>Aujourd'hui</p>
                 <div className="space-y-1">{todayTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}
             {upcomingTasks.length > 0 && (
               <div>
-                <p className="text-[10px] font-mono font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--color-muted)' }}>A venir</p>
+                <p className="text-[11px] font-medium mb-2" style={{ color: 'var(--color-muted)' }}>A venir</p>
                 <div className="space-y-1">{upcomingTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}
             {noDateTasks.length > 0 && (
               <div>
-                <p className="text-[10px] font-mono font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--color-muted)' }}>Sans date</p>
+                <p className="text-[11px] font-medium mb-2" style={{ color: 'var(--color-muted)' }}>Sans date</p>
                 <div className="space-y-1">{noDateTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}
             {doneTasks.length > 0 && (
               <div>
-                <p className="text-[10px] font-mono font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--color-muted)' }}>Terminees ({doneTasks.length})</p>
+                <p className="text-[11px] font-medium mb-2" style={{ color: 'var(--color-muted)' }}>Terminees ({doneTasks.length})</p>
                 <div className="space-y-1">{doneTasks.slice(0, 3).map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}

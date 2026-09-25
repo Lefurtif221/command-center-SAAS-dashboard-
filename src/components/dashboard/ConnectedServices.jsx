@@ -110,30 +110,30 @@ export default function ConnectedServices() {
   ]
 
   return (
-    <div className="rounded-2xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-      <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
+    <div className="rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+      <div className="px-4 pt-4 pb-2">
         <h3 className="text-sm font-display font-medium">Services connectes</h3>
       </div>
-      <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3" data-tutorial="connected-services">
+      <div className="px-4 pb-4 grid grid-cols-1 sm:grid-cols-2 gap-3" data-tutorial="connected-services">
         {allServices.map((service) => {
           const isConnected = connectedList.includes(service.id)
           return (
-            <div key={service.id} className="p-3 rounded-xl transition-all duration-200 hover:scale-[1.01]"
+            <div key={service.id} className="p-3 rounded-lg transition-colors duration-150"
               style={{ background: 'var(--color-bg)', border: `1px solid ${isConnected ? 'rgba(16,185,129,0.3)' : 'var(--color-border)'}` }}>
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-xl">{service.icon}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-display font-medium">{service.name}</p>
-                  <p className="text-[10px] font-mono truncate" style={{ color: 'var(--color-muted)' }}>{service.desc}</p>
+                  <p className="text-[11px] truncate" style={{ color: 'var(--color-muted)' }}>{service.desc}</p>
                 </div>
               </div>
               <div className="flex gap-2">
                 {isConnected ? (
-                  <button onClick={() => handleDisconnect(service.id)} className="flex-1 px-2 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 hover:scale-105"
+                  <button onClick={() => handleDisconnect(service.id)} className="flex-1 px-2 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150"
                     style={{ color: '#10B981', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)' }}>Deconnecter</button>
                 ) : (
                   <button onClick={() => handleConnect(service.id)} disabled={loading === service.id}
-                    className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 disabled:opacity-50 hover:scale-105"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150 disabled:opacity-50"
                     style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', color: '#2563EB' }}>
                     {loading === service.id ? '...' : 'Connecter'}
                   </button>
@@ -188,7 +188,7 @@ export default function ConnectedServices() {
             </div>
             <div className="flex gap-2 justify-end">
               <button onClick={() => setShowGoogleModal(false)} className="px-3 py-2 text-xs rounded-lg transition-colors" style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Annuler</button>
-              <button onClick={proceedGoogleConnect} className="px-3 py-2 text-xs font-medium rounded-lg hover:scale-105 transition-all" style={{ background: '#2563EB', color: '#FFF' }}>
+              <button onClick={proceedGoogleConnect} className="px-3 py-2 text-xs font-medium rounded-lg  transition-all" style={{ background: '#2563EB', color: '#FFF' }}>
                 Continuer
               </button>
             </div>
@@ -239,7 +239,7 @@ export default function ConnectedServices() {
             <div className="flex justify-end gap-2 pt-4">
               {whatsappStatus && whatsappStatus !== 'Scan le QR code avec ton telephone' && whatsappStatus !== 'Connexion en cours...' && whatsappStatus !== 'Generation du QR code...' && (
                 <button onClick={() => { setWhatsAppQR(null); setWhatsAppStatus(''); handleConnect('whatsapp') }}
-                  className="px-3 py-2 text-xs font-medium rounded-lg transition-all hover:scale-105"
+                  className="px-3 py-2 text-xs font-medium rounded-lg transition-all "
                   style={{ background: '#2563EB', color: '#FFF' }}>
                   Reessayer
                 </button>

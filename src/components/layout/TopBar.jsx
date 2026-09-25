@@ -48,7 +48,7 @@ export default function TopBar() {
   return (
     <header className="sticky top-0 z-30 h-14 md:h-16 flex items-center justify-between px-3 md:px-6 border-b backdrop-blur-xl" style={{ background: 'var(--color-surface-solid)', borderColor: 'var(--color-border)' }}>
       <div className="relative flex-1 md:w-80 ml-10 md:ml-0">
-        <div className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 focus-within:ring-1 focus-within:ring-red-500/30" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl transition-colors duration-150 focus-within:ring-1 focus-within:ring-red-500/30" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
           <Search size={14} className="shrink-0" style={{ color: 'var(--color-muted)' }} />
           <input ref={inputRef} type="text" placeholder="Rechercher..." value={query}
             onChange={(e) => { setQuery(e.target.value); setOpen(true) }}
@@ -84,21 +84,21 @@ export default function TopBar() {
       <div className="flex items-center gap-1.5 md:gap-2">
         <button onClick={toggleTheme}
           data-tutorial="theme-toggle"
-          className="p-2 md:p-2.5 rounded-xl transition-all duration-200 hover:scale-105"
+          className="p-2 md:p-2.5 rounded-xl transition-colors duration-150 "
           style={{ color: 'var(--color-muted)' }}
           aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}>
           {isDark ? <Sun size={16} /> : <Moon size={16} />}
         </button>
-        <button className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 hover:scale-105"
+        <button className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-colors duration-150 "
           style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', color: '#2563EB' }}>
           <Sparkles size={12} />Filtre intelligent
         </button>
-        <button className="relative p-2 md:p-2.5 rounded-xl transition-all duration-200 hover:scale-105"
+        <button className="relative p-2 md:p-2.5 rounded-lg transition-colors duration-150"
           style={{ color: 'var(--color-muted)' }}
           aria-label={`Notifications${stats.unreadEmails > 0 ? ` (${stats.unreadEmails} non lus)` : ''}`}>
           <Bell size={16} />
           {stats.unreadEmails > 0 && (
-            <span className="absolute top-0.5 right-0.5 md:top-1 md:right-1 w-4 h-4 text-[8px] font-mono font-bold text-white rounded-full flex items-center justify-center animate-glow-pulse"
+            <span className="absolute top-0.5 right-0.5 md:top-1 md:right-1 w-4 h-4 text-[8px] font-bold text-white rounded-full flex items-center justify-center"
               style={{ background: '#2563EB' }}>{stats.unreadEmails}</span>
           )}
         </button>

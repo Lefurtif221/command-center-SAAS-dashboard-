@@ -249,7 +249,7 @@ export default function OnboardingTutorial() {
         <div className="rounded-2xl p-5 shadow-2xl animate-scale-in" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center justify-between mb-3">
             <span className="text-[10px] font-mono" style={{ color: '#2563EB' }}>{step + 1} / {steps.length}</span>
-            <button onClick={handleClose} className="p-1 rounded-lg transition-colors hover:scale-110" style={{ color: 'var(--color-muted)' }}>
+            <button onClick={handleClose} className="p-1 rounded-lg transition-colors " style={{ color: 'var(--color-muted)' }}>
               <X size={14} />
             </button>
           </div>
@@ -266,19 +266,19 @@ export default function OnboardingTutorial() {
             </div>
             <div className="flex gap-2">
               {step > 0 && (
-                <button onClick={handlePrev} className="px-3 py-2 text-xs rounded-lg transition-colors flex items-center gap-1 hover:scale-105"
+                <button onClick={handlePrev} className="px-3 py-2 text-xs rounded-lg transition-colors flex items-center gap-1 "
                   style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
                   <ChevronLeft size={12} /> Retour
                 </button>
               )}
-              <button onClick={handleNext} className="px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 flex items-center gap-1 hover:scale-105"
+              <button onClick={handleNext} className="px-4 py-2 text-xs font-medium rounded-lg transition-colors duration-150 flex items-center gap-1 "
                 style={{ background: '#2563EB', color: '#FFF' }}>
                 {step === steps.length - 1 ? 'Commencer' : 'Suivant'} <ChevronRight size={12} />
               </button>
             </div>
           </div>
 
-          <button onClick={handleClose} className="w-full mt-3 text-[10px] text-center transition-colors py-1 hover:scale-105"
+          <button onClick={handleClose} className="w-full mt-3 text-[10px] text-center transition-colors py-1 "
             style={{ color: 'var(--color-muted)' }}>
             Passer le tutoriel
           </button>

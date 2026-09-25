@@ -102,12 +102,10 @@ export default function Calendar() {
   }
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+    <div className="rounded-xl overflow-hidden" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
-            <CalendarIcon size={14} style={{ color: '#2563EB' }} />
-          </div>
+          <CalendarIcon size={14} style={{ color: '#2563EB' }} />
           <h3 className="text-sm font-display font-medium">Calendrier</h3>
         </div>
         <div className="flex items-center gap-1 sm:gap-2">
@@ -155,7 +153,7 @@ export default function Calendar() {
                       className="border-b border-r h-10 relative transition-colors"
                       style={{ borderColor: 'var(--color-border)', background: isToday ? 'rgba(37,99,235,0.05)' : 'transparent', cursor: event ? 'default' : 'pointer' }}>
                       {event && (
-                        <div className="absolute inset-0.5 rounded-lg flex items-center justify-between px-1.5 transition-all duration-200 hover:scale-[1.02]"
+                        <div className="absolute inset-0.5 rounded-lg flex items-center justify-between px-1.5 transition-colors duration-150 "
                           style={{ background: c?.bg || '#2563EB', color: c?.text || '#FFF' }}>
                           <span className={`text-[10px] font-medium ${expandedEvents[event.id] ? 'whitespace-normal break-words' : 'truncate'}`}
                             onClick={(e) => toggleExpand(event.id, e)}
@@ -251,13 +249,13 @@ export default function Calendar() {
                 <div className="flex gap-2">
                   {Object.entries(colorLabels).map(([key, label]) => (
                     <button key={key} onClick={() => setNewEvent({ ...newEvent, color: key })}
-                      className="w-7 h-7 rounded-lg transition-all duration-200 hover:scale-110"
+                      className="w-7 h-7 rounded-lg transition-colors duration-150 "
                       style={{ background: colors[key].bg, opacity: newEvent.color === key ? 1 : 0.4, outline: newEvent.color === key ? '2px solid var(--color-text)' : 'none', outlineOffset: '2px' }} title={label} />
                   ))}
                 </div>
               </div>
               <div className="flex gap-2 pt-2">
-                <button onClick={handleAddEvent} disabled={!newEvent.title.trim()} className="flex-1 px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 disabled:opacity-50" style={{ background: '#2563EB', color: '#FFF' }}>Ajouter</button>
+                <button onClick={handleAddEvent} disabled={!newEvent.title.trim()} className="flex-1 px-3 py-2.5 text-sm font-medium rounded-xl transition-colors duration-150 disabled:opacity-50" style={{ background: '#2563EB', color: '#FFF' }}>Ajouter</button>
                 <button onClick={() => setModalOpen(false)} className="px-3 py-2.5 text-sm rounded-xl transition-all duration-200" style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Annuler</button>
               </div>
             </div>

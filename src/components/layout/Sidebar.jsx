@@ -46,13 +46,13 @@ export default function Sidebar({ onToggle }) {
           </div>
         )}
         <button onClick={() => { setCollapsed(!collapsed); onToggle && onToggle(!collapsed) }}
-          className="p-1.5 rounded-lg transition-all duration-200 hidden md:block"
+          className="p-1.5 rounded-lg transition-colors duration-150 hidden md:block"
           style={{ color: 'var(--color-muted)' }}
           aria-label={collapsed ? 'Developper la sidebar' : 'Reduire la sidebar'}>
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
         <button onClick={() => setMobileOpen(false)}
-          className="p-1.5 rounded-lg transition-all duration-200 md:hidden"
+          className="p-1.5 rounded-lg transition-colors duration-150 md:hidden"
           style={{ color: 'var(--color-muted)' }}
           aria-label="Fermer le menu">
           <X size={16} />
@@ -98,7 +98,7 @@ export default function Sidebar({ onToggle }) {
           {!collapsed && <span className="text-sm font-medium">Settings</span>}
         </button>
         <button onClick={logout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-red-500/10"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors duration-150 hover:bg-red-500/10"
           style={{ color: 'var(--color-muted)' }}>
           <LogOut size={18} className="shrink-0" />
           {!collapsed && <span className="text-sm font-medium">Deconnexion</span>}
@@ -124,12 +124,12 @@ export default function Sidebar({ onToggle }) {
   return (
     <>
       <button onClick={() => setMobileOpen(true)}
-        className="fixed top-3 left-3 z-50 p-2.5 rounded-xl transition-all duration-200 md:hidden hover:scale-105"
+        className="fixed top-3 left-3 z-50 p-2.5 rounded-xl transition-colors duration-150 md:hidden "
         style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}>
         <Menu size={20} />
       </button>
 
-      <aside className={`hidden md:flex fixed left-0 top-0 bottom-0 z-40 flex-col transition-all duration-300 ease-out ${collapsed ? 'w-16' : 'w-56'}`}
+      <aside className={`hidden md:flex fixed left-0 top-0 bottom-0 z-40 flex-col transition-colors duration-200 ease-out ${collapsed ? 'w-16' : 'w-56'}`}
         style={{ background: 'var(--color-surface-solid)', borderRight: '1px solid var(--color-border)' }}>
         {sidebarContent}
       </aside>

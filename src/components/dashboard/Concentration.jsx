@@ -164,22 +164,20 @@ export default function Concentration() {
     <div className="space-y-4 md:space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Left: Selector */}
-        <div className="rounded-2xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+        <div className="rounded-xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
-              <List size={14} style={{ color: '#2563EB' }} />
-            </div>
+            <List size={14} style={{ color: '#2563EB' }} />
             <h3 className="text-sm font-display font-medium">Selectionner une cible</h3>
           </div>
 
           <div className="space-y-2 max-h-[400px] overflow-y-auto">
-            <p className="text-[10px] uppercase tracking-wider font-medium font-mono" style={{ color: 'var(--color-muted)' }}>Taches</p>
+            <p className="text-[11px] font-medium" style={{ color: 'var(--color-muted)' }}>Taches</p>
             {tasks.filter(t => !t.completed).length === 0 && (
               <p className="text-xs py-2" style={{ color: 'var(--color-muted)' }}>Aucune tache en cours</p>
             )}
             {tasks.filter(t => !t.completed).map(task => (
               <button key={task.id} onClick={() => handleSelect('task', task.id, task.title)}
-                className="w-full text-left p-3 rounded-xl transition-all duration-200 hover:translate-x-1"
+                className="w-full text-left p-3 rounded-xl transition-colors duration-150 hover:translate-x-1"
                 style={{
                   background: 'var(--color-bg)',
                   border: selectedType === 'task' && selectedId === task.id ? '1px solid rgba(37,99,235,0.3)' : '1px solid var(--color-border)',
@@ -199,7 +197,7 @@ export default function Concentration() {
             )}
             {events.map(evt => (
               <button key={evt.id} onClick={() => handleSelect('event', evt.id, evt.title)}
-                className="w-full text-left p-3 rounded-xl transition-all duration-200 hover:translate-x-1"
+                className="w-full text-left p-3 rounded-xl transition-colors duration-150 hover:translate-x-1"
                 style={{
                   background: 'var(--color-bg)',
                   border: selectedType === 'event' && selectedId === evt.id ? '1px solid rgba(37,99,235,0.3)' : '1px solid var(--color-border)',
@@ -216,16 +214,14 @@ export default function Concentration() {
         </div>
 
         {/* Center: Timer */}
-        <div className="rounded-2xl p-4 md:p-5 flex flex-col items-center justify-center" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+        <div className="rounded-xl p-4 md:p-5 flex flex-col items-center justify-center" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center justify-between w-full mb-6">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
-                <Timer size={14} style={{ color: '#2563EB' }} />
-              </div>
+              <Timer size={14} style={{ color: '#2563EB' }} />
               <h3 className="text-sm font-display font-medium">Pomodoro</h3>
             </div>
             <button onClick={() => setShowSettings(!showSettings)}
-              className="p-2 rounded-lg transition-all duration-200 hover:scale-110"
+              className="p-2 rounded-lg transition-colors duration-150 "
               style={{ color: showSettings ? '#2563EB' : 'var(--color-muted)' }}>
               <Settings size={16} />
             </button>
@@ -237,7 +233,7 @@ export default function Concentration() {
               <div className="flex gap-2 mb-3 flex-wrap">
                 {presets.map(p => (
                   <button key={p.label} onClick={() => setSettings({ work: p.work, break: p.break, longBreak: p.longBreak, sessions: p.sessions })}
-                    className="px-2 py-1 rounded-lg text-[10px] font-mono transition-all duration-200 hover:scale-105"
+                    className="px-2 py-1 rounded-lg text-[10px] font-mono transition-colors duration-150 "
                     style={{ background: settings.work === p.work ? 'rgba(37,99,235,0.15)' : 'var(--color-surface-solid)', color: settings.work === p.work ? '#2563EB' : 'var(--color-muted)', border: '1px solid var(--color-border)' }}>
                     {p.label}
                   </button>
@@ -293,19 +289,19 @@ export default function Concentration() {
           <div className="flex items-center gap-3 mb-4">
             {!isRunning ? (
               <button onClick={handleStart} disabled={!selectedTitle}
-                className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105"
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed "
                 style={{ background: '#2563EB', color: '#FFF' }}>
                 <Play size={16} /> Demarrer
               </button>
             ) : (
               <button onClick={handlePause}
-                className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 hover:scale-105"
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl transition-colors duration-150 "
                 style={{ background: '#F59E0B', color: '#FFF' }}>
                 <Pause size={16} /> Pause
               </button>
             )}
             <button onClick={handleReset}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm rounded-xl transition-all duration-200 hover:scale-105"
+              className="flex items-center gap-2 px-4 py-2.5 text-sm rounded-xl transition-colors duration-150 "
               style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
               <RotateCcw size={16} /> Reset
             </button>
@@ -322,22 +318,20 @@ export default function Concentration() {
         </div>
 
         {/* Right: Stats */}
-        <div className="rounded-2xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+        <div className="rounded-xl p-4 md:p-5" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
-              <BarChart3 size={14} style={{ color: '#2563EB' }} />
-            </div>
+            <BarChart3 size={14} style={{ color: '#2563EB' }} />
             <h3 className="text-sm font-display font-medium">Aujourd'hui</h3>
           </div>
 
           <div className="space-y-4">
-            <div className="rounded-xl p-4" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-              <p className="text-[10px] uppercase tracking-wider font-mono" style={{ color: 'var(--color-muted)' }}>Sessions terminees</p>
-              <p className="text-2xl font-display font-bold mt-1">{todaySessions.length}</p>
+            <div className="rounded-lg p-4" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+              <p className="text-[11px]" style={{ color: 'var(--color-muted)' }}>Sessions terminees</p>
+              <p className="text-2xl font-display font-semibold mt-1">{todaySessions.length}</p>
             </div>
-            <div className="rounded-xl p-4" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-              <p className="text-[10px] uppercase tracking-wider font-mono" style={{ color: 'var(--color-muted)' }}>Temps total</p>
-              <p className="text-2xl font-display font-bold mt-1">{Math.floor(todayTotal / 60)}min</p>
+            <div className="rounded-lg p-4" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+              <p className="text-[11px]" style={{ color: 'var(--color-muted)' }}>Temps total</p>
+              <p className="text-2xl font-display font-semibold mt-1">{Math.floor(todayTotal / 60)}min</p>
             </div>
           </div>
 
@@ -346,7 +340,7 @@ export default function Concentration() {
               <p className="text-[10px] uppercase tracking-wider font-medium mb-2 font-mono" style={{ color: 'var(--color-muted)' }}>Historique</p>
               <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
                 {[...todaySessions].reverse().map((s, i) => (
-                  <div key={i} className="flex items-center justify-between p-2 rounded-lg transition-all duration-200 hover:translate-x-1"
+                  <div key={i} className="flex items-center justify-between p-2 rounded-lg transition-colors duration-150 hover:translate-x-1"
                     style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
                     <span className="text-xs truncate">{s.title}</span>
                     <span className="text-[10px] flex-shrink-0 ml-2 font-mono" style={{ color: 'var(--color-muted)' }}>{Math.floor(s.duration / 60)}min</span>
