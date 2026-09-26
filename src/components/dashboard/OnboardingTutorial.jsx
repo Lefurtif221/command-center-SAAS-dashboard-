@@ -1,170 +1,106 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { X, ChevronRight, ChevronLeft, ArrowUpRight } from 'lucide-react'
+import { X, ChevronRight, ChevronLeft, ArrowUpRight, Sparkles, Plug, LayoutGrid, BarChart3, CreditCard, Rocket } from 'lucide-react'
 import { useDashboard } from '../../hooks/useDashboard'
 
-const SECTION_LABELS = {
-  dashboard: 'Ouvrir le dashboard',
-  emails: 'Voir mes emails',
-  messages: 'Voir mes messages',
-  calendar: 'Voir mon calendrier',
-  tasks: 'Voir mes taches',
-  stats: 'Voir mes statistiques',
-  team: 'Voir mon equipe',
-  concentration: 'Lancer un focus',
-  settings: 'Voir mon abonnement',
-}
+const WIDTH = 360
 
-// Cible d un etape -> section a ouvrir quand on clique sur le bouton
-function actionFor(target) {
-  if (!target) return null
-  const sidebar = target.match(/sidebar-([a-z]+)/)
-  if (sidebar) return sidebar[1]
-  if (target.includes('connected-services')) return 'dashboard'
-  return null
-}
-
-const mobileSteps = [
+const STEPS = [
   {
+    icon: Sparkles,
     target: null,
-    title: 'Bienvenue sur Personal Place !',
-    desc: "Ton espace productivite personnel. Sur mobile, utilise le menu en haut a gauche pour naviguer. Clique 'Suivant' pour commencer.",
-    position: 'center',
+    title: 'Bienvenue sur Personal Place',
+    desc: "Ton espace productivite : emails, messages, taches, calendrier et focus au meme endroit. 6 etapes, 30 secondes, et tu connais tout.",
   },
   {
-    target: '[data-tutorial="sidebar-emails"]',
-    title: 'Tes Emails',
-    desc: "Clique ici pour voir tous tes emails. Le filtre intelligent les classe automatiquement par priorite.",
-    position: 'right',
-    openSidebar: true,
-  },
-  {
-    target: '[data-tutorial="sidebar-messages"]',
-    title: 'Messages WhatsApp',
-    desc: "Ici tu vois tes messages WhatsApp, comme sur WhatsApp Web. Connecte d'abord ton WhatsApp dans les services.",
-    position: 'right',
-    openSidebar: true,
-  },
-  {
-    target: '[data-tutorial="sidebar-calendar"]',
-    title: 'Calendrier',
-    desc: "Tes evenements Google Calendar s'affichent ici. Sync automatique avec ton compte Google.",
-    position: 'right',
-    openSidebar: true,
-  },
-  {
-    target: '[data-tutorial="sidebar-tasks"]',
-    title: 'Taches',
-    desc: "Gere tes taches du jour. Ajoute, complete, et garde un oeil sur ta productivite.",
-    position: 'right',
-    openSidebar: true,
-  },
-  {
+    icon: Plug,
     target: '[data-tutorial="connected-services"]',
-    title: 'Connecte tes services',
-    desc: "Clique 'Connecter' sur Gmail et WhatsApp pour synchroniser tes donnees. C'est ici que tout commence !",
     position: 'bottom',
+    section: 'dashboard',
+    title: 'Connecte tes services',
+    desc: "Connecte Gmail et WhatsApp ici. Tes emails sont filtres par priorite, tes messages arrivent en direct.",
+    action: { section: 'dashboard', label: 'Voir les services connectes' },
   },
   {
-    target: '[data-tutorial="theme-toggle"]',
-    title: 'Mode Sombre / Clair',
-    desc: "Bascule entre le mode sombre et clair selon ta preference.",
-    position: 'left',
+    icon: LayoutGrid,
+    target: '[data-tutorial="sidebar-emails"]',
+    position: 'right',
+    title: 'Toute ta navigation',
+    desc: "A gauche : Emails, Messages, Calendrier, Taches, Statistiques et Equipe. Chaque module reste synchronise avec tes comptes.",
+    action: { section: 'emails', label: 'Ouvrir mes emails' },
   },
   {
+    icon: BarChart3,
     target: '[data-tutorial="sidebar-stats"]',
-    title: 'Statistiques',
-    desc: "Tes minutes de focus, tes taches du jour et ton streak. Les 7 derniers jours sont gratuits, 365 jours avec la formule Pro.",
     position: 'right',
-    openSidebar: true,
+    title: 'Tes statistiques',
+    desc: "Minutes de focus, taches du jour et streak. Les 7 derniers jours sont gratuits, 365 jours avec la formule Pro.",
+    action: { section: 'stats', label: 'Voir mes statistiques' },
   },
   {
+    icon: CreditCard,
     target: '[data-tutorial="sidebar-settings"]',
-    title: 'Ton abonnement',
-    desc: "Settings affiche ta formule : Gratuit (1 equipe, 3 membres, stats 7 jours) ou Pro a 2000 FCFA le 1er mois puis 2500 / mois. Le bouton 'Passer en Pro' ouvre le paiement.",
     position: 'right',
-    openSidebar: true,
+    title: 'Ton abonnement',
+    desc: "Settings affiche ta formule et tes quotas. Le bouton Passer en Pro ouvre le paiement : 2000 FCFA le 1er mois, puis 2500 / mois.",
+    action: { section: 'settings', label: "Voir mon abonnement" },
   },
   {
+    icon: Rocket,
     target: null,
-    title: "C'est tout !",
-    desc: "Tu es pret. Connecte d'abord Gmail dans les services, puis reviens sur Settings pour revoir ce tutoriel quand tu veux.",
-    position: 'center',
+    title: "C'est pret !",
+    desc: "Commence par connecter Gmail dans les services connectes. Tu peux revoir ce guide quand tu veux depuis Settings.",
   },
 ]
 
-const desktopSteps = [
-  {
-    target: null,
-    title: 'Bienvenue sur Personal Place !',
-    desc: "Ton espace productivite personnel. Ce guide va te montrer comment utiliser chaque fonctionnalite. Clique 'Suivant' pour commencer.",
-    position: 'center',
-  },
-  {
-    target: '[data-tutorial="sidebar-emails"]',
-    title: 'Tes Emails',
-    desc: "Clique ici pour voir tous tes emails. Le filtre intelligent les classe automatiquement par priorite.",
-    position: 'right',
-  },
-  {
-    target: '[data-tutorial="sidebar-messages"]',
-    title: 'Messages WhatsApp',
-    desc: "Ici tu vois tes messages WhatsApp, comme sur WhatsApp Web. Connecte d'abord ton WhatsApp dans les services.",
-    position: 'right',
-  },
-  {
-    target: '[data-tutorial="sidebar-calendar"]',
-    title: 'Calendrier',
-    desc: "Tes evenements Google Calendar s'affichent ici. Sync automatique avec ton compte Google.",
-    position: 'right',
-  },
-  {
-    target: '[data-tutorial="sidebar-tasks"]',
-    title: 'Taches',
-    desc: "Gere tes taches du jour. Ajoute, complete, et garde un oeil sur ta productivite.",
-    position: 'right',
-  },
-  {
-    target: '[data-tutorial="connected-services"]',
-    title: 'Connecte tes services',
-    desc: "Clique 'Connecter' sur Gmail et WhatsApp pour synchroniser tes donnees. C'est ici que tout commence !",
-    position: 'bottom',
-  },
-  {
-    target: '[data-tutorial="theme-toggle"]',
-    title: 'Mode Sombre / Clair',
-    desc: "Bascule entre le mode sombre et clair selon ta preference.",
-    position: 'left',
-  },
-  {
-    target: '[data-tutorial="sidebar-stats"]',
-    title: 'Statistiques',
-    desc: "Tes minutes de focus, tes taches du jour et ton streak. Les 7 derniers jours sont gratuits, 365 jours avec la formule Pro.",
-    position: 'right',
-  },
-  {
-    target: '[data-tutorial="sidebar-settings"]',
-    title: 'Ton abonnement',
-    desc: "Settings affiche ta formule : Gratuit (1 equipe, 3 membres, stats 7 jours) ou Pro a 2000 FCFA le 1er mois puis 2500 / mois. Le bouton 'Passer en Pro' ouvre le paiement.",
-    position: 'right',
-  },
-  {
-    target: null,
-    title: "C'est tout !",
-    desc: "Tu es pret. Connecte d'abord Gmail dans les services, puis reviens sur Settings pour revoir ce tutoriel quand tu veux.",
-    position: 'center',
-  },
-]
+const SPOT_RADIUS = 10
+
+function placeTooltip(targetRect, position) {
+  const gap = 18
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+  const w = WIDTH
+  const h = 320
+
+  const candidates = []
+  if (targetRect) {
+    if (position === 'right') {
+      candidates.push({ top: targetRect.top + targetRect.height / 2 - h / 2, left: targetRect.right + gap, arrow: 'left' })
+      candidates.push({ top: targetRect.top + targetRect.height / 2 - h / 2, left: targetRect.left - gap - w, arrow: 'right' })
+    } else if (position === 'bottom') {
+      candidates.push({ top: targetRect.bottom + gap, left: targetRect.left + targetRect.width / 2 - w / 2, arrow: 'top' })
+      candidates.push({ top: targetRect.top - gap - h, left: targetRect.left + targetRect.width / 2 - w / 2, arrow: 'bottom' })
+    } else {
+      candidates.push({ top: targetRect.top - gap - h, left: targetRect.left + targetRect.width / 2 - w / 2, arrow: 'bottom' })
+      candidates.push({ top: targetRect.bottom + gap, left: targetRect.left + targetRect.width / 2 - w / 2, arrow: 'top' })
+    }
+  }
+
+  for (const c of candidates) {
+    if (c.left >= gap && c.left + w <= vw - gap && c.top >= gap && c.top + h <= vh - gap) return c
+  }
+
+  if (targetRect && candidates.length) {
+    const c = candidates[0]
+    return {
+      top: Math.min(Math.max(gap, c.top), vh - h - gap),
+      left: Math.min(Math.max(gap, c.left), vw - w - gap),
+      arrow: c.arrow,
+    }
+  }
+
+  return { top: (vh - h) / 2, left: (vw - w) / 2, arrow: null }
+}
 
 export default function OnboardingTutorial() {
   const [show, setShow] = useState(false)
   const [step, setStep] = useState(0)
   const [targetRect, setTargetRect] = useState(null)
   const [isMobile, setIsMobile] = useState(false)
-  const tooltipRef = useRef(null)
   const { setActiveSection } = useDashboard()
+  const cardRef = useRef(null)
 
-  const steps = isMobile ? mobileSteps : desktopSteps
+  const current = STEPS[step]
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -174,13 +110,12 @@ export default function OnboardingTutorial() {
   }, [])
 
   useEffect(() => {
-    const seen = localStorage.getItem('personalplace_onboarding_seen')
-    if (!seen) {
-      setTimeout(() => setShow(true), 1500)
+    if (!localStorage.getItem('personalplace_onboarding_seen')) {
+      const t = setTimeout(() => setShow(true), 1200)
+      return () => clearTimeout(t)
     }
   }, [])
 
-  // Relance depuis Settings ("Revoir le tutoriel")
   useEffect(() => {
     const restart = () => { setStep(0); setShow(true) }
     window.addEventListener('tutorial:restart', restart)
@@ -188,183 +123,161 @@ export default function OnboardingTutorial() {
   }, [])
 
   const findTarget = useCallback(() => {
-    const s = steps[step]
+    const s = STEPS[step]
     if (!s.target) { setTargetRect(null); return }
 
-    if (s.openSidebar && isMobile) {
-      window.dispatchEvent(new Event('tutorial:open-sidebar'))
-      setTimeout(() => {
-        const el = document.querySelector(s.target)
-        if (el) {
-          const r = el.getBoundingClientRect()
-          if (r.width === 0 && r.height === 0) {
-            setTargetRect(null)
-          } else {
-            setTargetRect({ top: r.top, left: r.left, width: r.width, height: r.height })
-          }
-        } else {
-          setTargetRect(null)
-        }
-      }, 400)
-      return
+    const locate = () => {
+      const el = document.querySelector(s.target)
+      if (!el) { setTargetRect(null); return }
+      const r = el.getBoundingClientRect()
+      if (r.width === 0 && r.height === 0) { setTargetRect(null); return }
+      setTargetRect({ top: r.top, left: r.left, width: r.width, height: r.height })
     }
 
-    const el = document.querySelector(s.target)
-    if (el) {
-      const r = el.getBoundingClientRect()
-      if (r.width === 0 && r.height === 0) {
-        setTargetRect(null)
-      } else {
-        setTargetRect({ top: r.top, left: r.left, width: r.width, height: r.height })
-      }
-    } else {
-      setTargetRect(null)
+    if (s.section) {
+      setActiveSection(s.section)
+      const t = setTimeout(locate, 300)
+      return () => clearTimeout(t)
     }
-  }, [step, steps, isMobile])
+
+    if (s.position === 'right' && isMobile) {
+      window.dispatchEvent(new Event('tutorial:open-sidebar'))
+      const t = setTimeout(locate, 420)
+      return () => clearTimeout(t)
+    }
+    locate()
+    return undefined
+  }, [step, isMobile, setActiveSection])
 
   useEffect(() => {
     if (!show) return
     findTarget()
     window.addEventListener('resize', findTarget)
-    return () => window.removeEventListener('resize', findTarget)
+    window.addEventListener('scroll', findTarget, true)
+    return () => {
+      window.removeEventListener('resize', findTarget)
+      window.removeEventListener('scroll', findTarget, true)
+    }
   }, [show, findTarget])
 
-  const handleClose = () => {
+  useEffect(() => {
+    if (!show) return
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [show])
+
+  const close = () => {
     setShow(false)
     localStorage.setItem('personalplace_onboarding_seen', 'true')
   }
 
-  const handleNext = () => {
-    if (step < steps.length - 1) setStep(step + 1)
-    else handleClose()
-  }
+  const next = () => (step < STEPS.length - 1 ? setStep(step + 1) : close())
+  const prev = () => step > 0 && setStep(step - 1)
 
-  const handlePrev = () => {
-    if (step > 0) setStep(step - 1)
-  }
-
-  // Ouvre la section visee puis passe a l etape suivante
-  const openSection = (id) => {
-    setActiveSection(id)
-    handleNext()
-  }
-
-  // Clavier : ← → pour naviguer, Echap pour fermer
   useEffect(() => {
     if (!show) return
     const onKey = (e) => {
-      if (e.key === 'Escape') handleClose()
-      else if (e.key === 'ArrowRight') handleNext()
-      else if (e.key === 'ArrowLeft') handlePrev()
+      if (e.key === 'Escape') close()
+      else if (e.key === 'ArrowRight') next()
+      else if (e.key === 'ArrowLeft') prev()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [show, step])
+  })
 
   if (!show) return null
 
-  const s = steps[step]
-  const stepAction = actionFor(s.target)
-  const isCenter = !s.target || s.position === 'center'
+  const Icon = current.icon
+  const isCenter = !current.target || !targetRect
+  const pos = isCenter ? { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', arrow: null } : placeTooltip(targetRect, current.position)
+  const pct = Math.round(((step + 1) / STEPS.length) * 100)
 
-  const getTooltipStyle = () => {
-    if (isCenter || !targetRect) {
-      return { position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 10002 }
-    }
-    const gap = 16
-    let top, left
-    const vw = window.innerWidth
-    const vh = window.innerHeight
-
-    if (s.position === 'right') {
-      top = targetRect ? targetRect.top + targetRect.height / 2 : vh / 2
-      left = targetRect ? targetRect.right + gap : vw / 2
-      if (left + 340 > vw) left = (targetRect ? targetRect.left : vw / 2) - gap - 340
-    } else if (s.position === 'left') {
-      top = targetRect ? targetRect.top + targetRect.height / 2 : vh / 2
-      left = targetRect ? targetRect.left - gap - 340 : vw / 2
-      if (left < gap) left = targetRect ? targetRect.right + gap : vw / 2
-    } else if (s.position === 'bottom') {
-      top = targetRect ? targetRect.bottom + gap : vh / 2
-      left = targetRect ? targetRect.left + targetRect.width / 2 : vw / 2
-      left = Math.min(Math.max(left - 170, gap), vw - 340 - gap)
-      if (top + 200 > vh) top = (targetRect ? targetRect.top : vh / 2) - gap - 200
-    } else {
-      top = targetRect ? targetRect.top - gap - 180 : vh / 2
-      left = targetRect ? targetRect.left + targetRect.width / 2 : vw / 2
-      left = Math.min(Math.max(left - 170, gap), vw - 340 - gap)
-      if (top < gap) top = (targetRect ? targetRect.bottom : vh / 2) + gap
-    }
-
-    return { position: 'fixed', top: `${top}px`, left: `${left}px`, zIndex: 10002, maxWidth: '340px', width: '340px' }
+  const arrowStyle = (arrow) => {
+    if (!arrow) return null
+    const base = { position: 'absolute', width: 12, height: 12, background: 'var(--color-surface-solid)', transform: 'rotate(45deg)' }
+    if (arrow === 'left') return { ...base, left: -6, top: '50%', marginTop: -6, borderLeft: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)' }
+    if (arrow === 'right') return { ...base, right: -6, top: '50%', marginTop: -6, borderRight: '1px solid var(--color-border)', borderTop: '1px solid var(--color-border)' }
+    if (arrow === 'top') return { ...base, top: -6, left: '50%', marginLeft: -6, borderLeft: '1px solid var(--color-border)', borderTop: '1px solid var(--color-border)' }
+    return { ...base, bottom: -6, left: '50%', marginLeft: -6, borderRight: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)' }
   }
 
   return createPortal(
     <>
-      <div className="fixed inset-0 z-[10000]" style={{ background: 'rgba(0,0,0,0.65)' }} onClick={handleClose} />
+      <div className="fixed inset-0" style={{ background: 'rgba(0,0,0,0.72)', zIndex: 10000 }} onClick={close} />
 
       {targetRect && !isCenter && (
         <div
-          className="fixed z-[10001] rounded-xl transition-all duration-300"
+          className="fixed transition-all duration-300"
           style={{
-            top: `${targetRect.top - 4}px`,
-            left: `${targetRect.left - 4}px`,
-            width: `${targetRect.width + 8}px`,
-            height: `${targetRect.height + 8}px`,
-            boxShadow: '0 0 0 9999px rgba(0,0,0,0.65)',
+            top: targetRect.top - SPOT_RADIUS,
+            left: targetRect.left - SPOT_RADIUS,
+            width: targetRect.width + SPOT_RADIUS * 2,
+            height: targetRect.height + SPOT_RADIUS * 2,
+            borderRadius: 14,
+            boxShadow: '0 0 0 9999px rgba(0,0,0,0.72), 0 0 0 2px rgba(37,99,235,0.9)',
+            zIndex: 10001,
             pointerEvents: 'none',
           }}
         />
       )}
 
-      <div ref={tooltipRef} style={getTooltipStyle()}
-        className="rounded-2xl p-5 shadow-2xl" onClick={e => e.stopPropagation()}
+      <div
+        ref={cardRef}
         key={step}
+        className="fixed rounded-2xl shadow-2xl animate-scale-in overflow-hidden"
+        style={{ ...pos, zIndex: 10002, width: WIDTH, background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="rounded-2xl p-5 shadow-2xl animate-scale-in" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px]" style={{ color: '#2563EB' }}>{step + 1} / {steps.length}</span>
-            <button onClick={handleClose} className="p-1 rounded-lg transition-colors " style={{ color: 'var(--color-muted)' }}>
-              <X size={14} />
+        {pos.arrow && <span style={arrowStyle(pos.arrow)} />}
+
+        <div className="px-5 pt-5 pb-4">
+          <div className="flex items-start justify-between gap-3 mb-4">
+            <span className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>
+              <Icon size={19} />
+            </span>
+            <button type="button" onClick={close} aria-label="Fermer le tutoriel"
+              className="p-1.5 -m-1 rounded-lg transition-colors" style={{ color: 'var(--color-muted)' }}>
+              <X size={15} />
             </button>
           </div>
 
-          <h3 className="text-base sm:text-lg font-display font-medium mb-2">{s.title}</h3>
-          <p className="text-xs sm:text-sm leading-relaxed mb-4" style={{ color: 'var(--color-muted)' }}>{s.desc}</p>
+          <p className="text-[11px] font-medium mb-1.5" style={{ color: '#2563EB' }}>
+            Etape {step + 1} sur {STEPS.length}
+          </p>
+          <div className="h-1 rounded-full overflow-hidden mb-3.5" style={{ background: 'var(--color-border)' }}>
+            <div className="h-full rounded-full transition-all duration-300" style={{ width: `${pct}%`, background: '#2563EB' }} />
+          </div>
 
-          {stepAction && SECTION_LABELS[stepAction] && (
-            <button type="button" onClick={() => openSection(stepAction)}
-              className="w-full mb-4 px-3 py-2 text-xs font-medium rounded-lg flex items-center justify-center gap-1.5 transition-colors"
+          <h3 className="text-base font-display font-medium mb-1.5 leading-snug">{current.title}</h3>
+          <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-muted)' }}>{current.desc}</p>
+
+          {current.action && (
+            <button type="button"
+              onClick={() => { setActiveSection(current.action.section); next() }}
+              className="w-full mt-4 px-3 py-2.5 text-xs font-medium rounded-xl flex items-center justify-center gap-1.5 transition-colors"
               style={{ background: 'rgba(37,99,235,0.12)', color: '#2563EB' }}>
-              {SECTION_LABELS[stepAction]} <ArrowUpRight size={13} />
+              {current.action.label} <ArrowUpRight size={14} />
             </button>
           )}
+        </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex gap-1">
-              {steps.map((_, i) => (
-                <div key={i} className="h-1.5 rounded-full transition-all duration-300"
-                  style={{ background: i === step ? '#2563EB' : 'var(--color-border)', width: i === step ? '20px' : '6px' }} />
-              ))}
-            </div>
-            <div className="flex gap-2">
-              {step > 0 && (
-                <button onClick={handlePrev} className="px-3 py-2 text-xs rounded-lg transition-colors flex items-center gap-1 "
-                  style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
-                  <ChevronLeft size={12} /> Retour
-                </button>
-              )}
-              <button onClick={handleNext} className="px-4 py-2 text-xs font-medium rounded-lg transition-colors duration-150 flex items-center gap-1 "
-                style={{ background: '#2563EB', color: '#FFF' }}>
-                {step === steps.length - 1 ? 'Commencer' : 'Suivant'} <ChevronRight size={12} />
+        <div className="flex items-center justify-between gap-2 px-5 py-3.5" style={{ borderTop: '1px solid var(--color-border)' }}>
+          <button type="button" onClick={close} className="text-[11px] transition-colors py-1 pr-1" style={{ color: 'var(--color-muted)' }}>
+            Passer
+          </button>
+          <div className="flex items-center gap-2">
+            {step > 0 && (
+              <button type="button" onClick={prev}
+                className="px-3 py-2 text-xs rounded-xl transition-colors flex items-center gap-1"
+                style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                <ChevronLeft size={13} /> Retour
               </button>
-            </div>
-          </div>
-
-          <div className="w-full mt-3 flex items-center justify-between gap-2">
-            <span className="text-[9px]" style={{ color: 'var(--color-muted)' }}>← → naviguer · Echap fermer</span>
-            <button onClick={handleClose} className="text-[10px] transition-colors py-1" style={{ color: 'var(--color-muted)' }}>
-              Passer le tutoriel
+            )}
+            <button type="button" onClick={next}
+              className="px-4 py-2 text-xs font-medium rounded-xl transition-colors duration-150 flex items-center gap-1"
+              style={{ background: '#2563EB', color: '#FFF' }}>
+              {step === STEPS.length - 1 ? 'Commencer' : 'Suivant'} <ChevronRight size={13} />
             </button>
           </div>
         </div>

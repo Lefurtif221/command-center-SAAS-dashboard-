@@ -7,11 +7,11 @@ export const PRO_PERKS = [
   'Toutes les fonctions gratuites, en plus grand',
 ]
 
-export default function ProPerks({ className = '' }) {
+export default function ProPerks({ className = '', size = 'text-[12px]' }) {
   return (
     <ul className={`space-y-1.5 ${className}`}>
       {PRO_PERKS.map((perk) => (
-        <li key={perk} className="flex items-start gap-2 text-[12px] leading-snug" style={{ color: 'var(--color-muted)' }}>
+        <li key={perk} className={`flex items-start gap-2 ${size} leading-snug`} style={{ color: 'var(--color-muted)' }}>
           <Check size={13} style={{ color: '#10B981' }} className="shrink-0 mt-0.5" />
           {perk}
         </li>
