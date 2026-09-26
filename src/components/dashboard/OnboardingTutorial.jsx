@@ -1,9 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { X, ChevronRight, ChevronLeft, ArrowUpRight, Sparkles, Plug, LayoutGrid, BarChart3, CreditCard, Rocket } from 'lucide-react'
 import { useDashboard } from '../../hooks/useDashboard'
-
-const WIDTH = 360
 
 const STEPS = [
   {
@@ -54,25 +52,44 @@ const STEPS = [
 ]
 
 const SPOT_RADIUS = 10
+const MIN_GAP = 12
 
-function placeTooltip(targetRect, position) {
-  const gap = 18
+function placeTooltip(targetRect, position, w, h) {
+  const gap = MIN_GAP
   const vw = window.innerWidth
   const vh = window.innerHeight
-  const w = WIDTH
-  const h = 320
+  const narrow = vw < 768
+
+  // Petits ecrans : le cartouche se place sous la cible, sinon au-dessus,
+  // sinon il est colle en bas (la cible est alors remontee par locate())
+  if (narrow) {
+    const wN = Math.min(480, vw - gap * 2)
+    const centered = { left: '50%', transform: 'translateX(-50%)', width: wN, arrow: null }
+    if (targetRect) {
+      const bottomOfTarget = targetRect.top + targetRect.height
+      if (bottomOfTarget + gap + h <= vh - gap) return { top: bottomOfTarget + gap, ...centered }
+      if (targetRect.top - gap - h >= gap) return { top: targetRect.top - gap - h, ...centered }
+    }
+    return { top: 'auto', bottom: gap, ...centered }
+  }
+
+  const sides = position === 'right' ? ['right', 'left', 'bottom', 'top'] : position === 'bottom' ? ['bottom', 'top'] : ['top', 'bottom']
 
   const candidates = []
   if (targetRect) {
-    if (position === 'right') {
-      candidates.push({ top: targetRect.top + targetRect.height / 2 - h / 2, left: targetRect.right + gap, arrow: 'left' })
-      candidates.push({ top: targetRect.top + targetRect.height / 2 - h / 2, left: targetRect.left - gap - w, arrow: 'right' })
-    } else if (position === 'bottom') {
-      candidates.push({ top: targetRect.bottom + gap, left: targetRect.left + targetRect.width / 2 - w / 2, arrow: 'top' })
-      candidates.push({ top: targetRect.top - gap - h, left: targetRect.left + targetRect.width / 2 - w / 2, arrow: 'bottom' })
-    } else {
-      candidates.push({ top: targetRect.top - gap - h, left: targetRect.left + targetRect.width / 2 - w / 2, arrow: 'bottom' })
-      candidates.push({ top: targetRect.bottom + gap, left: targetRect.left + targetRect.width / 2 - w / 2, arrow: 'top' })
+    const r = {
+      top: targetRect.top,
+      left: targetRect.left,
+      right: targetRect.left + targetRect.width,
+      bottom: targetRect.top + targetRect.height,
+      width: targetRect.width,
+      height: targetRect.height,
+    }
+    for (const side of sides) {
+      if (side === 'right') candidates.push({ top: r.top + r.height / 2 - h / 2, left: r.right + gap, arrow: 'left' })
+      else if (side === 'left') candidates.push({ top: r.top + r.height / 2 - h / 2, left: r.left - gap - w, arrow: 'right' })
+      else if (side === 'bottom') candidates.push({ top: r.bottom + gap, left: r.left + r.width / 2 - w / 2, arrow: 'top' })
+      else candidates.push({ top: r.top - gap - h, left: r.left + r.width / 2 - w / 2, arrow: 'bottom' })
     }
   }
 
@@ -80,12 +97,12 @@ function placeTooltip(targetRect, position) {
     if (c.left >= gap && c.left + w <= vw - gap && c.top >= gap && c.top + h <= vh - gap) return c
   }
 
-  if (targetRect && candidates.length) {
-    const c = candidates[0]
+  const fallback = candidates.find((c) => Number.isFinite(c.top) && Number.isFinite(c.left))
+  if (fallback) {
     return {
-      top: Math.min(Math.max(gap, c.top), vh - h - gap),
-      left: Math.min(Math.max(gap, c.left), vw - w - gap),
-      arrow: c.arrow,
+      top: Math.min(Math.max(gap, fallback.top), Math.max(gap, vh - h - gap)),
+      left: Math.min(Math.max(gap, fallback.left), Math.max(gap, vw - w - gap)),
+      arrow: null,
     }
   }
 
@@ -97,13 +114,18 @@ export default function OnboardingTutorial() {
   const [step, setStep] = useState(0)
   const [targetRect, setTargetRect] = useState(null)
   const [isMobile, setIsMobile] = useState(false)
+  const [vw, setVw] = useState(() => (typeof window === 'undefined' ? 1024 : window.innerWidth))
+  const [cardH, setCardH] = useState(0)
   const { setActiveSection } = useDashboard()
   const cardRef = useRef(null)
 
   const current = STEPS[step]
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768)
+    const check = () => {
+      setIsMobile(window.innerWidth < 768)
+      setVw(window.innerWidth)
+    }
     check()
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
@@ -127,8 +149,27 @@ export default function OnboardingTutorial() {
     if (!s.target) { setTargetRect(null); return }
 
     const locate = () => {
-      const el = document.querySelector(s.target)
+      // Plusieurs cibles existent (aside desktop masque + tiroir mobile) : on prend la visible
+      const nodes = document.querySelectorAll(s.target)
+      let el = null
+      for (const n of nodes) {
+        if (n.offsetWidth > 0 && n.offsetHeight > 0) { el = n; break }
+      }
       if (!el) { setTargetRect(null); return }
+
+      // Ramene la cible dans la zone visible (scroll bloque pendant le tutoriel)
+      const narrow = window.innerWidth < 768
+      const pad = 16
+      const before = el.getBoundingClientRect()
+      const out = before.top < pad || before.bottom > window.innerHeight - pad
+      const inLowerHalf = narrow && before.bottom > window.innerHeight * 0.55
+      if (out || inLowerHalf) {
+        const prev = document.body.style.overflow
+        document.body.style.overflow = ''
+        el.scrollIntoView({ block: narrow ? 'start' : 'center', behavior: 'auto' })
+        document.body.style.overflow = prev
+      }
+
       const r = el.getBoundingClientRect()
       if (r.width === 0 && r.height === 0) { setTargetRect(null); return }
       setTargetRect({ top: r.top, left: r.left, width: r.width, height: r.height })
@@ -168,7 +209,9 @@ export default function OnboardingTutorial() {
 
   const close = () => {
     setShow(false)
+    setCardH(0)
     localStorage.setItem('personalplace_onboarding_seen', 'true')
+    window.dispatchEvent(new Event('tutorial:close-sidebar'))
   }
 
   const next = () => (step < STEPS.length - 1 ? setStep(step + 1) : close())
@@ -185,11 +228,24 @@ export default function OnboardingTutorial() {
     return () => window.removeEventListener('keydown', onKey)
   })
 
+  // Hauteur reelle du cartouche pour le calage (mesure a chaque rendu, sans boucle)
+  useLayoutEffect(() => {
+    if (!show) { setCardH(0); return }
+    const el = cardRef.current
+    if (!el) return
+    const nh = el.offsetHeight
+    setCardH((prev) => (Math.abs(prev - nh) > 1 ? nh : prev))
+  })
+
   if (!show) return null
 
   const Icon = current.icon
   const isCenter = !current.target || !targetRect
-  const pos = isCenter ? { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', arrow: null } : placeTooltip(targetRect, current.position)
+  const w = Math.max(240, Math.min(360, vw - MIN_GAP * 2))
+  const h = cardH || 320
+  const pos = isCenter
+    ? { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', arrow: null }
+    : placeTooltip(targetRect, current.position, w, h)
   const pct = Math.round(((step + 1) / STEPS.length) * 100)
 
   const arrowStyle = (arrow) => {
@@ -205,27 +261,42 @@ export default function OnboardingTutorial() {
     <>
       <div className="fixed inset-0" style={{ background: 'rgba(0,0,0,0.72)', zIndex: 10000 }} onClick={close} />
 
-      {targetRect && !isCenter && (
-        <div
-          className="fixed transition-all duration-300"
-          style={{
-            top: targetRect.top - SPOT_RADIUS,
-            left: targetRect.left - SPOT_RADIUS,
-            width: targetRect.width + SPOT_RADIUS * 2,
-            height: targetRect.height + SPOT_RADIUS * 2,
-            borderRadius: 14,
-            boxShadow: '0 0 0 9999px rgba(0,0,0,0.72), 0 0 0 2px rgba(37,99,235,0.9)',
-            zIndex: 10001,
-            pointerEvents: 'none',
-          }}
-        />
-      )}
+      {targetRect && !isCenter && (() => {
+        const vw = window.innerWidth
+        const vh = window.innerHeight
+        const left = Math.min(Math.max(0, targetRect.left - SPOT_RADIUS), Math.max(0, vw - targetRect.width - SPOT_RADIUS * 2))
+        const top = Math.min(Math.max(0, targetRect.top - SPOT_RADIUS), Math.max(0, vh - targetRect.height - SPOT_RADIUS * 2))
+        return (
+          <div
+            className="fixed transition-all duration-300"
+            style={{
+              top,
+              left,
+              width: targetRect.width + SPOT_RADIUS * 2,
+              height: targetRect.height + SPOT_RADIUS * 2,
+              borderRadius: 14,
+              boxShadow: '0 0 0 9999px rgba(0,0,0,0.72), 0 0 0 2px rgba(37,99,235,0.9)',
+              zIndex: 10001,
+              pointerEvents: 'none',
+            }}
+          />
+        )
+      })()}
 
       <div
         ref={cardRef}
         key={step}
         className="fixed rounded-2xl shadow-2xl animate-scale-in overflow-hidden"
-        style={{ ...pos, zIndex: 10002, width: WIDTH, background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}
+        style={{
+          ...pos,
+          zIndex: 10002,
+          width: pos.width ?? w,
+          maxWidth: `calc(100vw - ${MIN_GAP * 2}px)`,
+          maxHeight: `calc(100vh - ${MIN_GAP * 2}px)`,
+          overflowY: 'auto',
+          background: 'var(--color-surface-solid)',
+          border: '1px solid var(--color-border)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {pos.arrow && <span style={arrowStyle(pos.arrow)} />}
@@ -255,27 +326,27 @@ export default function OnboardingTutorial() {
           {current.action && (
             <button type="button"
               onClick={() => { setActiveSection(current.action.section); next() }}
-              className="w-full mt-4 px-3 py-2.5 text-xs font-medium rounded-xl flex items-center justify-center gap-1.5 transition-colors"
+              className="w-full mt-4 px-3 py-2.5 min-h-[40px] text-xs font-medium rounded-xl flex items-center justify-center gap-1.5 transition-colors"
               style={{ background: 'rgba(37,99,235,0.12)', color: '#2563EB' }}>
               {current.action.label} <ArrowUpRight size={14} />
             </button>
           )}
         </div>
 
-        <div className="flex items-center justify-between gap-2 px-5 py-3.5" style={{ borderTop: '1px solid var(--color-border)' }}>
-          <button type="button" onClick={close} className="text-[11px] transition-colors py-1 pr-1" style={{ color: 'var(--color-muted)' }}>
+        <div className="flex items-center justify-between gap-2 px-4 sm:px-5 py-3" style={{ borderTop: '1px solid var(--color-border)' }}>
+          <button type="button" onClick={close} className="text-[12px] transition-colors py-2.5 px-1.5 -ml-1.5 rounded-lg" style={{ color: 'var(--color-muted)' }}>
             Passer
           </button>
           <div className="flex items-center gap-2">
             {step > 0 && (
               <button type="button" onClick={prev}
-                className="px-3 py-2 text-xs rounded-xl transition-colors flex items-center gap-1"
+                className="px-3.5 py-2.5 text-xs rounded-xl transition-colors flex items-center gap-1 min-h-[40px]"
                 style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
                 <ChevronLeft size={13} /> Retour
               </button>
             )}
             <button type="button" onClick={next}
-              className="px-4 py-2 text-xs font-medium rounded-xl transition-colors duration-150 flex items-center gap-1"
+              className="px-4 py-2.5 text-xs font-medium rounded-xl transition-colors duration-150 flex items-center gap-1 min-h-[40px]"
               style={{ background: '#2563EB', color: '#FFF' }}>
               {step === STEPS.length - 1 ? 'Commencer' : 'Suivant'} <ChevronRight size={13} />
             </button>

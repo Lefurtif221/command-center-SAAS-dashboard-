@@ -34,8 +34,13 @@ export default function Sidebar({ onToggle }) {
 
   useEffect(() => {
     const handler = () => setMobileOpen(true)
+    const closeHandler = () => setMobileOpen(false)
     window.addEventListener('tutorial:open-sidebar', handler)
-    return () => window.removeEventListener('tutorial:open-sidebar', handler)
+    window.addEventListener('tutorial:close-sidebar', closeHandler)
+    return () => {
+      window.removeEventListener('tutorial:open-sidebar', handler)
+      window.removeEventListener('tutorial:close-sidebar', closeHandler)
+    }
   }, [])
 
   const sidebarContent = (
