@@ -10,6 +10,7 @@ export default function Tasks() {
   const [newTeamId, setNewTeamId] = useState('')
   const [adding, setAdding] = useState(false)
   const [scope, setScope] = useState('all')
+  const [donePeriod, setDonePeriod] = useState('30')
 
   useEffect(() => {
     const tracked = JSON.parse(localStorage.getItem('lastWarningTasks') || '{}')
@@ -65,7 +66,17 @@ export default function Tasks() {
   const todayTasks = visible.filter(t => !t.completed && t.due_date === todayStr)
   const upcomingTasks = visible.filter(t => !t.completed && t.due_date && t.due_date > todayStr)
   const noDateTasks = visible.filter(t => !t.completed && !t.due_date)
-  const doneTasks = visible.filter(t => t.completed)
+  const doneAt = (t) => t.completed_at || t.updated_at || t.created_at
+  const doneCutoff = donePeriod === 'all' ? null : new Date(today.getTime() - Number(donePeriod) * 86400000)
+  const doneTasks = visible
+    .filter(t => t.completed)
+    .filter(t => !doneCutoff || new Date(doneAt(t)) >= doneCutoff)
+    .sort((a, b) => new Date(doneAt(b)) - new Date(doneAt(a)))
+  const donePeriods = [
+    { id: '7', label: '7 jours' },
+    { id: '30', label: '1 mois' },
+    { id: 'all', label: 'Tout' },
+  ]
 
   const priorityColors = { high: '#1E40AF', medium: '#F59E0B', low: '#10B981' }
 
@@ -86,6 +97,9 @@ export default function Tasks() {
       <div className="flex-1 min-w-0">
         <p className={`text-sm ${task.completed ? 'line-through' : ''}`} style={{ color: task.completed ? 'var(--color-muted)' : 'var(--color-text)' }}>{task.title}</p>
         <div className="flex items-center gap-2 mt-0.5">
+          {task.completed && task.completed_at && (
+            <p className="text-[10px]" style={{ color: '#10B981' }}>Terminee le {new Date(task.completed_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</p>
+          )}
           {task.due_date && <p className="text-[10px]" style={{ color: 'var(--color-muted)' }}>{formatDate(task.due_date)}</p>}
           {task.team_name && (
             <span className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md"
@@ -217,8 +231,21 @@ export default function Tasks() {
             )}
             {doneTasks.length > 0 && (
               <div>
-                <p className="text-[11px] font-medium mb-2" style={{ color: 'var(--color-muted)' }}>Terminees ({doneTasks.length})</p>
-                <div className="space-y-1">{doneTasks.slice(0, 3).map(t => <TaskItem key={t.id} task={t} />)}</div>
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <p className="text-[11px] font-medium" style={{ color: 'var(--color-muted)' }}>Terminees ({doneTasks.length})</p>
+                  <div className="flex gap-1 ml-auto">
+                    {donePeriods.map(p => (
+                      <button key={p.id} onClick={() => setDonePeriod(p.id)}
+                        className="px-2 py-0.5 rounded-md text-[10px] font-medium transition-colors duration-150"
+                        style={donePeriod === p.id
+                          ? { background: 'rgba(37,99,235,0.15)', color: '#2563EB', border: '1px solid rgba(37,99,235,0.3)' }
+                          : { background: 'var(--color-bg)', color: 'var(--color-muted)', border: '1px solid var(--color-border)' }}>
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-1 max-h-64 overflow-y-auto pr-0.5">{doneTasks.map(t => <TaskItem key={t.id} task={t} />)}</div>
               </div>
             )}
           </>
