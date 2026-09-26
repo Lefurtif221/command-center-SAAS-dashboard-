@@ -4,6 +4,8 @@ import { apiFetch } from '../../utils/api'
 import { Users, Plus, Mail, Copy, Trash2, ShieldCheck, UserPlus, X, Check, Link2 } from 'lucide-react'
 import UpgradeButton from './UpgradeButton'
 import ProPerks, { ENTREPRISE_PERKS } from './ProPerks'
+import TeamChat from './TeamChat'
+import TeamSchedule from './TeamSchedule'
 
 const roleLabels = { owner: 'Proprietaire', admin: 'Admin', member: 'Membre' }
 
@@ -129,6 +131,9 @@ export default function Team() {
   const inputStyle = { background: 'var(--color-bg)', border: '1px solid var(--color-border)' }
 
   return (
+    <div className="space-y-4">
+      <div className="flex flex-col xl:flex-row gap-4">
+        <div className="flex-1 min-w-0 xl:max-w-2xl">
     <div className="rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
       <div className="flex items-center gap-2 px-4 pt-4 pb-2">
         <Users size={14} style={{ color: '#2563EB' }} />
@@ -315,6 +320,13 @@ export default function Team() {
           </>
         )}
       </div>
+    </div>
+        </div>
+        <div className="xl:w-[360px] shrink-0">
+          <TeamChat teamId={selectedId} />
+        </div>
+      </div>
+      <TeamSchedule teamId={selectedId} canManage={canManage} />
     </div>
   )
 }

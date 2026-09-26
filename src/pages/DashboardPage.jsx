@@ -114,7 +114,7 @@ export default function DashboardPage() {
           )}
 
           {activeSection === 'team' && (
-            <div className="page-enter max-w-2xl">
+            <div className="page-enter">
               <Team />
             </div>
           )}
