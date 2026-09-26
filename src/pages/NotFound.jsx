@@ -14,7 +14,7 @@ export default function NotFound() {
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button onClick={() => navigate('/')} className="flex items-center justify-center gap-2 text-sm font-medium px-5 py-2.5 rounded-lg transition-colors" style={{ background: '#2563EB', color: '#FFF' }}>
-            <ArrowLeft size={16} /> Retour a l'accueil
+            <ArrowLeft size={16} /> Retour à l'accueil
           </button>
           <button onClick={() => navigate('/dashboard')} className="text-sm font-medium px-5 py-2.5 rounded-lg transition-colors" style={{ border: '1px solid var(--color-border)', color: 'var(--color-text)' }}>
             Mon dashboard

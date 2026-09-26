@@ -43,7 +43,7 @@ export default function Team() {
       setNewTeamName('')
       await fetchTeams()
       setSelectedId(data.team.id)
-      setNotice('Equipe creee.')
+      setNotice('Équipe créée.')
     } catch (err) { setError(err.message) }
     finally { setLoading(false) }
   }
@@ -59,7 +59,7 @@ export default function Team() {
       setLastInviteUrl(data.inviteUrl)
       setInviteEmail('')
       await loadDetail(selectedId)
-      setNotice(`Invitation envoyee a ${data.invitation.email}`)
+      setNotice(`Invitation envoyée à ${data.invitation.email}`)
     } catch (err) { setError(err.message) }
     finally { setLoading(false) }
   }
@@ -108,7 +108,7 @@ export default function Team() {
       setDetail(null)
       await fetchTeams()
       await fetchTasks()
-      setNotice('Equipe supprimee.')
+      setNotice('Équipe supprimée.')
     } catch (err) { setError(err.message) }
   }
 
@@ -189,7 +189,7 @@ export default function Team() {
 
         {teams.length === 0 ? (
           <p className="text-sm text-center py-3" style={{ color: 'var(--color-muted)' }}>
-            Creez une equipe pour partager vos taches.
+            Créez une équipe pour partager vos tâches.
           </p>
         ) : (
           <>

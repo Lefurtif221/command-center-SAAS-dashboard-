@@ -63,7 +63,7 @@ export default function Legal() {
           <ArrowLeft size={16} /><span>Retour</span>
         </button>
         <h1 className="text-3xl font-display font-semibold tracking-tighter-custom mb-2">{content.title}</h1>
-        <p className="text-xs mb-10" style={{ color: 'var(--color-muted)' }}>Derniere mise a jour : {content.updated}</p>
+        <p className="text-xs mb-10" style={{ color: 'var(--color-muted)' }}>Dernière mise à jour : {content.updated}</p>
 
         <div className="space-y-8">
           {content.sections.map((s, i) => (

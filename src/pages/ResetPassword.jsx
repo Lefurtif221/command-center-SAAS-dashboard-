@@ -56,7 +56,7 @@ export default function ResetPassword() {
           <div className="p-6 text-center rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
             <CheckCircle size={36} className="text-success mx-auto mb-3 block" />
             <h3 className="text-sm font-display font-medium mb-2">Mot de passe reinitialise !</h3>
-            <p className="text-xs text-muted mb-4 leading-relaxed">Votre mot de passe a ete mis a jour. Vous pouvez maintenant vous connecter.</p>
+            <p className="text-xs text-muted mb-4 leading-relaxed">Votre mot de passe a été mis à jour. Vous pouvez maintenant vous connecter.</p>
             <button onClick={() => navigate('/auth')} className="px-4 py-2.5 text-sm font-medium rounded-lg transition-colors" style={{ background: '#2563EB', color: '#FFF' }}>
               Se connecter
             </button>

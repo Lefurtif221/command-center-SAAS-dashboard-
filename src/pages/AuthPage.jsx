@@ -95,7 +95,7 @@ export default function AuthPage() {
       if (popup.closed || Date.now() - started > 180000) {
         clearInterval(timer)
         setGoogleLoading(false)
-        if (Date.now() - started <= 180000) setError('Connexion Google annulee')
+        if (Date.now() - started <= 180000) setError('Connexion Google annulée')
       }
     }, 400)
   }

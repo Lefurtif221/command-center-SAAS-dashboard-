@@ -175,7 +175,7 @@ export default function DashboardPage() {
                         <span className="text-[11px] shrink-0" style={{ color: 'var(--color-muted)' }}>
                           {expiresAt
                             ? `Expire le ${new Date(expiresAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`
-                            : 'Duree illimitee'}
+                            : 'Durée illimitée'}
                         </span>
                       </div>
                       <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--color-border)' }}>
