@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Sparkles, ShieldCheck, X, Loader2, Smartphone, CreditCard, Wallet } from 'lucide-react'
 import { apiFetch } from '../../utils/api'
-import ProPerks from './ProPerks'
+import ProPerks, { PRO_PERKS, ENTREPRISE_PERKS } from './ProPerks'
 
 const METHODS = [
   { icon: Smartphone, label: 'Wave', hint: 'Numero Wave' },
@@ -10,15 +10,35 @@ const METHODS = [
   { icon: CreditCard, label: 'Carte bancaire', hint: 'Visa / Mastercard' },
 ]
 
-const STEPS = [
-  'Choisis ton moyen de paiement',
-  'Valide sur ton telephone (OTP)',
-  'Ta formule Pro est activee tout de suite',
-]
+const OFFERS = {
+  pro: {
+    title: 'Passer en Pro',
+    subtitle: 'Formule mensuelle, sans engagement',
+    price: '2000',
+    per: '/ 1er mois',
+    then: 'puis 2500 FCFA / mois',
+    cta: 'Payer 2000 FCFA',
+    perks: PRO_PERKS,
+    steps: ['Choisis ton moyen de paiement', 'Valide sur ton telephone (OTP)', 'Ta formule Pro est activee tout de suite'],
+    keep: 'tu gardes Pro 31 jours',
+  },
+  entreprise: {
+    title: 'Formule Entreprise',
+    subtitle: 'Pour les equipes qui grandissent',
+    price: '7500',
+    per: '/ mois',
+    then: '31 jours, sans prelevement automatique',
+    cta: 'Payer 7500 FCFA',
+    perks: ENTREPRISE_PERKS,
+    steps: ['Choisis ton moyen de paiement', 'Valide sur ton telephone (OTP)', 'Ta formule Entreprise est activee tout de suite'],
+    keep: 'tu gardes Entreprise 31 jours',
+  },
+}
 
-export default function PaymentModal({ onClose }) {
+export default function PaymentModal({ onClose, plan = 'pro' }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const offer = OFFERS[plan] || OFFERS.pro
 
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose() }
@@ -36,7 +56,7 @@ export default function PaymentModal({ onClose }) {
     try {
       const data = await apiFetch('/api/pay/init', {
         method: 'POST',
-        body: JSON.stringify({ plan: 'pro' }),
+        body: JSON.stringify({ plan }),
       })
       window.location.href = data.payment_url
     } catch (err) {
@@ -64,8 +84,8 @@ export default function PaymentModal({ onClose }) {
               <Sparkles size={20} />
             </span>
             <div>
-              <h4 className="text-base sm:text-lg font-display font-medium leading-tight">Passer en Pro</h4>
-              <p className="text-xs mt-0.5" style={{ color: 'var(--color-muted)' }}>Formule mensuelle, sans engagement</p>
+              <h4 className="text-base sm:text-lg font-display font-medium leading-tight">{offer.title}</h4>
+              <p className="text-xs mt-0.5" style={{ color: 'var(--color-muted)' }}>{offer.subtitle}</p>
             </div>
           </div>
           <button type="button" onClick={onClose} aria-label="Fermer"
@@ -78,22 +98,22 @@ export default function PaymentModal({ onClose }) {
           <div className="space-y-5">
             <div>
               <div className="flex items-baseline flex-wrap gap-x-2">
-                <span className="text-4xl sm:text-5xl font-display font-semibold tracking-tight" style={{ color: 'var(--color-text)' }}>2000</span>
+                <span className="text-4xl sm:text-5xl font-display font-semibold tracking-tight" style={{ color: 'var(--color-text)' }}>{offer.price}</span>
                 <span className="text-base font-medium" style={{ color: 'var(--color-text)' }}>FCFA</span>
-                <span className="text-xs" style={{ color: 'var(--color-muted)' }}>/ 1er mois</span>
+                <span className="text-xs" style={{ color: 'var(--color-muted)' }}>{offer.per}</span>
               </div>
-              <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>puis 2500 FCFA / mois</p>
+              <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>{offer.then}</p>
             </div>
 
             <div>
               <p className="text-xs mb-2.5 font-medium" style={{ color: 'var(--color-muted)' }}>Ce que tu debloques :</p>
-              <ProPerks size="text-[13px]" />
+              <ProPerks perks={offer.perks} size="text-[13px]" />
             </div>
 
             <div className="rounded-xl p-4" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
               <p className="text-xs font-medium mb-2.5">Comment ca marche</p>
               <ol className="space-y-2.5">
-                {STEPS.map((step, i) => (
+                {offer.steps.map((step, i) => (
                   <li key={step} className="flex items-start gap-2.5 text-[13px] leading-snug" style={{ color: 'var(--color-muted)' }}>
                     <span className="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-medium shrink-0 mt-px"
                       style={{ background: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>{i + 1}</span>
@@ -128,7 +148,7 @@ export default function PaymentModal({ onClose }) {
               style={{ background: 'rgba(16,185,129,0.07)', border: '1px solid rgba(16,185,129,0.25)' }}>
               <ShieldCheck size={16} style={{ color: '#10B981' }} className="shrink-0 mt-0.5" />
               <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>
-                Paiement securise. Pas de prelevement automatique : tu gardes Pro 31 jours, puis tu choisis si tu renouvelles.
+                Paiement securise. Pas de prelevement automatique : {offer.keep}, puis tu choisis si tu renouvelles.
               </p>
             </div>
           </div>
@@ -144,7 +164,7 @@ export default function PaymentModal({ onClose }) {
             className="w-full flex items-center justify-center gap-2 font-medium text-sm sm:text-base py-3.5 rounded-xl transition-colors duration-150 disabled:opacity-60"
             style={{ background: '#2563EB', color: '#FFF' }}>
             {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
-            {loading ? 'Ouverture du paiement...' : 'Payer 2000 FCFA'}
+            {loading ? 'Ouverture du paiement...' : offer.cta}
           </button>
         </div>
       </div>

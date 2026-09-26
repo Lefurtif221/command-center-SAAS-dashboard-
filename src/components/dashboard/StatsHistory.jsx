@@ -3,7 +3,7 @@ import { useDashboard } from '../../hooks/useDashboard'
 import { apiFetch } from '../../utils/api'
 import { Timer, Layers, CheckSquare, Flame, RefreshCw, Lock } from 'lucide-react'
 import UpgradeButton from './UpgradeButton'
-import ProPerks from './ProPerks'
+import ProPerks, { PRO_PERKS, ENTREPRISE_PERKS } from './ProPerks'
 
 const kpis = [
   { key: 'focusMinutes', label: 'Minutes de focus', icon: Timer, accent: '#2563EB', suffix: 'min' },
@@ -70,7 +70,20 @@ export default function StatsHistory() {
             </span>
             <UpgradeButton size="sm" />
           </div>
-          <ProPerks className="mt-2.5 pl-5" />
+          <ProPerks perks={PRO_PERKS} className="mt-2.5 pl-5" />
+        </div>
+      )}
+
+      {plan === 'pro' && (
+        <div className="px-3.5 py-3 rounded-lg text-xs" style={{ background: 'rgba(37,99,235,0.08)', border: '1px solid rgba(37,99,235,0.25)', color: '#2563EB' }}>
+          <div className="flex flex-wrap items-center gap-3">
+            <Lock size={14} className="shrink-0" />
+            <span className="flex-1 min-w-[200px]">
+              Pro : 90 jours d historique. La formule Entreprise (7500 FCFA / mois) debloque 365 jours :
+            </span>
+            <UpgradeButton plan="entreprise" size="sm" />
+          </div>
+          <ProPerks perks={ENTREPRISE_PERKS} className="mt-2.5 pl-5" />
         </div>
       )}
 

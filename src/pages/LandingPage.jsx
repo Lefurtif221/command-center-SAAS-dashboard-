@@ -110,12 +110,12 @@ export default function LandingPage() {
 
       {/* Pricing */}
       <section id="pricing" className="py-16 px-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="mb-10">
-            <h2 className="text-2xl md:text-3xl font-display font-semibold tracking-tight mb-3">Deux formules</h2>
-            <p className="text-muted">Commence gratuitement, passe en Pro quand tu as besoin de plus d espace.</p>
+            <h2 className="text-2xl md:text-3xl font-display font-semibold tracking-tight mb-3">Trois formules</h2>
+            <p className="text-muted">Commence gratuitement, monte en Pro, puis passe en Entreprise quand la structure grandit.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-6 rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
               <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ background: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>Gratuit</span>
               <div className="mt-3 mb-5">
@@ -149,9 +149,9 @@ export default function LandingPage() {
               </div>
               <div className="space-y-2.5">
                 {[
-                  'Jusqu a 20 equipes',
-                  'Jusqu a 50 membres par equipe',
-                  'Statistiques sur 365 jours',
+                  'Jusqu a 7 equipes',
+                  'Jusqu a 10 membres par equipe',
+                  'Statistiques sur 90 jours',
                   'Toutes les fonctions de la formule gratuite',
                 ].map((f, i) => (
                   <div key={i} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-muted)' }}>
@@ -162,6 +162,31 @@ export default function LandingPage() {
               </div>
               <button onClick={go} className="w-full mt-6 text-sm font-medium px-5 py-2.5 rounded-lg transition-colors" style={{ background: '#2563EB', color: '#FFF' }}>
                 Passer en Pro
+              </button>
+            </div>
+
+            <div className="p-6 rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid rgba(16,185,129,0.45)' }}>
+              <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ background: '#10B981', color: '#FFF' }}>Entreprise</span>
+              <div className="mt-3 mb-5">
+                <span className="text-4xl font-display font-semibold tracking-tight">7500 FCFA</span>
+                <span className="text-sm ml-1" style={{ color: 'var(--color-muted)' }}>/ mois</span>
+                <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>sans prelevement automatique</p>
+              </div>
+              <div className="space-y-2.5">
+                {[
+                  'Jusqu a 20 equipes',
+                  'Jusqu a 50 membres par equipe',
+                  'Statistiques sur 365 jours',
+                  'Tout le palier Pro',
+                ].map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-muted)' }}>
+                    <Check size={14} style={{ color: '#10B981' }} className="shrink-0" />
+                    {f}
+                  </div>
+                ))}
+              </div>
+              <button onClick={go} className="w-full mt-6 text-sm font-medium px-5 py-2.5 rounded-lg transition-colors" style={{ background: '#10B981', color: '#FFF' }}>
+                Passer en Entreprise
               </button>
             </div>
           </div>

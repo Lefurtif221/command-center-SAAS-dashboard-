@@ -3,7 +3,7 @@ import { useDashboard } from '../../hooks/useDashboard'
 import { apiFetch } from '../../utils/api'
 import { Users, Plus, Mail, Copy, Trash2, ShieldCheck, UserPlus, X, Check, Link2 } from 'lucide-react'
 import UpgradeButton from './UpgradeButton'
-import ProPerks from './ProPerks'
+import ProPerks, { ENTREPRISE_PERKS } from './ProPerks'
 
 const roleLabels = { owner: 'Proprietaire', admin: 'Admin', member: 'Membre' }
 
@@ -115,9 +115,16 @@ export default function Team() {
   const selected = teams.find(t => t.id === selectedId)
   const isOwner = detail?.role === 'owner' || selected?.role === 'owner'
   const canManage = ['owner', 'admin'].includes(detail?.role)
-  const atTeamLimit = plan !== 'pro' && !!planLimits && teams.length >= planLimits.teams
-  const atMemberLimit = plan !== 'pro' && !!planLimits && !!detail &&
+  const atTeamLimit = !!planLimits && teams.length >= planLimits.teams
+  const atMemberLimit = !!planLimits && !!detail &&
     (detail.members.length + (detail.invitations?.length || 0)) >= planLimits.teamMembers
+  const planLabel = plan === 'entreprise' ? 'Entreprise' : plan === 'pro' ? 'Pro' : 'Gratuit'
+  const isPaid = plan === 'pro' || plan === 'entreprise'
+  const quotaHint = (limit, unit) => plan === 'entreprise'
+    ? `Quota Entreprise atteint (${limit} ${unit}). Contacte-nous pour en discuter.`
+    : plan === 'pro'
+      ? `Quota Pro atteint (${limit} ${unit}). Passe en Entreprise (7500 FCFA/mois) pour plus de place.`
+      : `Quota gratuit atteint (${limit} ${unit}). Passe en Pro pour en profiter pleinement.`
 
   const inputStyle = { background: 'var(--color-bg)', border: '1px solid var(--color-border)' }
 
@@ -126,14 +133,14 @@ export default function Team() {
       <div className="flex items-center gap-2 px-4 pt-4 pb-2">
         <Users size={14} style={{ color: '#2563EB' }} />
         <h3 className="text-sm font-display font-medium">Equipe</h3>
-        <span className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={plan === 'pro'
+        <span className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={isPaid
           ? { background: 'rgba(16,185,129,0.12)', color: '#10B981', border: '1px solid rgba(16,185,129,0.25)' }
           : { background: 'var(--color-bg)', color: 'var(--color-muted)', border: '1px solid var(--color-border)' }}>
-          {plan === 'pro' ? 'Pro' : 'Gratuit'}
+          {planLabel}
         </span>
         <span className="text-[11px] ml-auto" style={{ color: 'var(--color-muted)' }}>
           {teams.length}{planLimits ? `/${planLimits.teams}` : ''} {teams.length > 1 ? 'equipes' : 'equipe'}
-          {plan !== 'pro' && planLimits ? ` · max ${planLimits.teamMembers} membres` : ''}
+          {planLimits ? ` · max ${planLimits.teamMembers} membres` : ''}
         </span>
       </div>
 
@@ -152,15 +159,25 @@ export default function Team() {
         </div>
         {atTeamLimit && (
           <p className="mt-2 text-[10px] leading-relaxed" style={{ color: '#F59E0B' }}>
-            Quota gratuit atteint ({planLimits.teams} equipe). Passe en Pro pour en creer davantage.
+            {quotaHint(planLimits.teams, planLimits.teams > 1 ? 'equipes' : 'equipe')}
           </p>
         )}
-        {plan !== 'pro' && (
+        {plan === 'free' && (
           <div className="mt-3 space-y-2.5">
             <ProPerks />
             <div className="flex items-center gap-3">
               <UpgradeButton size="sm" />
               <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>2000 le 1er mois, puis 2500 / mois</span>
+            </div>
+          </div>
+        )}
+        {plan === 'pro' && (
+          <div className="mt-3 space-y-2.5">
+            <p className="text-[11px] font-medium" style={{ color: 'var(--color-muted)' }}>Formule Entreprise</p>
+            <ProPerks perks={ENTREPRISE_PERKS} />
+            <div className="flex items-center gap-3">
+              <UpgradeButton plan="entreprise" size="sm" />
+              <span className="text-[10px]" style={{ color: 'var(--color-muted)' }}>7500 FCFA / mois</span>
             </div>
           </div>
         )}
@@ -261,7 +278,7 @@ export default function Team() {
 
                     {atMemberLimit && (
                       <p className="mt-2 text-[10px] leading-relaxed" style={{ color: '#F59E0B' }}>
-                        Quota gratuit atteint ({planLimits.teamMembers} membres par equipe). Passe en Pro pour inviter plus de monde.
+                        {quotaHint(planLimits.teamMembers, 'membres par equipe')}
                       </p>
                     )}
 

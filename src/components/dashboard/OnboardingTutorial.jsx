@@ -34,7 +34,7 @@ const STEPS = [
     target: '[data-tutorial="sidebar-stats"]',
     position: 'right',
     title: 'Tes statistiques',
-    desc: "Minutes de focus, taches du jour et streak. Les 7 derniers jours sont gratuits, 365 jours avec la formule Pro.",
+    desc: "Minutes de focus, taches du jour et streak. 7 jours en gratuit, 90 avec la formule Pro, 365 avec Entreprise.",
     action: { section: 'stats', label: 'Voir mes statistiques' },
   },
   {
@@ -42,7 +42,7 @@ const STEPS = [
     target: '[data-tutorial="sidebar-settings"]',
     position: 'right',
     title: 'Ton abonnement',
-    desc: "Settings affiche ta formule et tes quotas. Le bouton Passer en Pro ouvre le paiement : 2000 FCFA le 1er mois, puis 2500 / mois.",
+    desc: "Settings affiche ta formule et tes quotas. Le bouton Passer en Pro ouvre le paiement : 2000 FCFA le 1er mois, puis 2500 / mois (7500 / mois en Entreprise).",
     action: { section: 'settings', label: "Voir mon abonnement" },
   },
   {

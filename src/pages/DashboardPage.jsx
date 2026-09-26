@@ -15,7 +15,7 @@ import StatsHistory from '../components/dashboard/StatsHistory'
 import Concentration from '../components/dashboard/Concentration'
 import OnboardingTutorial from '../components/dashboard/OnboardingTutorial'
 import UpgradeButton from '../components/dashboard/UpgradeButton'
-import ProPerks from '../components/dashboard/ProPerks'
+import ProPerks, { PRO_PERKS, ENTREPRISE_PERKS } from '../components/dashboard/ProPerks'
 import { useDashboard } from '../hooks/useDashboard'
 import { useAuth } from '../hooks/useAuth'
 import { apiFetch } from '../utils/api'
@@ -30,6 +30,8 @@ export default function DashboardPage() {
   const expiresAt = subscription?.subscription?.expires_at || null
   const daysLeft = expiresAt ? Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 86400000)) : null
   const daysPct = daysLeft != null ? Math.max(6, Math.min(100, Math.round((daysLeft / 31) * 100))) : 0
+  const isPaid = plan === 'pro' || plan === 'entreprise'
+  const planLabel = plan === 'entreprise' ? 'Entreprise' : plan === 'pro' ? 'Pro' : 'Gratuit'
 
   useEffect(() => {
     if (activeSection !== 'settings') return
@@ -153,23 +155,23 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between px-5 md:px-6 py-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
                   <div className="flex items-center gap-2.5">
                     <span className="w-7 h-7 rounded-lg flex items-center justify-center"
-                      style={{ background: plan === 'pro' ? 'rgba(16,185,129,0.12)' : 'rgba(37,99,235,0.1)', color: plan === 'pro' ? '#10B981' : '#2563EB' }}>
+                      style={{ background: isPaid ? 'rgba(16,185,129,0.12)' : 'rgba(37,99,235,0.1)', color: isPaid ? '#10B981' : '#2563EB' }}>
                       <Sparkles size={14} />
                     </span>
                     <h3 className="text-base font-display font-medium">Abonnement</h3>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={plan === 'pro'
+                  <span className="text-[10px] px-2 py-0.5 rounded-full font-medium" style={isPaid
                     ? { background: 'rgba(16,185,129,0.12)', color: '#10B981' }
                     : { background: 'rgba(37,99,235,0.1)', color: '#2563EB' }}>
-                    {plan === 'pro' ? 'Pro' : 'Gratuit'}
+                    {planLabel}
                   </span>
                 </div>
 
-                {plan === 'pro' ? (
+                {isPaid ? (
                   <div className="px-5 md:px-6 py-5 space-y-5">
                     <div>
                       <div className="flex items-baseline justify-between gap-3 mb-2">
-                        <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>Formule Pro active</span>
+                        <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>Formule {planLabel} active</span>
                         <span className="text-[11px] shrink-0" style={{ color: 'var(--color-muted)' }}>
                           {expiresAt
                             ? `Expire le ${new Date(expiresAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`
@@ -183,14 +185,27 @@ export default function DashboardPage() {
                         {expiresAt
                           ? daysLeft > 0
                             ? `Il reste ${daysLeft} jour${daysLeft > 1 ? 's' : ''} avant le retour en formule gratuite`
-                            : 'Dernier jour de ta formule Pro'
+                            : `Dernier jour de ta formule ${planLabel}`
                           : 'Acces complet debloque'}
                       </p>
                     </div>
                     <div>
                       <p className="text-[11px] mb-2 font-medium" style={{ color: 'var(--color-muted)' }}>Ce que tu as :</p>
-                      <ProPerks />
+                      <ProPerks perks={plan === 'entreprise' ? ENTREPRISE_PERKS : PRO_PERKS} />
                     </div>
+
+                    {plan === 'pro' && (
+                      <div className="rounded-xl p-4" style={{ background: 'rgba(37,99,235,0.06)', border: '1px solid rgba(37,99,235,0.25)' }}>
+                        <div className="flex items-center justify-between mb-2.5 gap-3 flex-wrap">
+                          <span className="flex items-center gap-1.5 text-[11px] font-medium" style={{ color: '#2563EB' }}>
+                            <Sparkles size={12} /> Besoin de plus ? Formule Entreprise
+                          </span>
+                          <span className="text-[11px] font-medium" style={{ color: 'var(--color-text)' }}>7500 FCFA / mois</span>
+                        </div>
+                        <ProPerks perks={ENTREPRISE_PERKS} className="mb-3" />
+                        <UpgradeButton plan="entreprise" size="sm" />
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="px-5 md:px-6 py-5 space-y-4">
@@ -236,6 +251,14 @@ export default function DashboardPage() {
                         <ShieldCheck size={12} className="shrink-0 mt-px" />
                         Paiement securise. Pas de prelevement automatique : tu gardes Pro 31 jours, puis tu choisis si tu renouvelles.
                       </p>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-3 flex-wrap pt-1" style={{ borderTop: '1px solid var(--color-border)' }}>
+                      <div>
+                        <p className="text-[11px] font-medium" style={{ color: 'var(--color-text)' }}>Une structure plus grande ?</p>
+                        <p className="text-[10px]" style={{ color: 'var(--color-muted)' }}>Formule Entreprise : 20 equipes, 50 membres, stats 365 jours — 7500 FCFA / mois</p>
+                      </div>
+                      <UpgradeButton plan="entreprise" size="sm" />
                     </div>
                   </div>
                 )}
