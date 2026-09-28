@@ -4,6 +4,34 @@ import { useDashboard } from '../../hooks/useDashboard'
 import { Sparkles, Inbox, X, Loader2, FileText } from 'lucide-react'
 import { apiFetch } from '../../utils/api'
 
+function EmailBody({ html }) {
+  if (!html) return <p className="text-sm" style={{ color: 'var(--color-muted)' }}>Email vide.</p>
+  if (!/<[a-z][^>]*>/i.test(html)) {
+    return (
+      <div className="text-sm whitespace-pre-wrap leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+        {html}
+      </div>
+    )
+  }
+  const doc = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>
+    html,body{margin:0;padding:12px;background:#ffffff;color:#18181b;font:14px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;word-break:break-word}
+    img{max-width:100%;height:auto}
+    a{color:#2563eb}
+    table{max-width:100%}
+    pre{white-space:pre-wrap;word-break:break-word}
+    blockquote{border-left:3px solid #e4e4e7;padding-left:10px;color:#52525b}
+  </style></head><body>${html}</body></html>`
+  return (
+    <iframe
+      title="Contenu de l'email"
+      sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+      srcDoc={doc}
+      className="w-full rounded-lg border-0"
+      style={{ minHeight: '55vh', background: '#fff' }}
+    />
+  )
+}
+
 export default function EmailFilter() {
   const { filteredEmails, filterPriority, filterTime, setFilterPriority, setFilterTime, markEmailRead, emailError, gmailReconnect, refreshEmails, updateEmailPriority, gmailAccounts } = useDashboard()
   const [accountScope, setAccountScope] = useState('all')
@@ -110,15 +138,6 @@ export default function EmailFilter() {
     } catch { setSummaryText('Erreur lors du chargement du résumé.') } finally { setSummaryLoading(false) }
   }
 
-  const stripHtml = (html) => {    if (!html) return ''
-    const el = document.createElement('div')
-    el.innerHTML = html.replace(/<br\s*\/?>/gi, '\n').replace(/<\/p>/gi, '\n\n').replace(/<\/div>/gi, '\n').replace(/<\/tr>/gi, '\n').replace(/<\/li>/gi, '\n')
-    let text = el.textContent || el.innerText || ''
-    return text.replace(/\n{3,}/g, '\n\n').trim()
-  }
-
-  const closeEmailModal = useCallback(() => setEmailModal(null), [])
-
   const emailModalOverlay = emailModal ? createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.6)' }} onClick={closeEmailModal}>
       <div className="w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden rounded-2xl animate-scale-in" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }} onClick={e => e.stopPropagation()}>
@@ -135,7 +154,7 @@ export default function EmailFilter() {
               <Loader2 size={24} className="animate-spin" style={{ color: '#2563EB' }} />
             </div>
           ) : (
-            <div className="text-sm whitespace-pre-wrap leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{stripHtml(emailBody)}</div>
+            <EmailBody html={emailBody} />
           )}
         </div>
         <div className="flex flex-wrap gap-2 p-4 flex-shrink-0" style={{ borderTop: '1px solid var(--color-border)' }}>
@@ -216,7 +235,7 @@ export default function EmailFilter() {
               <Loader2 size={24} className="animate-spin" style={{ color: '#2563EB' }} />
             </div>
           ) : showFullEmail ? (
-            <div className="text-sm whitespace-pre-wrap leading-relaxed" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{stripHtml(summaryFullBody)}</div>
+            <EmailBody html={summaryFullBody} />
           ) : (
             <div>
               <div className="flex items-center gap-2 mb-3">

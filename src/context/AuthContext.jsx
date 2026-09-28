@@ -44,13 +44,31 @@ export function AuthProvider({ children }) {
   }
 
   const signup = async (name, email, password) => {
-    const { token, user } = await apiFetch('/api/auth/signup', {
+    const data = await apiFetch('/api/auth/signup', {
       method: 'POST',
       body: JSON.stringify({ name, email, password }),
     })
-    localStorage.setItem('command_center_token', token)
-    setUser(user)
-    return user
+    if (data.needsVerification) return { needsVerification: true, email: data.email }
+    localStorage.setItem('command_center_token', data.token)
+    setUser(data.user)
+    return data.user
+  }
+
+  const verifyCode = async (email, code) => {
+    const data = await apiFetch('/api/auth/verify-email', {
+      method: 'POST',
+      body: JSON.stringify({ email, code }),
+    })
+    localStorage.setItem('command_center_token', data.token)
+    setUser(data.user)
+    return data.user
+  }
+
+  const resendCode = async (email) => {
+    return apiFetch('/api/auth/resend-code', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    })
   }
 
   const refreshUser = async () => {
@@ -78,6 +96,8 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!user,
     login,
     signup,
+    verifyCode,
+    resendCode,
     logout,
     updateProfile,
     refreshUser,

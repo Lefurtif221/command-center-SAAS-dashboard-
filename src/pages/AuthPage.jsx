@@ -19,7 +19,7 @@ export default function AuthPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const nextPath = searchParams.get('next')
-  const { login, signup, isAuthenticated, refreshUser } = useAuth()
+  const { login, signup, verifyCode, resendCode, isAuthenticated, refreshUser } = useAuth()
   const [activeTab, setActiveTab] = useState('login')
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
@@ -29,6 +29,9 @@ export default function AuthPage() {
   const [showLoginPassword, setShowLoginPassword] = useState(false)
   const [showSignupPassword, setShowSignupPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [verifyEmail, setVerifyEmail] = useState(null)
+  const [verifyCodeInput, setVerifyCodeInput] = useState('')
+  const [resendIn, setResendIn] = useState(0)
   const urlError = searchParams.get('error')
 
   const resolveNext = () => {
@@ -39,6 +42,12 @@ export default function AuthPage() {
   }
 
   useEffect(() => { if (urlError) setError(urlError) }, [urlError])
+
+  useEffect(() => {
+    if (resendIn <= 0) return
+    const t = setTimeout(() => setResendIn(s => s - 1), 1000)
+    return () => clearTimeout(t)
+  }, [resendIn])
 
   // Reveille l'API (Render se couche apres inactivite) avant le parcours Google
   useEffect(() => {
@@ -57,7 +66,17 @@ export default function AuthPage() {
   const handleLogin = async (e) => {
     e.preventDefault(); setError(''); setLoading(true)
     try { await login(loginForm.email, loginForm.password); afterAuth() }
-    catch (err) { setError(err.message || 'Email ou mot de passe incorrect') }
+    catch (err) {
+      if (err.needsVerification) {
+        setVerifyEmail(err.email || loginForm.email)
+        setVerifyCodeInput('')
+        setResendIn(30)
+        setError('')
+        resendCode(loginForm.email).catch(() => {})
+      } else {
+        setError(err.message || 'Email ou mot de passe incorrect')
+      }
+    }
     finally { setLoading(false) }
   }
 
@@ -66,9 +85,32 @@ export default function AuthPage() {
     if (signupForm.password !== signupForm.confirmPassword) { setError('Les mots de passe ne correspondent pas'); return }
     if (signupForm.password.length < 8) { setError('Le mot de passe doit contenir au moins 8 caracteres'); return }
     setLoading(true)
-    try { await signup(signupForm.name, signupForm.email, signupForm.password); afterAuth() }
+    try {
+      const res = await signup(signupForm.name, signupForm.email, signupForm.password)
+      if (res && res.needsVerification) {
+        setVerifyEmail(res.email)
+        setVerifyCodeInput('')
+        setResendIn(30)
+      } else {
+        afterAuth()
+      }
+    }
     catch (err) { setError(err.message || 'Une erreur est survenue') }
     finally { setLoading(false) }
+  }
+
+  const handleVerify = async (e) => {
+    e.preventDefault(); setError(''); setLoading(true)
+    try { await verifyCode(verifyEmail, verifyCodeInput.trim()); afterAuth() }
+    catch (err) { setError(err.message || 'Code incorrect') }
+    finally { setLoading(false) }
+  }
+
+  const handleResend = async () => {
+    if (resendIn > 0) return
+    setError('')
+    try { await resendCode(verifyEmail); setResendIn(30) }
+    catch (err) { setError(err.message || 'Impossible de renvoyer le code') }
   }
 
   const handleGoogle = () => {
@@ -158,7 +200,44 @@ export default function AuthPage() {
           </div>
           {error && <div className="mb-6 p-3 rounded-lg text-sm" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#EF4444' }}>{error}</div>}
 
-          {activeTab === 'login' ? (
+          {verifyEmail ? (
+            <form onSubmit={handleVerify} className="space-y-4">
+              <div className="text-center space-y-2">
+                <div className="w-12 h-12 rounded-2xl mx-auto flex items-center justify-center" style={{ background: 'rgba(37,99,235,0.1)' }}>
+                  <Mail size={22} style={{ color: '#2563EB' }} />
+                </div>
+                <h2 className="text-lg font-display font-semibold">Verifie ton email</h2>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+                  On a envoye un code a 6 chiffres a<br />
+                  <span className="font-medium" style={{ color: 'var(--color-text)' }}>{verifyEmail}</span>
+                </p>
+              </div>
+              <input
+                inputMode="numeric" autoComplete="one-time-code" maxLength={6} placeholder="000000"
+                value={verifyCodeInput}
+                onChange={(e) => setVerifyCodeInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                className={`w-full px-3 py-3 rounded-lg text-center text-xl tracking-[0.4em] font-mono ${inputFocus}`}
+                style={inputStyle} autoFocus required
+              />
+              <button type="submit" disabled={loading || verifyCodeInput.length !== 6}
+                className="w-full font-medium text-sm py-2.5 rounded-lg transition-colors duration-150 disabled:opacity-50"
+                style={{ background: '#2563EB', color: '#FFF' }}>
+                {loading ? 'Verification...' : 'Verifier mon compte'}
+              </button>
+              <div className="flex items-center justify-between text-xs">
+                <button type="button" onClick={handleResend} disabled={resendIn > 0}
+                  style={{ color: resendIn > 0 ? 'var(--color-muted)' : '#2563EB' }}>
+                  {resendIn > 0 ? `Renvoyer dans ${resendIn}s` : 'Renvoyer le code'}
+                </button>
+                <button type="button" onClick={() => { setVerifyEmail(null); setError('') }} style={{ color: 'var(--color-muted)' }}>
+                  Changer d'email
+                </button>
+              </div>
+              <p className="text-center text-[11px]" style={{ color: 'var(--color-muted)' }}>
+                Le code expire dans 15 minutes.
+              </p>
+            </form>
+          ) : activeTab === 'login' ? (
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
                 <label className="block text-xs mb-1.5" style={{ color: 'var(--color-muted)' }}>Email</label>
@@ -229,27 +308,31 @@ export default function AuthPage() {
             </form>
           )}
 
-          <div className="flex items-center gap-3 my-5">
-            <span className="flex-1 h-px" style={{ background: 'var(--color-border)' }} />
-            <span className="text-xs" style={{ color: 'var(--color-muted)' }}>ou</span>
-            <span className="flex-1 h-px" style={{ background: 'var(--color-border)' }} />
-          </div>
+          {!verifyEmail && (
+            <>
+              <div className="flex items-center gap-3 my-5">
+                <span className="flex-1 h-px" style={{ background: 'var(--color-border)' }} />
+                <span className="text-xs" style={{ color: 'var(--color-muted)' }}>ou</span>
+                <span className="flex-1 h-px" style={{ background: 'var(--color-border)' }} />
+              </div>
 
-          <button type="button" onClick={handleGoogle} disabled={googleLoading}
-            className="w-full flex items-center justify-center gap-2.5 text-sm font-medium py-2.5 rounded-lg transition-colors duration-150 hover:border-[#2563EB] disabled:opacity-60"
-            style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }}>
-            <GoogleIcon />
-            {googleLoading ? 'Connexion a Google...' : 'Continuer avec Google'}
-          </button>
-          {googleLoading && (
-            <p className="mt-3 text-center text-xs" style={{ color: 'var(--color-muted)' }}>
-              Choisis ton compte dans la fenetre Google
-            </p>
+              <button type="button" onClick={handleGoogle} disabled={googleLoading}
+                className="w-full flex items-center justify-center gap-2.5 text-sm font-medium py-2.5 rounded-lg transition-colors duration-150 hover:border-[#2563EB] disabled:opacity-60"
+                style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }}>
+                <GoogleIcon />
+                {googleLoading ? 'Connexion a Google...' : 'Continuer avec Google'}
+              </button>
+              {googleLoading && (
+                <p className="mt-3 text-center text-xs" style={{ color: 'var(--color-muted)' }}>
+                  Choisis ton compte dans la fenetre Google
+                </p>
+              )}
+
+              <p className="mt-6 text-center text-xs" style={{ color: 'var(--color-muted)' }}>
+                {activeTab === 'login' ? <>Pas encore de compte ? <button onClick={() => setActiveTab('signup')} style={{ color: '#2563EB' }}>Creer un compte</button></> : <>Deja un compte ? <button onClick={() => setActiveTab('login')} style={{ color: '#2563EB' }}>Se connecter</button></>}
+              </p>
+            </>
           )}
-
-          <p className="mt-6 text-center text-xs" style={{ color: 'var(--color-muted)' }}>
-            {activeTab === 'login' ? <>Pas encore de compte ? <button onClick={() => setActiveTab('signup')} style={{ color: '#2563EB' }}>Creer un compte</button></> : <>Deja un compte ? <button onClick={() => setActiveTab('login')} style={{ color: '#2563EB' }}>Se connecter</button></>}
-          </p>
         </div>
       </div>
     </div>

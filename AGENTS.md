@@ -14,7 +14,7 @@
 ## Commandes
 
 - Front : `npm run lint` (oxlint — 0 erreur attendu), `npm run build`
-- Back : `cd server && npm test` (`node --test`), `npm run lint`
+- Back : `cd server && npm test` (`node --test`)
 - Backend local : `node index.js` dans `server/` (port 3001, auto-migration des tables au boot)
 - Dev server front : `npm run dev` (port 5173)
 
