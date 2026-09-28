@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
 import { apiFetch } from '../../utils/api'
 
+const WHATSAPP_MAINTENANCE = true
+
 export default function ConnectedServices() {
   const { disconnectService, gmailAccounts, fetchConnectedServices } = useDashboard()
   const [connectedList, setConnectedList] = useState([])
@@ -25,6 +27,7 @@ export default function ConnectedServices() {
 
   const handleConnect = async (serviceName) => {
     if (serviceName === 'whatsapp') {
+      if (WHATSAPP_MAINTENANCE) return
       setShowWhatsAppModal(true)
       setWhatsAppQR('')
       setWhatsAppStatus('Generation du QR code...')
@@ -111,7 +114,7 @@ export default function ConnectedServices() {
 
   const allServices = [
     { id: 'gmail', name: 'Gmail', icon: '\u{1F4E7}', desc: 'Emails, calendrier, contacts' },
-    { id: 'whatsapp', name: 'WhatsApp', icon: '\u{1F4AC}', desc: 'Messages WhatsApp (comme WhatsApp Web)' },
+    { id: 'whatsapp', name: 'WhatsApp', icon: '\u{1F4AC}', desc: WHATSAPP_MAINTENANCE ? 'Service en maintenance, reviens bientot' : 'Messages WhatsApp (comme WhatsApp Web)' },
   ]
 
   return (
@@ -134,11 +137,19 @@ export default function ConnectedServices() {
               </div>
               <div className="space-y-2">
                 {!isConnected ? (
-                  <button onClick={() => handleConnect(service.id)} disabled={loading === service.id}
-                    className="w-full flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150 disabled:opacity-50"
-                    style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', color: '#2563EB' }}>
-                    {loading === service.id ? '...' : 'Connecter'}
-                  </button>
+                  WHATSAPP_MAINTENANCE && service.id === 'whatsapp' ? (
+                    <button disabled aria-disabled="true"
+                      className="w-full flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-lg text-xs font-medium cursor-not-allowed"
+                      style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.25)', color: '#F59E0B' }}>
+                      En maintenance
+                    </button>
+                  ) : (
+                    <button onClick={() => handleConnect(service.id)} disabled={loading === service.id}
+                      className="w-full flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-lg text-xs font-medium transition-colors duration-150 disabled:opacity-50"
+                      style={{ background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', color: '#2563EB' }}>
+                      {loading === service.id ? '...' : 'Connecter'}
+                    </button>
+                  )
                 ) : service.id === 'gmail' ? (
                   <>
                     {gmailAccounts.length === 0 && (

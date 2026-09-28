@@ -159,12 +159,12 @@ export default function WhatsAppMessages() {
           <MessageCircle size={28} style={{ color: '#2563EB' }} />
         </div>
         <h3 className="text-sm font-display font-medium mb-2">
-          {status === 'reconnecting' ? 'Reconnexion...' : 'WhatsApp non connecte'}
+          {status === 'reconnecting' ? 'Reconnexion...' : 'WhatsApp en maintenance'}
         </h3>
         <p className="text-xs max-w-xs mx-auto" style={{ color: 'var(--color-muted)' }}>
           {status === 'reconnecting'
             ? 'Tentative de reconnexion en cours...'
-            : 'Connecte ton WhatsApp dans "Services connectes" pour voir et envoyer des messages directement depuis l\'app.'}
+            : 'WhatsApp est temporairement en maintenance. Reviens un peu plus tard pour lire et envoyer tes messages.'}
         </p>
       </div>
     )
