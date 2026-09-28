@@ -133,13 +133,23 @@ export function DashboardProvider({ children }) {
     } catch (err) { console.error(err) }
   }
 
-  const addEvent = async (title, date, hour, color) => {
+  const addEvent = async (title, date, start_minute, end_minute, color) => {
     try {
       const data = await apiFetch('/api/calendar', {
         method: 'POST',
-        body: JSON.stringify({ title, date, hour, color }),
+        body: JSON.stringify({ title, date, hour: Math.floor(start_minute / 60), start_minute, end_minute, color }),
       })
       if (data.event) setEvents(prev => [...prev, data.event])
+    } catch (err) { console.error(err) }
+  }
+
+  const updateEvent = async (id, title, date, start_minute, end_minute, color) => {
+    try {
+      const data = await apiFetch(`/api/calendar/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ title, date, hour: Math.floor(start_minute / 60), start_minute, end_minute, color }),
+      })
+      if (data.event) setEvents(prev => prev.map(e => e.id === id ? data.event : e))
     } catch (err) { console.error(err) }
   }
 
@@ -261,7 +271,7 @@ export function DashboardProvider({ children }) {
     services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect, apiError, teams, gmailAccounts, plan, planLimits,
     filterPriority, filterTime, activeSection,
     setFilterPriority, setFilterTime, setActiveSection,
-    fetchTasks, fetchEvents, addTask, toggleTask, deleteTask, addEvent, removeEvent, shareTask, fetchTeams,
+    fetchTasks, fetchEvents, addTask, toggleTask, deleteTask, addEvent, updateEvent, removeEvent, shareTask, fetchTeams,
     connectService, disconnectService, syncService, markEmailRead, fetchConnectedServices, refreshEmails, updateEmailPriority
   }), [services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect, apiError, teams, gmailAccounts, plan, planLimits, filterPriority, filterTime, activeSection])
 

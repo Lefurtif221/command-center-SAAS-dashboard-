@@ -31,6 +31,13 @@ function getTodayKey() {
   return new Date().toLocaleDateString('sv-SE')
 }
 
+function formatEventRange(evt) {
+  const start = evt.start_minute ?? (evt.hour ?? 0) * 60
+  const end = evt.end_minute ?? start + 60
+  const t = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+  return `${evt.date} · ${t(start)}–${t(end)}`
+}
+
 export default function Concentration() {
   const { tasks, events } = useDashboard()
   const [selectedType, setSelectedType] = useState('')
@@ -212,7 +219,7 @@ export default function Concentration() {
                   <CalendarIcon size={14} style={{ color: '#2563EB' }} />
                   <span className="text-sm truncate">{evt.title}</span>
                 </div>
-                <p className="text-[10px] mt-1 ml-5" style={{ color: 'var(--color-muted)' }}>{evt.date} a {String(evt.hour).padStart(2, '0')}:00</p>
+                <p className="text-[10px] mt-1 ml-5" style={{ color: 'var(--color-muted)' }}>{formatEventRange(evt)}</p>
               </button>
             ))}
           </div>

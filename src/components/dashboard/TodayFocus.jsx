@@ -9,6 +9,18 @@ const pCfg = {
 }
 const colorMap = { red: '#2563EB', gray: '#A3A3A3', dark: '#1E40AF', light: '#E5E5E5', white: '#F5F5F5' }
 
+function formatEventRange(event) {
+  const start = eventStart(event)
+  const end = event.end_minute ?? start + 60
+  const t = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+  return `${t(start)}–${t(end)}`
+}
+
+function eventStart(event) {
+  if (typeof event.start_minute === 'number') return event.start_minute
+  return (Number(event.hour) || 0) * 60
+}
+
 export default function TodayFocus() {
   const { tasks, events, toggleTask } = useDashboard()
   const [showAllOverdue, setShowAllOverdue] = useState(false)
@@ -18,7 +30,7 @@ export default function TodayFocus() {
   const todayTasks = tasks.filter(t => !t.completed && t.due_date === today)
   const allOverdueTasks = tasks.filter(t => !t.completed && t.due_date && t.due_date < today)
   const overdueTasks = showAllOverdue ? allOverdueTasks : allOverdueTasks.slice(0, 3)
-  const todayEvents = events.filter(e => e.date === today).sort((a, b) => (a.hour || '').localeCompare(b.hour || ''))
+  const todayEvents = events.filter(e => e.date === today).sort((a, b) => eventStart(a) - eventStart(b))
 
   const isEmpty = todayTasks.length === 0 && allOverdueTasks.length === 0 && todayEvents.length === 0
 
@@ -89,7 +101,7 @@ export default function TodayFocus() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm">{event.title}</p>
-                    {event.hour && <p className="text-[11px]" style={{ color: 'var(--color-muted)' }}>{event.hour}</p>}
+                    <p className="text-[11px]" style={{ color: 'var(--color-muted)' }}>{formatEventRange(event)}</p>
                   </div>
                 </div>
               ))}
