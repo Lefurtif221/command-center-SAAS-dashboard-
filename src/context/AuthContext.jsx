@@ -8,6 +8,21 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Lien de parrainage ouvert (?ref=XXX) : on le garde pour l'attribuer apres l'inscription
+    const ref = new URLSearchParams(window.location.search).get('ref')
+    if (ref && /^[A-Za-z0-9]{4,20}$/.test(ref)) localStorage.setItem('pp_ref', ref.toUpperCase())
+  }, [])
+
+  useEffect(() => {
+    if (!user) return
+    const ref = localStorage.getItem('pp_ref')
+    if (!ref) return
+    apiFetch('/api/me/referral/attach', { method: 'POST', body: JSON.stringify({ ref }) })
+      .then(() => localStorage.removeItem('pp_ref'))
+      .catch(() => { /* on reessera au prochain chargement */ })
+  }, [user])
+
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const tokenFromUrl = params.get('token')
     const userFromUrl = params.get('user')

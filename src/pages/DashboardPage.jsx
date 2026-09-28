@@ -14,6 +14,7 @@ import Team from '../components/dashboard/Team'
 import StatsHistory from '../components/dashboard/StatsHistory'
 import Concentration from '../components/dashboard/Concentration'
 import Feedback from '../components/dashboard/Feedback'
+import SharePanel from '../components/dashboard/SharePanel'
 import GettingStarted from '../components/dashboard/GettingStarted'
 import InviteToasts from '../components/dashboard/InviteToasts'
 import OnboardingTutorial from '../components/dashboard/OnboardingTutorial'
@@ -84,6 +85,7 @@ export default function DashboardPage() {
                   <QuickActions />
                 </div>
               </div>
+              <SharePanel compact />
             </div>
           )}
 
@@ -130,8 +132,11 @@ export default function DashboardPage() {
           )}
 
           {activeSection === 'feedback' && (
-            <div className="page-enter max-w-3xl">
-              <Feedback />
+            <div className="page-enter grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 items-start">
+              <div className="lg:col-span-2">
+                <Feedback />
+              </div>
+              <SharePanel />
             </div>
           )}
 
