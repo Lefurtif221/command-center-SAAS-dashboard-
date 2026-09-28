@@ -29,6 +29,7 @@ export default function LandingPage() {
             <a href="#features" className="hover:text-text transition-colors">Fonctionnalites</a>
             <a href="#how" className="hover:text-text transition-colors">Comment ca marche</a>
             <a href="#pricing" className="hover:text-text transition-colors">Tarifs</a>
+            <a href="#apercu" className="hover:text-text transition-colors">Apercu</a>
           </div>
           <div className="flex items-center gap-3">
             <button onClick={go} className="text-xs font-medium text-muted hover:text-text hidden sm:block transition-colors">{isAuthenticated ? 'Dashboard' : 'Connexion'}</button>
@@ -40,18 +41,19 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <header className="pt-28 pb-16 md:pt-36 md:pb-24 px-6">
+      <header className="pt-28 pb-16 md:pt-36 md:pb-20 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="max-w-2xl">
+          <div className="max-w-3xl mx-auto text-center">
             <p className="text-xs font-medium mb-4" style={{ color: '#2563EB' }}>Gratuit pour demarrer</p>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold tracking-tighter-custom mb-5 leading-[1.05]">
-              Tes emails, messages,<br />taches et calendrier<br />
-              <span style={{ color: '#2563EB' }}>au meme endroit.</span>
+              Tes emails, WhatsApp, taches<br className="hidden sm:block" /> et agenda.<br />
+              <span style={{ color: '#2563EB' }}>Un seul ecran.</span>
             </h1>
-            <p className="text-muted text-base md:text-lg max-w-xl mb-8 leading-relaxed">
-              Personal Place connecte Gmail et WhatsApp dans un seul dashboard. Filtrage intelligent, timer Pomodoro, focus du jour. Pas de bruit, juste l essentiel.
+            <p className="text-muted text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+              Au lieu de jongler entre Gmail, WhatsApp, tes notes et ton calendrier, Personal Place
+              rassemble tout dans un seul tableau de bord : tu vois ce qui compte, tu agis, c est fait.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button onClick={go} className="w-full sm:w-auto text-sm font-medium px-6 py-3 rounded-lg transition-colors flex items-center justify-center gap-2" style={{ background: '#2563EB', color: '#FFF' }}>
                 {isAuthenticated ? 'Acceder au dashboard' : 'Creer mon espace gratuit'}
                 <ArrowRight size={16} />
@@ -61,6 +63,31 @@ export default function LandingPage() {
               </button>
             </div>
             <p className="mt-6 text-xs" style={{ color: 'var(--color-muted)' }}>Pas de carte bancaire. Setup en 2 minutes.</p>
+          </div>
+
+          {/* Capture du dashboard */}
+          <div id="apercu" className="mt-12 md:mt-16 relative max-w-4xl mx-auto">
+            <div className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--color-border)', boxShadow: '0 24px 60px rgba(0,0,0,0.45)' }}>
+              <img src="/dashboard-preview.png" alt="Apercu du dashboard Personal Place" className="w-full h-auto" loading="eager" />
+            </div>
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-medium px-3 py-1 rounded-full" style={{ background: '#2563EB', color: '#FFF' }}>
+              Ton espace, en un coup d oeil
+            </div>
+          </div>
+
+          {/* 3 etapes */}
+          <div id="how" className="mt-16 md:mt-20 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { n: '01', title: 'Connecte Gmail', desc: 'Un clic, autorisation Google. Tes emails arrivent ici, tries par priorite.' },
+              { n: '02', title: 'Ajoute ta tache', desc: 'Ce que tu dois faire aujourd hui, ecrit en 5 secondes. Il apparait dans le focus du jour.' },
+              { n: '03', title: 'Cale un bloc', desc: 'Reserve une heure dans ton calendrier. C est fait, sans changer d app.' },
+            ].map((s) => (
+              <div key={s.n} className="p-5 rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+                <span className="text-xs font-display font-semibold mb-3 block" style={{ color: '#2563EB' }}>{s.n}</span>
+                <h3 className="text-sm font-display font-medium mb-1.5">{s.title}</h3>
+                <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-muted)' }}>{s.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </header>
@@ -80,30 +107,6 @@ export default function LandingPage() {
                 <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-muted)' }}>{f.desc}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section id="how" className="py-16 px-6 border-t" style={{ borderColor: 'var(--color-border)', background: 'var(--color-surface-solid)' }}>
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-display font-semibold tracking-tight mb-10">Comment ca marche</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <span className="text-3xl font-display font-semibold mb-3 block" style={{ color: 'var(--color-border)' }}>01</span>
-              <h4 className="text-sm font-display font-medium mb-2">Connecte Gmail</h4>
-              <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-muted)' }}>Autorise l acces a tes emails. Le filtre les trie automatiquement par priorite.</p>
-            </div>
-            <div>
-              <span className="text-3xl font-display font-semibold mb-3 block" style={{ color: 'var(--color-border)' }}>02</span>
-              <h4 className="text-sm font-display font-medium mb-2">Scanne le QR WhatsApp</h4>
-              <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-muted)' }}>Comme WhatsApp Web. Tes conversations apparaissent dans le dashboard.</p>
-            </div>
-            <div>
-              <span className="text-3xl font-display font-semibold mb-3 block" style={{ color: 'var(--color-border)' }}>03</span>
-              <h4 className="text-sm font-display font-medium mb-2">Travaille au calme</h4>
-              <p className="text-[13px] leading-relaxed" style={{ color: 'var(--color-muted)' }}>Focus du jour, taches, calendrier, Pomodoro. Tout au meme endroit.</p>
-            </div>
           </div>
         </div>
       </section>

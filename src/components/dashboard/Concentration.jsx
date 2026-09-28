@@ -3,8 +3,13 @@ import { useDashboard } from '../../hooks/useDashboard'
 import { apiFetch } from '../../utils/api'
 import { List, CheckSquare, Calendar as CalendarIcon, Timer, Play, Pause, RotateCcw, BarChart3, Settings, ChevronDown, ChevronUp } from 'lucide-react'
 
-const DEFAULTS = { work: 25, break: 5, longBreak: 15, sessions: 4 }
+const DEFAULTS = { work: 25, break: 5, longBreak: 15, sessions: 4, sound: 'classic', muted: false }
 const PHASES = { work: 'Travail', break: 'Pause', longBreak: 'Pause longue' }
+const SOUNDS = [
+  { id: 'classic', label: 'Classique' },
+  { id: 'digital', label: 'Digital' },
+  { id: 'chime', label: 'Carillon' },
+]
 
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60)
@@ -12,18 +17,33 @@ function formatTime(seconds) {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
-function playNotification() {
+function playNotification(kind = 'classic', muted = false) {
+  if (muted) return
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)()
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
-    osc.connect(gain)
-    gain.connect(ctx.destination)
-    osc.frequency.value = 800
-    gain.gain.value = 0.3
-    osc.start()
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8)
-    osc.stop(ctx.currentTime + 0.8)
+    const tone = (freq, delay, dur, type = 'sine', vol = 0.3) => {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.type = type
+      osc.frequency.value = freq
+      gain.gain.value = vol
+      osc.start(ctx.currentTime + delay)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + dur)
+      osc.stop(ctx.currentTime + delay + dur)
+    }
+    if (kind === 'digital') { tone(880, 0, 0.15, 'square', 0.12); tone(1320, 0.18, 0.2, 'square', 0.12) }
+    else if (kind === 'chime') { tone(523, 0, 0.5, 'triangle', 0.22); tone(659, 0.15, 0.7, 'triangle', 0.18) }
+    else { tone(800, 0, 0.8, 'sine', 0.3) }
+  } catch {}
+}
+
+function notifyBrowser(title, body) {
+  try {
+    if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+      new Notification(title, { body })
+    }
   } catch {}
 }
 
@@ -55,6 +75,15 @@ export default function Concentration() {
   const [isRunning, setIsRunning] = useState(false)
   const [sessionsCompleted, setSessionsCompleted] = useState(0)
   const [todaySessions, setTodaySessions] = useState([])
+  const [weekTotal, setWeekTotal] = useState(0)
+
+  useEffect(() => {
+    try {
+      const all = JSON.parse(localStorage.getItem('pomodoro_sessions') || '[]')
+      const limit = Date.now() - 7 * 86400000
+      setWeekTotal(all.filter(s => new Date(s.completedAt).getTime() >= limit).reduce((a, s) => a + (s.duration || 0), 0))
+    } catch { setWeekTotal(0) }
+  }, [todaySessions])
 
   const intervalRef = useRef(null)
   const phaseRef = useRef(phase)
@@ -63,6 +92,13 @@ export default function Concentration() {
   settingsRef.current = settings
 
   useEffect(() => { localStorage.setItem('pomodoro_settings', JSON.stringify(settings)) }, [settings])
+
+  // Compteur visible meme quand l'onglet est perdu au milieu des autres
+  useEffect(() => {
+    const base = 'Personal Place'
+    document.title = isRunning ? `${formatTime(timeLeft)} · ${PHASES[phase]} — ${base}` : base
+    return () => { document.title = base }
+  }, [isRunning, timeLeft, phase])
 
   const workSec = settings.work * 60
   const breakSec = settings.break * 60
@@ -118,7 +154,9 @@ export default function Concentration() {
       setPhase('work')
       setTimeLeft(wSec)
     }
-    playNotification()
+    const wasWork = phaseRef.current === 'work'
+    playNotification(settingsRef.current.sound, settingsRef.current.muted)
+    notifyBrowser('Pomodoro', wasWork ? 'Session terminee : c est la pause !' : 'Pause terminee : on repart pour une session !')
   }, [sessionsCompleted, selectedTitle])
 
   useEffect(() => {
@@ -144,7 +182,15 @@ export default function Concentration() {
     handleReset()
   }
 
-  const handleStart = () => { if (selectedTitle) setIsRunning(true) }
+  const handleStart = () => {
+    if (!selectedTitle) return
+    try {
+      if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+        Notification.requestPermission().catch(() => {})
+      }
+    } catch {}
+    setIsRunning(true)
+  }
   const handlePause = () => setIsRunning(false)
   const handleReset = () => {
     setIsRunning(false)
@@ -270,6 +316,34 @@ export default function Concentration() {
               <p className="text-[10px] mt-2" style={{ color: 'var(--color-muted)' }}>
                 Total cycle : {settings.work * settings.sessions + settings.break * (settings.sessions - 1) + settings.longBreak} min
               </p>
+
+              <div className="flex items-center gap-1.5 mt-3 flex-wrap">
+                <span className="text-[10px] mr-1" style={{ color: 'var(--color-muted)' }}>Son</span>
+                {SOUNDS.map(s => (
+                  <button key={s.id} onClick={() => setSettings(prev => ({ ...prev, sound: s.id, muted: false }))}
+                    className="px-2 py-1 rounded-lg text-[10px] transition-colors duration-150"
+                    style={{
+                      background: settings.sound === s.id && !settings.muted ? 'rgba(37,99,235,0.15)' : 'var(--color-surface-solid)',
+                      color: settings.sound === s.id && !settings.muted ? '#2563EB' : 'var(--color-muted)',
+                      border: '1px solid var(--color-border)',
+                    }}>
+                    {s.label}
+                  </button>
+                ))}
+                <button onClick={() => {
+                  const muted = !settings.muted
+                  setSettings(prev => ({ ...prev, muted }))
+                  if (!muted) playNotification(settings.sound, false)
+                }}
+                  className="px-2 py-1 rounded-lg text-[10px] transition-colors duration-150"
+                  style={{
+                    background: settings.muted ? 'rgba(239,68,68,0.1)' : 'var(--color-surface-solid)',
+                    color: settings.muted ? '#EF4444' : 'var(--color-muted)',
+                    border: '1px solid var(--color-border)',
+                  }}>
+                  {settings.muted ? 'Son coupe' : 'Couper'}
+                </button>
+              </div>
             </div>
           )}
 
@@ -344,6 +418,13 @@ export default function Concentration() {
             <div className="rounded-lg p-4" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
               <p className="text-[11px]" style={{ color: 'var(--color-muted)' }}>Temps total</p>
               <p className="text-2xl font-display font-semibold mt-1">{Math.floor(todayTotal / 60)}min</p>
+            </div>
+            <div className="rounded-lg p-4" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+              <p className="text-[11px]" style={{ color: 'var(--color-muted)' }}>Cette semaine</p>
+              <p className="text-2xl font-display font-semibold mt-1" style={{ color: '#10B981' }}>{Math.floor(weekTotal / 60)}min</p>
+              <p className="text-[10px] mt-1" style={{ color: 'var(--color-muted)' }}>
+                sur les 7 derniers jours
+              </p>
             </div>
           </div>
 

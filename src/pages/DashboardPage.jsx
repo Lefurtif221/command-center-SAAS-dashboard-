@@ -13,6 +13,9 @@ import Tasks from '../components/dashboard/Tasks'
 import Team from '../components/dashboard/Team'
 import StatsHistory from '../components/dashboard/StatsHistory'
 import Concentration from '../components/dashboard/Concentration'
+import Feedback from '../components/dashboard/Feedback'
+import GettingStarted from '../components/dashboard/GettingStarted'
+import InviteToasts from '../components/dashboard/InviteToasts'
 import OnboardingTutorial from '../components/dashboard/OnboardingTutorial'
 import UpgradeButton from '../components/dashboard/UpgradeButton'
 import ProPerks, { PRO_PERKS, ENTREPRISE_PERKS } from '../components/dashboard/ProPerks'
@@ -21,7 +24,7 @@ import { useAuth } from '../hooks/useAuth'
 import { apiFetch } from '../utils/api'
 
 export default function DashboardPage() {
-  const { activeSection, apiError, plan, planLimits } = useDashboard()
+  const { activeSection, apiError, plan, planLimits, services } = useDashboard()
   const { user, updateProfile } = useAuth()
   const [name, setName] = useState(user?.name || '')
   const [saving, setSaving] = useState(false)
@@ -52,6 +55,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen" style={{ background: 'var(--color-bg)' }}>
       <OnboardingTutorial />
+      <InviteToasts />
       <Sidebar />
 
       <div className="md:ml-56 overflow-x-hidden min-h-screen">
@@ -68,18 +72,18 @@ export default function DashboardPage() {
         <main className="p-3 md:p-6 max-w-[1400px] mx-auto">
           {activeSection === 'dashboard' && (
             <div className="space-y-4 md:space-y-6 page-enter">
+              <GettingStarted />
               <StatsGrid />
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
                 <div className="lg:col-span-2 space-y-4 md:space-y-6">
+                  <TodayFocus />
                   <ConnectedServices />
-                  <EmailFilter />
+                  {services.gmail.connected && <EmailFilter />}
                 </div>
                 <div className="space-y-4 md:space-y-6">
-                  <TodayFocus />
                   <QuickActions />
                 </div>
               </div>
-              <WhatsAppMessages />
             </div>
           )}
 
@@ -122,6 +126,12 @@ export default function DashboardPage() {
           {activeSection === 'concentration' && (
             <div className="page-enter">
               <Concentration />
+            </div>
+          )}
+
+          {activeSection === 'feedback' && (
+            <div className="page-enter max-w-3xl">
+              <Feedback />
             </div>
           )}
 

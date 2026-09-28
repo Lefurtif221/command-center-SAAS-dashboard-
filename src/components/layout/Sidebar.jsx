@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import { useDashboard } from '../../hooks/useDashboard'
-import { LayoutGrid, Mail, MessageSquare, Calendar, CheckSquare, Timer, Sparkles, ChevronLeft, ChevronRight, X, Settings, LogOut, Menu, Users, BarChart3 } from 'lucide-react'
+import { LayoutGrid, Mail, MessageSquare, Calendar, CheckSquare, Timer, Sparkles, ChevronLeft, ChevronRight, X, Settings, LogOut, Menu, Users, BarChart3, Lightbulb } from 'lucide-react'
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
@@ -10,16 +10,17 @@ const navItems = [
   { id: 'calendar', label: 'Calendrier', icon: Calendar },
   { id: 'tasks', label: 'Taches', icon: CheckSquare },
   { id: 'stats', label: 'Statistiques', icon: BarChart3 },
-  { id: 'team', label: 'Equipe', icon: Users },
+  { id: 'team', label: 'Equipe', icon: Users, badge: 'invites' },
   { id: 'concentration', label: 'Concentration', icon: Timer },
+  { id: 'feedback', label: 'Retours', icon: Lightbulb },
 ]
 
 export default function Sidebar({ onToggle }) {
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const { user, logout } = useAuth()
-  const { activeSection, setActiveSection, stats } = useDashboard()
-  const getBadge = (t) => t === 'emails' ? stats.unreadEmails : 0
+  const { activeSection, setActiveSection, stats, invites } = useDashboard()
+  const getBadge = (t) => t === 'emails' ? stats.unreadEmails : t === 'invites' ? invites.length : 0
 
   const handleNav = (id) => {
     setActiveSection(id)

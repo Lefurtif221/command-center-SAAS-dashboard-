@@ -10,7 +10,7 @@ import TeamSchedule from './TeamSchedule'
 const roleLabels = { owner: 'Proprietaire', admin: 'Admin', member: 'Membre' }
 
 export default function Team() {
-  const { teams, fetchTeams, fetchTasks, plan, planLimits } = useDashboard()
+  const { teams, fetchTeams, fetchTasks, plan, planLimits, invites: myInvites, fetchInvites } = useDashboard()
   const [selectedId, setSelectedId] = useState(null)
   const [detail, setDetail] = useState(null)
   const [newTeamName, setNewTeamName] = useState('')
@@ -21,16 +21,7 @@ export default function Team() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
-  const [myInvites, setMyInvites] = useState([])
-
-  const loadMyInvites = async () => {
-    try {
-      const data = await apiFetch('/api/teams/my-invitations')
-      setMyInvites(data.invitations || [])
-    } catch { /* pas d invitation : normal */ }
-  }
-
-  useEffect(() => { loadMyInvites() }, [])
+  const loadMyInvites = fetchInvites
 
   useEffect(() => { if (!selectedId && teams.length > 0) setSelectedId(teams[0].id) }, [teams, selectedId])
 
@@ -88,7 +79,7 @@ export default function Team() {
     setError(''); setNotice('')
     try {
       await apiFetch(`/api/teams/invitations/${inv.token}/accept`, { method: 'POST' })
-      setMyInvites(prev => prev.filter(i => i.id !== inv.id))
+      await loadMyInvites()
       await fetchTeams()
       setSelectedId(inv.team_id)
       setNotice(`Invitation acceptee : ${inv.team_name}`)
@@ -99,7 +90,7 @@ export default function Team() {
     setError(''); setNotice('')
     try {
       await apiFetch(`/api/teams/invitations/${inv.token}/decline`, { method: 'POST' })
-      setMyInvites(prev => prev.filter(i => i.id !== inv.id))
+      await loadMyInvites()
       setNotice('Invitation refusee.')
     } catch (err) { setError(err.message) }
   }
