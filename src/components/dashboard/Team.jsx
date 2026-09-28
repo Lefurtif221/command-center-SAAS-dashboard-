@@ -21,6 +21,16 @@ export default function Team() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  const [myInvites, setMyInvites] = useState([])
+
+  const loadMyInvites = async () => {
+    try {
+      const data = await apiFetch('/api/teams/my-invitations')
+      setMyInvites(data.invitations || [])
+    } catch { /* pas d invitation : normal */ }
+  }
+
+  useEffect(() => { loadMyInvites() }, [])
 
   useEffect(() => { if (!selectedId && teams.length > 0) setSelectedId(teams[0].id) }, [teams, selectedId])
 
@@ -72,6 +82,26 @@ export default function Team() {
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
     } catch { /* presse-papiers indisponible */ }
+  }
+
+  const acceptInvite = async (inv) => {
+    setError(''); setNotice('')
+    try {
+      await apiFetch(`/api/teams/invitations/${inv.token}/accept`, { method: 'POST' })
+      setMyInvites(prev => prev.filter(i => i.id !== inv.id))
+      await fetchTeams()
+      setSelectedId(inv.team_id)
+      setNotice(`Invitation acceptee : ${inv.team_name}`)
+    } catch (err) { setError(err.message) }
+  }
+
+  const declineInvite = async (inv) => {
+    setError(''); setNotice('')
+    try {
+      await apiFetch(`/api/teams/invitations/${inv.token}/decline`, { method: 'POST' })
+      setMyInvites(prev => prev.filter(i => i.id !== inv.id))
+      setNotice('Invitation refusee.')
+    } catch (err) { setError(err.message) }
   }
 
   const revokeInvite = async (invId) => {
@@ -132,6 +162,33 @@ export default function Team() {
 
   return (
     <div className="space-y-4">
+      {myInvites.length > 0 && (
+        <div className="space-y-2">
+          {myInvites.map(inv => (
+            <div key={inv.id} className="rounded-xl p-3 flex flex-wrap items-center justify-between gap-3"
+              style={{ background: 'rgba(37,99,235,0.07)', border: '1px solid rgba(37,99,235,0.25)' }}>
+              <div className="min-w-0">
+                <p className="text-xs font-medium">Invitation a rejoindre « {inv.team_name} »</p>
+                <p className="text-[11px]" style={{ color: 'var(--color-muted)' }}>
+                  par {inv.inviter_name || 'un membre'} · role {roleLabels[inv.role] || inv.role}
+                </p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <button onClick={() => acceptInvite(inv)}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-150"
+                  style={{ background: '#2563EB', color: '#FFF' }}>
+                  Accepter
+                </button>
+                <button onClick={() => declineInvite(inv)}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-150"
+                  style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}>
+                  Refuser
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       <div className="flex flex-col xl:flex-row gap-4">
         <div className="flex-1 min-w-0 xl:max-w-2xl">
     <div className="rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
