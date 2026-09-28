@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { ArrowLeft, Mail, Lock, Timer, Eye, EyeOff } from 'lucide-react'
 import { API_URL } from '../config'
+import { isValidEmail } from '../utils/email'
 
 function GoogleIcon() {
   return (
@@ -72,7 +73,8 @@ export default function AuthPage() {
         setVerifyCodeInput('')
         setResendIn(30)
         setError('')
-        resendCode(loginForm.email).catch(() => {})
+        resendCode(loginForm.email)
+          .catch((err) => setError(err.message || "Le code n'a pas pu être envoyé. Réessaie plus tard."))
       } else {
         setError(err.message || 'Email ou mot de passe incorrect')
       }
@@ -84,6 +86,7 @@ export default function AuthPage() {
     e.preventDefault(); setError('')
     if (signupForm.password !== signupForm.confirmPassword) { setError('Les mots de passe ne correspondent pas'); return }
     if (signupForm.password.length < 8) { setError('Le mot de passe doit contenir au moins 8 caracteres'); return }
+    if (!isValidEmail(signupForm.email.trim())) { setError("Adresse email invalide : verifie l'ecriture (exemple : prenom@famille.com)"); return }
     setLoading(true)
     try {
       const res = await signup(signupForm.name, signupForm.email, signupForm.password)
