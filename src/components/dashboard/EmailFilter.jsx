@@ -127,6 +127,10 @@ export default function EmailFilter() {
     } catch { setEmailBody(email.preview || '') } finally { setEmailBodyLoading(false) }
   }
 
+  const closeEmailModal = () => {
+    setEmailModal(null); setEmailBody(''); setEmailBodyLoading(false)
+  }
+
   const openSummary = async (email, e) => {
     e.stopPropagation()
     setSummaryModal(email); setSummaryText(''); setSummaryFullBody(''); setSummaryLoading(true); setShowFullEmail(false)
