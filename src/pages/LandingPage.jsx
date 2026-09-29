@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { ArrowRight, Mail, MessageSquare, Calendar, CheckSquare, Timer, FileText, Check } from 'lucide-react'
+import { ArrowRight, Mail, MessageSquare, Calendar, CheckSquare, Timer, FileText, Check, Monitor, Bell, Smartphone } from 'lucide-react'
+import { INSTALL_STEPS, NOTIF_NOTE } from '../data/installSteps'
 
 const features = [
   { icon: Mail, title: 'Emails filtrés', desc: 'Gmail connecté en un clic. Les emails importants remontent en haut, le reste attend.' },
@@ -29,6 +30,7 @@ export default function LandingPage() {
             <a href="#features" className="hover:text-text transition-colors">Fonctionnalités</a>
             <a href="#how" className="hover:text-text transition-colors">Comment ça marche</a>
             <a href="#pricing" className="hover:text-text transition-colors">Tarifs</a>
+            <a href="#installer" className="hover:text-text transition-colors">Installer</a>
             <a href="#apercu" className="hover:text-text transition-colors">Aperçu</a>
           </div>
           <div className="flex items-center gap-3">
@@ -199,6 +201,57 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Installer */}
+      <section id="installer" className="py-16 px-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <p className="text-xs font-medium mb-3" style={{ color: '#2563EB' }}>Sur mobile ? Installe l’app</p>
+            <h2 className="text-2xl md:text-3xl font-display font-semibold tracking-tighter-custom mb-3">
+              Personal Place sur ton écran d’accueil
+            </h2>
+            <p className="text-sm md:text-base" style={{ color: 'var(--color-muted)' }}>
+              Deux gestes et ça s’ouvre comme une app : icône dédiée, plein écran, plus de barre de navigateur.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { key: 'ios', icon: Smartphone },
+              { key: 'android', icon: Smartphone },
+              { key: 'desktop', icon: Monitor },
+            ].map(({ key, icon: Icon }) => {
+              const cfg = INSTALL_STEPS[key]
+              return (
+                <div key={key} className="p-4 rounded-xl" style={{ background: 'var(--color-surface-solid)', border: '1px solid var(--color-border)' }}>
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <span className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ background: 'rgba(37,99,235,0.12)', color: '#2563EB' }}>
+                      <Icon size={15} />
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium">{cfg.label}</p>
+                      <p className="text-[10px]" style={{ color: 'var(--color-muted)' }}>via {cfg.how}</p>
+                    </div>
+                  </div>
+                  <ol className="space-y-2">
+                    {cfg.steps.map((s, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs">
+                        <span className="w-4 h-4 shrink-0 rounded-full flex items-center justify-center text-[9px] font-semibold mt-px"
+                          style={{ background: 'rgba(37,99,235,0.12)', color: '#2563EB' }}>{i + 1}</span>
+                        <span style={{ color: 'var(--color-muted)' }}>{s}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )
+            })}
+          </div>
+          <div className="mt-6 rounded-xl p-4 flex items-start gap-3" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+            <Bell size={15} className="shrink-0 mt-0.5" style={{ color: '#F59E0B' }} />
+            <p className="text-xs leading-relaxed" style={{ color: 'var(--color-muted)' }}>{NOTIF_NOTE}</p>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t py-10 px-6" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
@@ -210,6 +263,7 @@ export default function LandingPage() {
             <a href="/confidentialite" className="hover:text-text transition-colors">Confidentialité</a>
             <a href="/conditions" className="hover:text-text transition-colors">Conditions</a>
             <a href="/contact" className="hover:text-text transition-colors">Contact</a>
+            <a href="#installer" className="hover:text-text transition-colors">Installer l’app</a>
           </div>
           <div className="text-xs" style={{ color: 'var(--color-muted)', opacity: 0.5 }}>&copy; 2026 Personal Place</div>
         </div>

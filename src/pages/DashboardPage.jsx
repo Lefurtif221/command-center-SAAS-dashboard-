@@ -16,6 +16,7 @@ import Concentration from '../components/dashboard/Concentration'
 import Feedback from '../components/dashboard/Feedback'
 import SharePanel from '../components/dashboard/SharePanel'
 import GmailPromo from '../components/dashboard/GmailPromo'
+import InstallHint from '../components/dashboard/InstallHint'
 import GettingStarted from '../components/dashboard/GettingStarted'
 import InviteToasts from '../components/dashboard/InviteToasts'
 import OnboardingTutorial from '../components/dashboard/OnboardingTutorial'
@@ -59,6 +60,7 @@ export default function DashboardPage() {
       <OnboardingTutorial />
       <InviteToasts />
       <GmailPromo />
+      <InstallHint />
       <Sidebar />
 
       <div className="md:ml-56 overflow-x-hidden min-h-screen">
