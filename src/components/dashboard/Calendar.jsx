@@ -4,8 +4,8 @@ import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, X, Plus, Trash2 } 
 
 const DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 const MONTHS = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre']
-const START_H = 6
-const END_H = 22
+const START_H = 0
+const END_H = 24
 const PX_PER_MIN = 0.85
 const GRID_H = (END_H - START_H) * 60 * PX_PER_MIN
 const COLORS = { accent: '#2563EB', success: '#10B981', warning: '#F59E0B', accentSec: '#1E40AF', purple: '#8B5CF6' }
