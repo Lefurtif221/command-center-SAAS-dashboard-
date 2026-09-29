@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
 import { apiFetch } from '../../utils/api'
+import PushToggle from './PushToggle'
 
 const WHATSAPP_MAINTENANCE = true
 
@@ -182,6 +183,11 @@ export default function ConnectedServices() {
             </div>
           )
         })}
+      </div>
+
+      <div className="px-4 pb-4">
+        <h4 className="text-xs font-medium mb-3 px-1" style={{ color: 'var(--color-muted)' }}>Notifications push</h4>
+        <PushToggle />
       </div>
 
       {showGoogleModal && (
