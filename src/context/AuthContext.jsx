@@ -55,6 +55,7 @@ export function AuthProvider({ children }) {
     })
     localStorage.setItem('command_center_token', token)
     setUser(user)
+    localStorage.setItem('pp_promo_gmail', String(Date.now()))
     return user
   }
 

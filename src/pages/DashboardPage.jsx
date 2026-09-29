@@ -15,6 +15,7 @@ import StatsHistory from '../components/dashboard/StatsHistory'
 import Concentration from '../components/dashboard/Concentration'
 import Feedback from '../components/dashboard/Feedback'
 import SharePanel from '../components/dashboard/SharePanel'
+import GmailPromo from '../components/dashboard/GmailPromo'
 import GettingStarted from '../components/dashboard/GettingStarted'
 import InviteToasts from '../components/dashboard/InviteToasts'
 import OnboardingTutorial from '../components/dashboard/OnboardingTutorial'
@@ -57,6 +58,7 @@ export default function DashboardPage() {
     <div className="min-h-screen" style={{ background: 'var(--color-bg)' }}>
       <OnboardingTutorial />
       <InviteToasts />
+      <GmailPromo />
       <Sidebar />
 
       <div className="md:ml-56 overflow-x-hidden min-h-screen">
