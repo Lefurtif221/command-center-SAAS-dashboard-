@@ -51,10 +51,8 @@ export async function subscribeToPush() {
     })
   );
 
-  await fetch('/api/push/subscribe', {
+  await apiFetch('/api/push/subscribe', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
     body: JSON.stringify({
       endpoint: subscription.endpoint,
       keys: {
@@ -62,7 +60,6 @@ export async function subscribeToPush() {
         auth: btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('auth')))),
       },
     }),
-    credentials: 'include',
   });
 
   return subscription;
@@ -73,10 +70,8 @@ export async function unsubscribeFromPush() {
   const subscription = await registration.pushManager.getSubscription();
   if (!subscription) return;
 
-  await fetch('/api/push/unsubscribe', {
+  await apiFetch('/api/push/unsubscribe', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
     body: JSON.stringify({ endpoint: subscription.endpoint }),
   });
 

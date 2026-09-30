@@ -13,8 +13,9 @@ export default defineConfig({
       manifest: false,
       devOptions: { enabled: false },
       workbox: {
+        importScripts: ['push-sw.js'],
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
-        globIgnores: ['**/dashboard-preview.png'],
+        globIgnores: ['**/dashboard-preview.png', 'push-sw.js'],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
         cleanupOutdatedCaches: true,
