@@ -78,6 +78,10 @@ export async function unsubscribeFromPush() {
   await subscription.unsubscribe();
 }
 
+export async function sendTestPush() {
+  return apiFetch('/api/push/test', { method: 'POST' });
+}
+
 export function isPushSupported() {
   return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 }
