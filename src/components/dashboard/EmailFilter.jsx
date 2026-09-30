@@ -53,7 +53,7 @@ export default function EmailFilter() {
   const [summaryFullBody, setSummaryFullBody] = useState('')
   const [summaryLoading, setSummaryLoading] = useState(false)
   const [showFullEmail, setShowFullEmail] = useState(false)
-  const pColors = { high: '#1E40AF', low: '#10B981' }
+  const pColors = { high: '#EF4444', low: '#10B981' }
   const pLabels = { high: 'Important', low: 'Non important' }
 
   useEffect(() => { fetchRules() }, [])
@@ -165,7 +165,7 @@ export default function EmailFilter() {
           <button onClick={() => { setEmailModal(null); setReplyModal(emailModal); setReplyBody('') }}
             className="px-3 py-2 text-xs font-medium rounded-lg transition-colors duration-150 " style={{ background: '#2563EB', color: '#FFF' }}>Repondre</button>
           <button onClick={() => markImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
-            className="px-3 py-2 text-xs rounded-lg transition-colors duration-150  disabled:opacity-50" style={{ background: 'rgba(30,64,175,0.1)', border: '1px solid rgba(30,64,175,0.2)', color: '#1E40AF' }}>Important</button>
+            className="px-3 py-2 text-xs rounded-lg transition-colors duration-150  disabled:opacity-50" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#EF4444' }}>Important</button>
           <button onClick={() => markNotImportant(emailModal.senderEmail, { stopPropagation: () => {} })} disabled={ruleLoading === emailModal.senderEmail}
             className="px-3 py-2 text-xs rounded-lg transition-colors disabled:opacity-50" style={{ color: 'var(--color-muted)', background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>Non important</button>
         </div>
@@ -317,7 +317,7 @@ export default function EmailFilter() {
                 <div key={rule.id} className="flex items-center justify-between px-2 py-1.5 rounded-lg text-xs" style={{ background: 'var(--color-surface-solid)' }}>
                   <span>
                     {rule.keyword ? <><span style={{ color: '#2563EB' }}>Mot-cle:</span> {rule.keyword}</> : <><span style={{ color: '#2563EB' }}>Expediteur:</span> {rule.sender}</>}
-                    <span className="ml-2 px-1.5 py-0.5 rounded text-[10px]" style={{ background: rule.priority === 'high' ? 'rgba(30,64,175,0.1)' : 'rgba(16,185,129,0.1)', color: rule.priority === 'high' ? '#1E40AF' : '#10B981' }}>
+                    <span className="ml-2 px-1.5 py-0.5 rounded text-[10px]" style={{ background: rule.priority === 'high' ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)', color: rule.priority === 'high' ? '#EF4444' : '#10B981' }}>
                       {rule.priority === 'high' ? 'Important' : 'Non important'}
                     </span>
                   </span>
@@ -361,7 +361,7 @@ export default function EmailFilter() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   {email.unread && <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#2563EB' }} />}
-                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ background: email.priority === 'high' ? 'rgba(30,64,175,0.1)' : 'rgba(16,185,129,0.1)', color: email.priority === 'high' ? '#1E40AF' : '#10B981' }}>{pLabels[email.priority] || email.priority}</span>
+                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ background: email.priority === 'high' ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)', color: email.priority === 'high' ? '#EF4444' : '#10B981' }}>{pLabels[email.priority] || email.priority}</span>
                   {gmailAccounts.length > 1 && email.accountEmail && (
                     <span className="text-[10px] px-1.5 py-0.5 rounded truncate max-w-[140px]" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}>{email.accountEmail}</span>
                   )}
