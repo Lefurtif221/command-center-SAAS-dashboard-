@@ -21,6 +21,7 @@ import PushPrompt from '../components/dashboard/PushPrompt'
 import GettingStarted from '../components/dashboard/GettingStarted'
 import InviteToasts from '../components/dashboard/InviteToasts'
 import OnboardingTutorial from '../components/dashboard/OnboardingTutorial'
+import ThankYouBanner from '../components/dashboard/ThankYouBanner'
 import UpgradeButton from '../components/dashboard/UpgradeButton'
 import ProPerks, { PRO_PERKS, ENTREPRISE_PERKS } from '../components/dashboard/ProPerks'
 import { useDashboard } from '../hooks/useDashboard'
@@ -67,6 +68,8 @@ export default function DashboardPage() {
 
       <div className="md:ml-56 overflow-x-hidden min-h-screen">
         <TopBar />
+
+        <ThankYouBanner />
 
         {apiError && (
           <div className="mx-3 md:mx-6 mt-3 flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-xs" style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.25)', color: '#F59E0B' }}>
