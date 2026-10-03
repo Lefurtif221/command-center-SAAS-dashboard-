@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import { useDashboard } from '../../hooks/useDashboard'
-import { LayoutGrid, Mail, MessageSquare, Calendar, CheckSquare, Timer, Sparkles, ChevronLeft, ChevronRight, X, Settings, LogOut, Menu, Users, BarChart3, Lightbulb } from 'lucide-react'
+import { LayoutGrid, Mail, MessageSquare, Calendar, CheckSquare, Timer, Sparkles, ChevronLeft, ChevronRight, X, Settings, LogOut, Menu, Users, BarChart3, Lightbulb, Inbox } from 'lucide-react'
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
@@ -13,6 +13,7 @@ const navItems = [
   { id: 'team', label: 'Equipe', icon: Users, badge: 'invites' },
   { id: 'concentration', label: 'Concentration', icon: Timer },
   { id: 'feedback', label: 'Retours', icon: Lightbulb },
+  { id: 'admin-feedback', label: 'Retours admin', icon: Inbox, adminOnly: true },
 ]
 
 export default function Sidebar({ onToggle }) {
@@ -69,7 +70,7 @@ export default function Sidebar({ onToggle }) {
       <nav className="flex-1 py-4 px-2 overflow-y-auto">
         <div className="flex flex-col gap-0.5">
           {!collapsed && <div className="text-[10px] font-medium px-3 mb-2 uppercase tracking-wider" style={{ color: 'var(--color-muted)' }}>Modules</div>}
-          {navItems.map((item) => {
+          {navItems.filter((item) => !item.adminOnly || user?.admin).map((item) => {
             const b = item.badge ? getBadge(item.badge) : 0
             const isActive = activeSection === item.id
             return (

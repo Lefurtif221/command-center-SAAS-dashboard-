@@ -14,6 +14,7 @@ import Team from '../components/dashboard/Team'
 import StatsHistory from '../components/dashboard/StatsHistory'
 import Concentration from '../components/dashboard/Concentration'
 import Feedback from '../components/dashboard/Feedback'
+import AdminFeedback from '../components/dashboard/AdminFeedback'
 import SharePanel from '../components/dashboard/SharePanel'
 import GmailPromo from '../components/dashboard/GmailPromo'
 import InstallHint from '../components/dashboard/InstallHint'
@@ -146,6 +147,12 @@ export default function DashboardPage() {
                 <Feedback />
               </div>
               <SharePanel />
+            </div>
+          )}
+
+          {activeSection === 'admin-feedback' && user?.admin && (
+            <div className="page-enter max-w-3xl">
+              <AdminFeedback />
             </div>
           )}
 

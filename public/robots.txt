@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://personnal-place.tech/sitemap.xml

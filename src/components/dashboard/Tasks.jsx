@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
-import { Trash2, CheckSquare, AlertTriangle, Plus, Users } from 'lucide-react'
+import { Trash2, CheckSquare, AlertTriangle, Plus, Users, Clock } from 'lucide-react'
 
 export default function Tasks() {
   const { tasks, addTask, toggleTask, deleteTask, teams, shareTask } = useDashboard()
   const [newTitle, setNewTitle] = useState('')
   const [newDate, setNewDate] = useState('')
+  const [newTime, setNewTime] = useState('')
   const [newPriority, setNewPriority] = useState('medium')
   const [newTeamId, setNewTeamId] = useState('')
   const [adding, setAdding] = useState(false)
@@ -44,8 +45,8 @@ export default function Tasks() {
   const handleAdd = async () => {
     if (!newTitle.trim()) return
     setAdding(true)
-    await addTask(newTitle.trim(), newPriority, newDate || null, newTeamId || null)
-    setNewTitle(''); setNewDate(''); setNewPriority('medium'); setNewTeamId('')
+    await addTask(newTitle.trim(), newPriority, newDate || null, newTeamId || null, newTime || null)
+    setNewTitle(''); setNewDate(''); setNewTime(''); setNewPriority('medium'); setNewTeamId('')
     setAdding(false)
   }
 
@@ -101,6 +102,11 @@ export default function Tasks() {
             <p className="text-[10px]" style={{ color: '#10B981' }}>Terminee le {new Date(task.completed_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</p>
           )}
           {task.due_date && <p className="text-[10px]" style={{ color: 'var(--color-muted)' }}>{formatDate(task.due_date)}</p>}
+          {task.remind_time && (
+            <span className="flex items-center gap-1 text-[10px]" style={{ color: '#2563EB' }}>
+              <Clock size={9} /> {task.remind_time.slice(0, 5)}
+            </span>
+          )}
           {task.team_name && (
             <span className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md"
               style={{ background: 'rgba(37,99,235,0.12)', color: '#2563EB' }}>
@@ -161,6 +167,10 @@ export default function Tasks() {
             style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
           <div className="flex gap-2">
             <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)}
+              className="flex-1 sm:flex-none px-2 py-2.5 rounded-lg text-xs focus:outline-none transition-colors duration-150"
+              style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
+            <input type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)}
+              title="Heure de rappel (notification)" aria-label="Heure de rappel"
               className="flex-1 sm:flex-none px-2 py-2.5 rounded-lg text-xs focus:outline-none transition-colors duration-150"
               style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
             <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)}

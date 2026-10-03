@@ -96,11 +96,11 @@ export function DashboardProvider({ children }) {
     } catch (err) { handleFetchError(err) }
   }
 
-  const addTask = async (title, priority, due_date, team_id) => {
+  const addTask = async (title, priority, due_date, team_id, remind_time) => {
     try {
       const data = await apiFetch('/api/tasks', {
         method: 'POST',
-        body: JSON.stringify({ title, priority, due_date, team_id: team_id || null }),
+        body: JSON.stringify({ title, priority, due_date, team_id: team_id || null, remind_time: remind_time || null }),
       })
       if (data.task) {
         const team = teams.find(t => t.id === team_id)
