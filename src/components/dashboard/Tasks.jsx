@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
-import { Trash2, CheckSquare, AlertTriangle, Plus, Users, Clock } from 'lucide-react'
+import { Trash2, CheckSquare, AlertTriangle, Plus, Users, Clock, Check } from 'lucide-react'
 
 export default function Tasks() {
   const { tasks, addTask, toggleTask, deleteTask, teams, shareTask } = useDashboard()
@@ -93,7 +93,7 @@ export default function Tasks() {
       <button onClick={() => toggleTask(task.id, task.completed)}
         className="w-6 h-6 rounded-md border flex-shrink-0 flex items-center justify-center transition-colors duration-150"
         style={{ borderColor: task.completed ? '#2563EB' : 'var(--color-border)', background: task.completed ? '#2563EB' : 'transparent' }}>
-        {task.completed && <span className="text-white text-[10px]">âœ“</span>}
+        {task.completed && <Check size={12} strokeWidth={3} className="text-white" />}
       </button>
       <div className="flex-1 min-w-0">
         <p className={`text-sm ${task.completed ? 'line-through' : ''}`} style={{ color: task.completed ? 'var(--color-muted)' : 'var(--color-text)' }}>{task.title}</p>
