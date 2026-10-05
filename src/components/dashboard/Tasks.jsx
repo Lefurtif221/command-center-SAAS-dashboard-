@@ -165,16 +165,16 @@ export default function Tasks() {
             onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
             className="flex-1 px-3 py-2.5 rounded-lg text-sm focus:outline-none transition-colors duration-150"
             style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)}
-              className="flex-1 sm:flex-none px-2 py-2.5 rounded-lg text-xs focus:outline-none transition-colors duration-150"
+              className="basis-[calc(50%-4px)] grow-0 sm:basis-auto min-w-0 px-2 py-2.5 rounded-lg text-xs focus:outline-none transition-colors duration-150"
               style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
             <input type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)}
               title="Heure de rappel (notification)" aria-label="Heure de rappel"
-              className="flex-1 sm:flex-none px-2 py-2.5 rounded-lg text-xs focus:outline-none transition-colors duration-150"
+              className="basis-[calc(50%-4px)] grow-0 sm:basis-auto min-w-0 px-2 py-2.5 rounded-lg text-xs focus:outline-none transition-colors duration-150"
               style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }} />
             <select value={newPriority} onChange={(e) => setNewPriority(e.target.value)}
-              className="px-2 py-2.5 rounded-lg text-xs focus:outline-none cursor-pointer transition-colors duration-150"
+              className="min-w-0 max-w-[45%] sm:max-w-none px-2 py-2.5 rounded-lg text-xs focus:outline-none cursor-pointer transition-colors duration-150"
               style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
               <option value="high">Urgent</option>
               <option value="medium">Moyen</option>
@@ -183,14 +183,14 @@ export default function Tasks() {
             {teams.length > 0 && (
               <select value={newTeamId} onChange={(e) => setNewTeamId(e.target.value)}
                 aria-label="Partager avec"
-                className="px-2 py-2.5 rounded-lg text-xs focus:outline-none cursor-pointer transition-colors duration-150"
+                className="min-w-0 max-w-[45%] sm:max-w-none px-2 py-2.5 rounded-lg text-xs focus:outline-none cursor-pointer transition-colors duration-150"
                 style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
                 <option value="">Prive</option>
                 {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
               </select>
             )}
             <button onClick={handleAdd} disabled={adding || !newTitle.trim()}
-              className="px-3 py-2.5 text-sm font-medium rounded-lg transition-colors duration-150 disabled:opacity-50"
+              className="shrink-0 ml-auto sm:ml-0 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors duration-150 disabled:opacity-50"
               style={{ background: '#2563EB', color: '#FFF' }}>
               {adding ? '...' : <Plus size={16} />}
             </button>
