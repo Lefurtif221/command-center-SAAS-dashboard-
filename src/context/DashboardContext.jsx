@@ -13,6 +13,7 @@ export function DashboardProvider({ children }) {
   const [emailError, setEmailError] = useState(null)
   const [gmailReconnect, setGmailReconnect] = useState(false)
   const [tasks, setTasks] = useState([])
+  const [tasksLoaded, setTasksLoaded] = useState(false)
   const [events, setEvents] = useState([])
   const [filterPriority, setFilterPriority] = useState('all')
   const [filterTime, setFilterTime] = useState('today')
@@ -83,7 +84,7 @@ export function DashboardProvider({ children }) {
   const fetchTasks = async () => {
     try {
       const data = await apiFetch('/api/tasks')
-      if (data.tasks) setTasks(data.tasks)
+      if (data.tasks) { setTasks(data.tasks); setTasksLoaded(true) }
       handleFetchSuccess()
     } catch (err) { handleFetchError(err) }
   }
@@ -105,8 +106,10 @@ export function DashboardProvider({ children }) {
       if (data.task) {
         const team = teams.find(t => t.id === team_id)
         setTasks(prev => [{ ...data.task, team_name: team?.name, is_owner: true }, ...prev])
+        return data.task
       }
-    } catch (err) { console.error(err) }
+      return null
+    } catch (err) { console.error(err); return null }
   }
 
   const shareTask = async (id, team_id) => {
@@ -278,12 +281,12 @@ export function DashboardProvider({ children }) {
   }
 
   const value = useMemo(() => ({
-    services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect, apiError, teams, invites, gmailAccounts, plan, planLimits,
+    services, emails, filteredEmails, tasks, tasksLoaded, events, stats, emailError, gmailReconnect, apiError, teams, invites, gmailAccounts, plan, planLimits,
     filterPriority, filterTime, activeSection,
     setFilterPriority, setFilterTime, setActiveSection,
     fetchTasks, fetchEvents, addTask, toggleTask, deleteTask, addEvent, updateEvent, removeEvent, shareTask, fetchTeams, fetchInvites,
     connectService, disconnectService, syncService, markEmailRead, fetchConnectedServices, refreshEmails, updateEmailPriority
-  }), [services, emails, filteredEmails, tasks, events, stats, emailError, gmailReconnect, apiError, teams, invites, gmailAccounts, plan, planLimits, filterPriority, filterTime, activeSection])
+  }), [services, emails, filteredEmails, tasks, tasksLoaded, events, stats, emailError, gmailReconnect, apiError, teams, invites, gmailAccounts, plan, planLimits, filterPriority, filterTime, activeSection])
 
   return (
     <DashboardContext.Provider value={value}>

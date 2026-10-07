@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDashboard } from '../../hooks/useDashboard'
 import { apiFetch } from '../../utils/api'
-import { Mail, CheckSquare, Calendar, Check, ArrowRight, Rocket } from 'lucide-react'
+import { Mail, CheckSquare, Calendar, Check, ArrowRight, Rocket, UserPlus, Copy } from 'lucide-react'
 
 export default function GettingStarted() {
   const { services, tasks, events, setActiveSection } = useDashboard()
   const [busy, setBusy] = useState(false)
+  const [inviteUrl, setInviteUrl] = useState('')
+  const [copied, setCopied] = useState(false)
 
   const connectGmail = async () => {
     setBusy(true)
@@ -18,15 +20,6 @@ export default function GettingStarted() {
 
   const steps = [
     {
-      id: 'gmail',
-      done: !!services.gmail.connected,
-      icon: Mail,
-      title: 'Connecte ton Gmail',
-      desc: 'Tes emails arrivent ici et sont tries par priorite.',
-      cta: 'Connecter',
-      run: connectGmail,
-    },
-    {
       id: 'task',
       done: tasks.length > 0,
       icon: CheckSquare,
@@ -34,6 +27,15 @@ export default function GettingStarted() {
       desc: 'Ce que tu dois faire aujourd’hui, au meme endroit.',
       cta: 'Ajouter une tache',
       run: () => setActiveSection('tasks'),
+    },
+    {
+      id: 'gmail',
+      done: !!services.gmail.connected,
+      icon: Mail,
+      title: 'Connecte ton Gmail',
+      desc: 'Tes emails arrivent ici et sont tries par priorite.',
+      cta: 'Connecter',
+      run: connectGmail,
     },
     {
       id: 'cal',
@@ -47,7 +49,55 @@ export default function GettingStarted() {
   ]
 
   const doneCount = steps.filter(s => s.done).length
-  if (doneCount === steps.length) return null
+  const allDone = doneCount === steps.length
+
+  useEffect(() => {
+    if (!allDone) return
+    let alive = true
+    apiFetch('/api/me/referral')
+      .then(({ code }) => { if (alive) setInviteUrl(`${window.location.origin}/?ref=${code}`) })
+      .catch(() => { /* lien indisponible : la carte reste sans champ */ })
+    return () => { alive = false }
+  }, [allDone])
+
+  const copyInvite = async () => {
+    if (!inviteUrl) return
+    try {
+      await navigator.clipboard.writeText(inviteUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2500)
+    } catch { /* presse-papiers refuse */ }
+  }
+
+  if (allDone) {
+    return (
+      <div className="rounded-xl p-4 md:p-5 page-enter" style={{ background: 'var(--color-surface-solid)', border: '1px solid rgba(16,185,129,0.35)' }}>
+        <div className="flex items-center gap-2 mb-1">
+          <UserPlus size={15} style={{ color: '#10B981' }} />
+          <h3 className="text-sm font-display font-medium">Invite un ami</h3>
+          <span className="text-[10px] px-2 py-0.5 rounded-full ml-auto" style={{ background: 'rgba(16,185,129,0.12)', color: '#10B981' }}>
+            3/3 faits
+          </span>
+        </div>
+        <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+          Ton espace est pret. Partage ton lien : ton ami decouvre Personal Place avec ta reco.
+        </p>
+        {inviteUrl && (
+          <div className="flex gap-2 mt-3">
+            <input readOnly value={inviteUrl} onFocus={(e) => e.target.select()}
+              className="flex-1 min-w-0 px-3 py-2 rounded-lg text-xs focus:outline-none"
+              style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }} />
+            <button onClick={copyInvite}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-medium shrink-0 transition-colors"
+              style={{ background: 'rgba(16,185,129,0.12)', color: '#10B981', border: '1px solid rgba(16,185,129,0.3)' }}>
+              {copied ? <Check size={12} /> : <Copy size={12} />}
+              {copied ? 'Copie' : 'Copier'}
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="rounded-xl p-4 md:p-5 page-enter" style={{ background: 'var(--color-surface-solid)', border: '1px solid rgba(37,99,235,0.3)' }}>

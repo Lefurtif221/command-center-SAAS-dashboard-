@@ -20,6 +20,7 @@ import GmailPromo from '../components/dashboard/GmailPromo'
 import InstallHint from '../components/dashboard/InstallHint'
 import PushPrompt from '../components/dashboard/PushPrompt'
 import GettingStarted from '../components/dashboard/GettingStarted'
+import FirstTaskModal from '../components/dashboard/FirstTaskModal'
 import InviteToasts from '../components/dashboard/InviteToasts'
 import OnboardingTutorial from '../components/dashboard/OnboardingTutorial'
 import ThankYouBanner from '../components/dashboard/ThankYouBanner'
@@ -65,6 +66,7 @@ export default function DashboardPage() {
       <GmailPromo />
       <InstallHint />
       <PushPrompt />
+      <FirstTaskModal />
       <Sidebar />
 
       <div className="md:ml-56 overflow-x-hidden min-h-screen">

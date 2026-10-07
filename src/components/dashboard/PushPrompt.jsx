@@ -39,6 +39,20 @@ export default function PushPrompt() {
     return () => clearTimeout(t)
   }, [show])
 
+  // Declenche apres la premiere tache creee : le bon moment pour proposer les rappels
+  useEffect(() => {
+    let timer
+    const onPrompt = () => {
+      if (localStorage.getItem(FLAG)) return
+      if (!isPushSupported()) return
+      if (typeof Notification === 'undefined' || Notification.permission !== 'default') return
+      clearTimeout(timer)
+      timer = setTimeout(() => setShow(true), 1800)
+    }
+    window.addEventListener('push:prompt', onPrompt)
+    return () => { window.removeEventListener('push:prompt', onPrompt); clearTimeout(timer) }
+  }, [])
+
   const dismiss = () => {
     localStorage.setItem(FLAG, String(Date.now()))
     setShow(false)

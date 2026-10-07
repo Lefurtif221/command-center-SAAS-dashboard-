@@ -3,22 +3,43 @@ import { apiFetch } from '../utils/api'
 
 const AuthContext = createContext(null)
 
+function safeParse(raw) {
+  if (!raw) return null
+  try { return JSON.parse(raw) } catch { return null }
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Attribution : on capture d ou le visiteur arrive (une seule fois, au premier chargement)
+    const sp = new URLSearchParams(window.location.search)
+    const ref = sp.get('ref')
+    if (!localStorage.getItem('pp_src')) {
+      const referrer = document.referrer
+      const src = {
+        ref: ref && /^[A-Za-z0-9]{4,20}$/.test(ref) ? ref.toUpperCase() : null,
+        utm_source: sp.get('utm_source'),
+        utm_medium: sp.get('utm_medium'),
+        utm_campaign: sp.get('utm_campaign'),
+        utm_content: sp.get('utm_content'),
+        referrer: referrer && !referrer.startsWith(window.location.origin) ? referrer : null,
+        landed_at: new Date().toISOString(),
+      }
+      localStorage.setItem('pp_src', JSON.stringify(src))
+    }
     // Lien de parrainage ouvert (?ref=XXX) : on le garde pour l'attribuer apres l'inscription
-    const ref = new URLSearchParams(window.location.search).get('ref')
     if (ref && /^[A-Za-z0-9]{4,20}$/.test(ref)) localStorage.setItem('pp_ref', ref.toUpperCase())
   }, [])
 
   useEffect(() => {
     if (!user) return
     const ref = localStorage.getItem('pp_ref')
-    if (!ref) return
-    apiFetch('/api/me/referral/attach', { method: 'POST', body: JSON.stringify({ ref }) })
-      .then(() => localStorage.removeItem('pp_ref'))
+    const source = safeParse(localStorage.getItem('pp_src'))
+    if (!ref && !source) return
+    apiFetch('/api/me/referral/attach', { method: 'POST', body: JSON.stringify({ ref: ref || '', source }) })
+      .then(() => { if (ref) localStorage.removeItem('pp_ref') })
       .catch(() => { /* on reessera au prochain chargement */ })
   }, [user])
 
@@ -62,7 +83,7 @@ export function AuthProvider({ children }) {
   const signup = async (name, email, password) => {
     const data = await apiFetch('/api/auth/signup', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password, source: safeParse(localStorage.getItem('pp_src')) }),
     })
     if (data.needsVerification) return { needsVerification: true, email: data.email }
     localStorage.setItem('command_center_token', data.token)
